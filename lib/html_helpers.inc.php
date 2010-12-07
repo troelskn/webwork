@@ -1,6 +1,13 @@
 <?php
 
 /**
+ * Echoes a string, escaped for html.
+ */
+function e($strlike) {
+  echo htmlspecialchars($strlike);
+}
+
+/**
  * Generates a link/anchortag
  */
 function html_link($url, $title = null, $options = array()) {

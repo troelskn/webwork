@@ -211,3 +211,46 @@ function json_encode_pretty($obj, $indentation = 0) {
       break;
   }
 }
+
+/**
+ * Generates an URL
+ */
+function url($href, $params = array()) {
+  if (is_array($href)) {
+    $href = implode('/', array_map('rawurlencode', $href));
+  }
+  if (strpos($href, '#') !== false) {
+    list($href, $fragment) = explode('#', $href, 2);
+    $fragment = "#".$fragment;
+  } else {
+    $fragment = "";
+  }
+  if (strpos($href, '?') !== false) {
+    list($href, $querystring) = explode('?', $href, 2);
+    parse_str($querystring, $embedded_params);
+    $params = array_merge($embedded_params, $params);
+  }
+  $assoc = array();
+  $indexed = array();
+  foreach ($params as $key => $value) {
+    if (is_int($key)) {
+      $indexed[] = rawurlencode($value);
+    } else {
+      $assoc[$key] = $value;
+    }
+  }
+  $querystring = "";
+  if (count($indexed) > 0) {
+    $querystring = implode('&', $indexed);
+  }
+  $assoc_string = http_build_query($assoc);
+  if ($assoc_string) {
+    if ($querystring) {
+      $querystring .= '&';
+    }
+    $querystring .= $assoc_string;
+  }
+  return $href . ($querystring ? ('?' . $querystring) : '') . $fragment;
+
+}
+
