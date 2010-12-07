@@ -7,5 +7,16 @@ foreach (array_keys($GLOBALS['ROUTES']) as $pattern) {
   $padsize = max($padsize, strlen($pattern));
 }
 foreach ($GLOBALS['ROUTES'] as $pattern => $handler) {
-  echo str_pad($pattern, $padsize) . " -> " . $handler . "\n";
+  $file_name = "NO FILE FOUND FOR $handler";
+  if (is_file($GLOBALS['APPLICATION_ROOT'].'/handlers/'.$handler.'.php')) {
+    $file_name = 'handlers/'.$handler.'.php';
+  }
+  foreach (scandir($GLOBALS['APPLICATION_ROOT'].'/vendor') as $plugin) {
+    if (substr($plugin, 0, 1) !== '.') {
+      if (is_file($GLOBALS['APPLICATION_ROOT'].'/vendor/'.$plugin.'/handlers/'.$handler.'.php')) {
+        $file_name = 'vendor/'.$plugin.'/handlers/'.$handler.'.php';
+      }
+    }
+  }
+  echo str_pad($pattern, $padsize) . " -> " . $file_name . "\n";
 }
