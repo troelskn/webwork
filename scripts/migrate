@@ -1,0 +1,126 @@
+#!/usr/bin/env php
+<?php
+require_once(dirname(__FILE__) . '/../bootstrap.inc.php');
+
+class Migrations {
+  protected $db;
+  protected $dir_migrations;
+  function __construct($db, $dir_migrations) {
+    $this->db = $db;
+    $this->dir_migrations = $dir_migrations;
+  }
+
+  function setup() {
+    // Create migrations table, if it doesn't exist
+    if (!in_array('schema_migrations', $this->getTables())) {
+      $this->db->exec("CREATE TABLE schema_migrations ( version varchar(255) COLLATE utf8_unicode_ci NOT NULL, UNIQUE KEY unique_schema_migrations (version) ) ENGINE=InnoDB DEFAULT CHARSET=utf8 COLLATE=utf8_unicode_ci");
+    }
+  }
+
+  function getTables() {
+    $tables = array();
+    foreach ($this->db->query("show tables") as $row) {
+      $tables[] = $row[0];
+    }
+    return $tables;
+  }
+
+  function getVersions() {
+    $versions = array();
+    foreach ($this->db->query("select * from schema_migrations") as $row) {
+      $versions[] = $row[0];
+    }
+    return $versions;
+  }
+
+  function getMigrations() {
+    return array_keys($this->getMigrationFileNames());
+  }
+
+  function getMigrationFileNameByVersion($version) {
+    $files = $this->getMigrationFileNames();
+    return $files[$version];
+  }
+
+  function getMigrationFileNames() {
+    $migrations = array();
+    foreach ($this->dir_migrations as $path) {
+      foreach (scandir($path) as $entry) {
+        $fullname = rtrim($path, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . $entry;
+        if (preg_match('/^([0-9]+)/', $entry, $reg) && is_file($fullname)) {
+          $migrations[$reg[1]] = $fullname;
+        }
+      }
+    }
+    ksort($migrations);
+    return $migrations;
+  }
+
+  function getOutstanding() {
+    $outstanding = array();
+    $versions = $this->getVersions();
+    foreach ($this->getMigrations() as $version) {
+      if (!in_array($version, $versions)) {
+        $outstanding[] = $version;
+      }
+    }
+    return $outstanding;
+  }
+
+  function migrateVersion($version) {
+    $filename = $this->getMigrationFileNameByVersion($version);
+    echo "Running migration: " . $version ."\n";
+    if (is_executable($filename)) {
+      $this->executeBin($filename, $version);
+    } elseif (preg_match('/\.sql$/', $filename)) {
+      $this->executeSql($filename, $version);
+    } elseif (preg_match('/\.php$/', $filename)) {
+      $this->executePhp($filename, $version);
+    } else {
+      throw new Exception("Unable to process migration ".$filename);
+    }
+    $statement = $this->db->prepare("insert into schema_migrations values (:version)");
+    $statement->execute(array(':version' => $version));
+    echo "OK.\n";
+  }
+
+  function executeBin($filename, $version) {
+    echo "* Executing external command:\n" . basename($filename) . "\n";
+    system($filename, $retval);
+    if ($retval !== 0) {
+      throw new Exception("External command failed with exit code ($retval).");
+    }
+  }
+
+  function executePhp($filename, $version) {
+    export($GLOBALS);
+    echo "* Include PHP file:\n" . basename($filename) . "\n";
+    include($filename);
+  }
+
+  function executeSql($filename, $version) {
+    $contents = file_get_contents($filename);
+    foreach (explode(";", $contents) as $sql) {
+      if (trim($sql)) {
+        echo "* Executing SQL:\n" . trim($sql) . "\n";
+        $this->db->exec($sql);
+      }
+    }
+  }
+}
+
+$migrations_dirs = array($GLOBALS['APPLICATION_ROOT'].'/migrations');
+foreach (scandir($GLOBALS['APPLICATION_ROOT'].'/vendor') as $plugin) {
+  if (substr($plugin, 0, 1) !== '.') {
+    if (is_dir($GLOBALS['APPLICATION_ROOT'].'/vendor/'.$plugin.'/migrations')) {
+      $directories[] = $GLOBALS['APPLICATION_ROOT'].'/vendor/'.$plugin.'/migrations';
+    }
+  }
+}
+
+$m = new Migrations($db, $migrations_dirs);
+$m->setup();
+foreach ($m->getOutstanding() as $version) {
+  $m->migrateVersion($version);
+}
+echo "Database up to date.\n";

@@ -1,0 +1,18 @@
+#!/bin/bash
+REVISION_ROOT=$(dirname $(dirname $0))
+[ -z "$DEPLOY_ROOT" ] && exit -1
+echo chown www-data:www-data ${REVISION_ROOT}
+sudo chown www-data:www-data ${REVISION_ROOT}
+echo ln -s ${DEPLOY_ROOT}/shared/log ${REVISION_ROOT}/log
+sudo ln -s ${DEPLOY_ROOT}/shared/log ${REVISION_ROOT}/log
+echo ln -s ${DEPLOY_ROOT}/shared/xml ${REVISION_ROOT}/xml
+sudo ln -s ${DEPLOY_ROOT}/shared/xml ${REVISION_ROOT}/xml
+echo unlink ${DEPLOY_ROOT}/current
+sudo unlink ${DEPLOY_ROOT}/current
+echo ln -s ${REVISION_ROOT} ${DEPLOY_ROOT}/current
+sudo ln -s ${REVISION_ROOT} ${DEPLOY_ROOT}/current
+
+echo "Running migrations"
+pushd ${DEPLOY_ROOT}/current
+scripts/migrate
+popd

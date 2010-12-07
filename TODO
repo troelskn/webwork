@@ -1,0 +1,15 @@
+documentation:
+  routes
+  plugins
+  config
+
+--
+
+session
+logging
+pdoext
+viewhelpers
+render layout
+plugin assets?? -- symlinks?
+deploy-init (create database .. setup initial dirs?)
+tests

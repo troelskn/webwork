@@ -1,0 +1,11 @@
+#!/usr/bin/env php
+<?php
+require_once(dirname(__FILE__) . '/../bootstrap.inc.php');
+
+$padsize = 0;
+foreach (array_keys($GLOBALS['ROUTES']) as $pattern) {
+  $padsize = max($padsize, strlen($pattern));
+}
+foreach ($GLOBALS['ROUTES'] as $pattern => $handler) {
+  echo str_pad($pattern, $padsize) . " -> " . $handler . "\n";
+}
