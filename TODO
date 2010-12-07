@@ -5,11 +5,10 @@ documentation:
 
 --
 
-session
-logging
-pdoext
 viewhelpers
-render layout
+session
+file upload (multipart)
+pdoext/db
 plugin assets?? -- symlinks?
 deploy-init (create database .. setup initial dirs?)
 tests

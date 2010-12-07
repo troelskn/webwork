@@ -1,7 +1,7 @@
 <?php
 set_layout('default');
 ?>
-<h1>Hello World</h1>
+<h1>It Works</h1>
 <p>
-  This file is found in: <code><?php echo htmlspecialchars(__FILE__); ?></code>
+  This file can be found in: <code style="background-color:lightblue"><?php echo htmlspecialchars(__FILE__); ?></code>
 </p>

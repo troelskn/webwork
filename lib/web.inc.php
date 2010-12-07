@@ -1,5 +1,22 @@
 <?php
+$GLOBALS['HTTP_RESPONSE'] = array(
+  'STATUS' => 200,
+  'ETAG' => null,
+  'HEADERS' => array(
+    array('Content-Type', 'text/html; charset=UTF-8')));
+
+$GLOBALS['RESPONSE_DOCUMENT'] = array(
+  'RENDER_LAYOUT' => null,
+  'TITLE' => null,
+  'SCRIPS' => array(),
+  'STYLESHEETS' => array(),
+  'ONLOAD' => array(),
+);
+
 function resolve_route($request_uri) {
+  if ($request_uri === "/") {
+    return $GLOBALS['ROUTES']['ROOT'];
+  }
   foreach ($GLOBALS['ROUTES'] as $pattern => $handler) {
     if ($pattern !== 'ROOT') {
       if (preg_match($pattern, $request_uri, $reg)) {
@@ -9,7 +26,7 @@ function resolve_route($request_uri) {
       }
     }
   }
-  return $GLOBALS['ROUTES']['ROOT'];
+  throw new http_NotFound();
 }
 
 function render($file_name, $params = array()) {
@@ -36,21 +53,23 @@ function render_in_place($file_name, $params = array()) {
 }
 
 function set_layout($file_name) {
-  $GLOBALS['RENDER_LAYOUT'] = $file_name;
+  $GLOBALS['RESPONSE_DOCUMENT']['RENDER_LAYOUT'] = $file_name;
 }
 
-function request() {
-  if (!isset($GLOBALS['http_request'])) {
-    $GLOBALS['http_request'] = new http_Request();
-  }
-  return $GLOBALS['http_request'];
+function set_title($title) {
+  $GLOBALS['RESPONSE_DOCUMENT']['TITLE'] = $title;
 }
 
-function response() {
-  if (!isset($GLOBALS['http_response'])) {
-    $GLOBALS['http_response'] = new http_Response(request());
-  }
-  return $GLOBALS['http_response'];
+function add_script($script) {
+  $GLOBALS['RESPONSE_DOCUMENT']['SCRIPS'] = $script;
+}
+
+function add_stylesheet($stylesheet) {
+  $GLOBALS['RESPONSE_DOCUMENT']['STYLESHEETS'] = $stylesheet;
+}
+
+function add_onload($onload) {
+  $GLOBALS['RESPONSE_DOCUMENT']['ONLOAD'] = $onload;
 }
 
 class http_Exception extends Exception {}
@@ -59,84 +78,136 @@ class http_MethodNotAllowed extends http_Exception {}
 class http_NotFound extends http_Exception {}
 class http_SeeOther extends http_Exception {}
 
-class http_Request {
-  function arg($key = null, $default = null) {
-    if ($key === null) {
-      return $_SERVER['REQUEST_ARGS'];
-    }
-    return isset($_SERVER['REQUEST_ARGS'][$key]) ? $_SERVER['REQUEST_ARGS'][$key] : $default;
+function request_param($key = null, $default = null) {
+  if ($key === null) {
+    return $_SERVER['REQUEST_PARAMS'];
   }
-  function query($key = null, $default = null) {
-    if ($key === null) {
-      return $_GET;
-    }
-    return isset($_GET[$key]) ? $_GET[$key] : $default;
+  return isset($_SERVER['REQUEST_PARAMS'][$key]) ? $_SERVER['REQUEST_PARAMS'][$key] : $default;
+}
+
+function request_query($key = null, $default = null) {
+  if ($key === null) {
+    return $_GET;
   }
-  function body($key = null, $default = null) {
-    if ($key === null) {
-      return $_POST;
-    }
-    return isset($_POST[$key]) ? $_POST[$key] : $default;
+  return isset($_GET[$key]) ? $_GET[$key] : $default;
+}
+
+function request_body($key = null, $default = null) {
+  if ($key === null) {
+    return $_POST;
   }
-  function header($key = null, $default = null) {
-    $HEADERS = apache_request_headers();
-    if ($key === null) {
-      return $HEADERS;
-    }
-    return isset($HEADERS[$key]) ? $HEADERS[$key] : $default;
+  return isset($_POST[$key]) ? $_POST[$key] : $default;
+}
+
+function request_header($key = null, $default = null) {
+  $HEADERS = apache_request_headers();
+  if ($key === null) {
+    return $HEADERS;
   }
-  function path() {
-    return rtrim(preg_replace('~[?].*$~', '', $this->uri()), '/');
-  }
-  function uri() {
-    return $_SERVER['REQUEST_URI'];
-  }
-  function subview() {
-    if (preg_match('~[?]([^=&]+)(&|$)~', $this->uri(), $reg)) {
-      return $reg[1];
-    }
-  }
-  function method() {
-    $real_http_method = strtolower($_SERVER['REQUEST_METHOD']);
-    return $real_http_method === 'post' ? $this->body('_method', 'post') : $real_http_method;
+  return isset($HEADERS[$key]) ? $HEADERS[$key] : $default;
+}
+
+function request_path() {
+  return rtrim(preg_replace('~[?].*$~', '', request_uri()), '/');
+}
+
+function request_uri() {
+  return $_SERVER['REQUEST_URI'];
+}
+
+function request_subview() {
+  if (preg_match('~[?]([^=&]+)(&|$)~', request_uri(), $reg)) {
+    return $reg[1];
   }
 }
 
-class http_Response {
-  protected $status = 200;
-  protected $headers = array(
-    array('Content-Type', 'text/html; charset=UTF-8'));
-  protected $requestEtag;
-  protected $etag;
-  function __construct($request) {
-    $this->requestEtag = $request->header('If-Match');
+function request_method() {
+  $real_http_method = strtolower($_SERVER['REQUEST_METHOD']);
+  return $real_http_method === 'post' ? request_body('_method', 'post') : $real_http_method;
+}
+
+function cache_by_etag($etag) {
+  $GLOBALS['HTTP_RESPONSE']['ETAG'] = $etag;
+  if ($GLOBALS['HTTP_RESPONSE']['ETAG'] === request_header('If-Match')) {
+    throw new HttpNotModified(array('ETag: ' . $etag));
   }
-  function status() {
-    return $this->status;
-  }
-  function headers() {
-    return $this->headers;
-  }
-  function cacheByEtag($etag) {
-    $this->etag = $etag;
-    if ($this->requestEtag && $etag === $this->requestEtag) {
-      throw new HttpNotModified(array('ETag: ' . $etag));
+}
+
+function response_set_status($code) {
+  $GLOBALS['HTTP_RESPONSE']['STATUS'] = $code;
+}
+
+function response_set_header($key, $value) {
+  $headers = array();
+  foreach ($GLOBALS['HTTP_RESPONSE']['HEADERS'] as $h) {
+    if (strtolower($h[0]) != strtolower($key)) {
+      $headers[] = $h;
     }
   }
-  function setStatus($code) {
-    $this->status = $code;
+  $GLOBALS['HTTP_RESPONSE']['HEADERS'] = $headers;
+  response_add_header($key, $value);
+}
+
+function response_add_header($key, $value) {
+  $GLOBALS['HTTP_RESPONSE']['HEADERS'][] = array($key, $value);
+}
+
+function debug($mixed) {
+  static $process_id;
+  if (!$process_id) {
+    $process_id = substr(md5(microtime(true)), 0, 16);
   }
-  function setHeader($key, $value) {
-    $headers = array();
-    foreach ($this->headers as $h) {
-      if (strtolower($h[0]) != strtolower($key)) {
-        $headers[] = $h;
+  $debug_backtrace = debug_backtrace();
+  $msg = "*** ".$process_id." ".date("Y-m-d H:i:s")." ".$debug_backtrace[0]['file']." : ".$debug_backtrace[0]['line']."\n".json_encode_pretty($mixed)."\n";
+  error_log($msg, 3, $GLOBALS['APPLICATION_ROOT'].'/log/debug.log');
+}
+
+/**
+ * Input an object, returns a json-ized string of said object, pretty-printed
+ *
+ * @param mixed $obj The array or object to encode
+ * @return string JSON formatted output
+ */
+function json_encode_pretty($obj, $indentation = 0) {
+  switch (gettype($obj)) {
+    case 'object':
+      $obj = get_object_vars($obj);
+    case 'array':
+      if (!isset($obj[0])) {
+        $arr_out = array();
+        foreach ($obj as $key => $val) {
+          $arr_out[] = '"' . addslashes($key) . '": ' . json_encode_pretty($val, $indentation + 1);
+        }
+        if (count($arr_out) < 2) {
+          return '{' . implode(',', $arr_out) . '}';
+        }
+        return "{\n" . str_repeat("  ", $indentation + 1) . implode(",\n".str_repeat("  ", $indentation + 1), $arr_out) . "\n" . str_repeat("  ", $indentation) . "}";
+      } else {
+        $arr_out = array();
+        $ct = count($obj);
+        for ($j = 0; $j < $ct; $j++) {
+          $arr_out[] = json_encode_pretty($obj[$j], $indentation + 1);
+        }
+        if (count($arr_out) < 2) {
+          return '[' . implode(',', $arr_out) . ']';
+        }
+        return "[\n" . str_repeat("  ", $indentation + 1) . implode(",\n".str_repeat("  ", $indentation + 1), $arr_out) . "\n" . str_repeat("  ", $indentation) . "]";
       }
-    }
-    $this->headers = $headers;
-    $this->addHeader($key, $value);
-  }
-  function addHeader($key, $value) {
-    $this->headers[] = array($key, $value);
+      break;
+    case 'NULL':
+      return 'null';
+      break;
+    case 'boolean':
+      return $obj ? 'true' : 'false';
+      break;
+    case 'integer':
+    case 'double':
+      return $obj;
+      break;
+    case 'string':
+    default:
+      $obj = str_replace(array('\\','"',), array('\\\\','\"'), $obj);
+      return '"' . $obj . '"';
+      break;
   }
 }
