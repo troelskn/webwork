@@ -33,6 +33,8 @@ try {
   header('Content-Type: text/plain');
   echo "Error Resolving request\n\n";
   echo request_method(), " ", request_uri(), "\n\n";
-  echo $ex; // TODO: Only in dev mode!
-  echo str_repeat(" ", 512);
+  if ($GLOBALS['ENVIRONMENT'] === 'development') {
+    echo $ex;
+    echo str_repeat(" ", 512);
+  }
 }
