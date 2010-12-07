@@ -1,6 +1,6 @@
 <html>
   <head>
-<title><?php echo htmlspecialchars($TITLE); ?></title>
+    <title><?php e($TITLE); ?></title>
   </head>
   <body>
 

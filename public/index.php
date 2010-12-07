@@ -1,19 +1,24 @@
 <?php
+$__benchmark_start = microtime(true);
 require_once '../bootstrap.inc.php';
 require_once 'web.inc.php';
+require_once 'html_helpers.inc.php';
 ob_start();
 try {
   render_in_place(resolve_route(request_uri()));
-  if (isset($GLOBALS['RESPONSE_DOCUMENT']['RENDER_LAYOUT'])) {
-    $content = ob_get_clean();
-    ob_start();
-    render_in_place($GLOBALS['RESPONSE_DOCUMENT']['RENDER_LAYOUT'].'_layout', array_merge($GLOBALS['RESPONSE_DOCUMENT'], array('content' => $content)));
+  if (!headers_sent()) {
+    if (isset($GLOBALS['RESPONSE_DOCUMENT']['RENDER_LAYOUT'])) {
+      $content = ob_get_clean();
+      ob_start();
+      render_in_place($GLOBALS['RESPONSE_DOCUMENT']['RENDER_LAYOUT'].'_layout', array_merge($GLOBALS['RESPONSE_DOCUMENT'], array('content' => $content)));
+    }
+    header("HTTP/1.1 ".$GLOBALS['HTTP_RESPONSE']['STATUS']);
+    foreach ($GLOBALS['HTTP_RESPONSE']['HEADERS'] as $header) {
+      header($header[0].": ".$header[1]);
+    }
+    header("X-Processing-Time: " . number_format(microtime(true) - $__benchmark_start, 4));
+    ob_end_flush();
   }
-  header("HTTP/1.1 ".$GLOBALS['HTTP_RESPONSE']['STATUS']);
-  foreach ($GLOBALS['HTTP_RESPONSE']['HEADERS'] as $header) {
-    header($header[0].": ".$header[1]);
-  }
-  ob_end_flush();
 } catch (http_SeeOther $ex) {
   header("HTTP/1.1 303 See Other");
   header('Location: ' . $ex->getMessage());

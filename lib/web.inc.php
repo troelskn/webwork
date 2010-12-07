@@ -6,8 +6,8 @@ $GLOBALS['HTTP_RESPONSE'] = array(
     array('Content-Type', 'text/html; charset=UTF-8')));
 
 $GLOBALS['RESPONSE_DOCUMENT'] = array(
-  'RENDER_LAYOUT' => null,
-  'TITLE' => null,
+  'RENDER_LAYOUT' => 'default',
+  'TITLE' => 'No title',
   'SCRIPS' => array(),
   'STYLESHEETS' => array(),
   'ONLOAD' => array(),
