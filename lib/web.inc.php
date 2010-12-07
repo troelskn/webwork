@@ -254,3 +254,18 @@ function url($href, $params = array()) {
 
 }
 
+/**
+ * Returns a URL to an arbitrary object.
+ * Requires that object's class to have a named url-helper
+ */
+function url_for($object, $params = array()) {
+  $fn = get_class($object)."_url";
+  if (!is_callable($fn)) {
+    throw new Exception("Missing URL helper $fn");
+  }
+  $href = $fn($object);
+  if (count($params) > 0) {
+    return url($href, $params);
+  }
+  return $href;
+}

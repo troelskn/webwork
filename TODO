@@ -6,9 +6,21 @@ documentation:
 --
 
 url-helpers?
-pdoext/db
-session
+session/cookies
 file upload (multipart)
 plugin assets?? -- symlinks?
 deploy-init (create database .. setup initial dirs?)
 tests
+
+---
+
+plugins:
+  pdoext
+  authentication a la devise
+  authorization a la cancan
+  navigation
+  exceptional
+  queue?
+  Image Manipulation?
+  shell
+  repositories
