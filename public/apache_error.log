@@ -1,2 +1,0 @@
-[Tue Dec 07 19:40:15 2010] [error] [client 127.0.0.1] PHP Fatal error:  Call to undefined function dispatch() in /home/tkn/personal/php-mini-core/public/index.php on line 5
-[Tue Dec 07 19:40:15 2010] [error] [client 127.0.0.1] PHP Fatal error:  Call to undefined function dispatch() in /home/tkn/personal/php-mini-core/public/index.php on line 5
