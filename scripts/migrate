@@ -118,7 +118,7 @@ foreach (scandir($GLOBALS['APPLICATION_ROOT'].'/vendor') as $plugin) {
   }
 }
 
-$m = new Migrations($db, $migrations_dirs);
+$m = new Migrations(db(), $migrations_dirs);
 $m->setup();
 foreach ($m->getOutstanding() as $version) {
   $m->migrateVersion($version);

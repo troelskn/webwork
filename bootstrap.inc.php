@@ -9,7 +9,7 @@ error_reporting(E_ALL);
 set_error_handler('exception_error_handler');
 spl_autoload_register('autoloader');
 
-$GLOBALS['ENVIRONMENT'] = isset($_SERVER['ENVIRONMENT']) ? $_SERVER['ENVIRONMENT'] : 'DEVELOPMENT';
+$GLOBALS['ENVIRONMENT'] = isset($_SERVER['ENVIRONMENT']) ? strtolower($_SERVER['ENVIRONMENT']) : 'development';
 $GLOBALS['APPLICATION_ROOT'] = dirname(__FILE__);
 $GLOBALS['HTTP_ROOT'] = 'http://localhost/';
 set_include_path(get_include_path() . PATH_SEPARATOR . $GLOBALS['APPLICATION_ROOT'].'/lib/');
@@ -22,12 +22,12 @@ if (is_file($GLOBALS['APPLICATION_ROOT'].'/config/environment.local.inc.php')) {
   include($GLOBALS['APPLICATION_ROOT'].'/config/environment.local.inc.php');
 }
 // Include env config
-if (is_file($GLOBALS['APPLICATION_ROOT'].'/config/environments/'.strtolower($GLOBALS['ENVIRONMENT']).'.php')) {
-  include($GLOBALS['APPLICATION_ROOT'].'/config/environments/'.strtolower($GLOBALS['ENVIRONMENT']).'.php');
+if (is_file($GLOBALS['APPLICATION_ROOT'].'/config/environments/'.$GLOBALS['ENVIRONMENT'].'.php')) {
+  include($GLOBALS['APPLICATION_ROOT'].'/config/environments/'.$GLOBALS['ENVIRONMENT'].'.php');
 }
 // Include local env config
-if (is_file($GLOBALS['APPLICATION_ROOT'].'/config/environments/'.strtolower($GLOBALS['ENVIRONMENT']).'.local.php')) {
-  include($GLOBALS['APPLICATION_ROOT'].'/config/environments/'.strtolower($GLOBALS['ENVIRONMENT']).'.local.php');
+if (is_file($GLOBALS['APPLICATION_ROOT'].'/config/environments/'.$GLOBALS['ENVIRONMENT'].'.local.php')) {
+  include($GLOBALS['APPLICATION_ROOT'].'/config/environments/'.$GLOBALS['ENVIRONMENT'].'.local.php');
 }
 
 // Load routes
