@@ -14,16 +14,11 @@ $GLOBALS['RESPONSE_DOCUMENT'] = array(
 );
 
 function resolve_route($request_uri) {
-  if ($request_uri === "/") {
-    return $GLOBALS['ROUTES']['ROOT'];
-  }
   foreach ($GLOBALS['ROUTES'] as $pattern => $handler) {
-    if ($pattern !== 'ROOT') {
-      if (preg_match($pattern, $request_uri, $reg)) {
-        array_shift($reg);
-        $_SERVER['REQUEST_ARGS'] = $reg;
-        return $handler;
-      }
+    if (preg_match($pattern, $request_uri, $reg)) {
+      array_shift($reg);
+      $_SERVER['REQUEST_ARGS'] = $reg;
+      return $handler;
     }
   }
   throw new http_NotFound();
@@ -126,18 +121,33 @@ function request_method() {
   return $real_http_method === 'post' ? request_body('_method', 'post') : $real_http_method;
 }
 
+/**
+ * Sets the response ETag.
+ * If the request specifies an ETag, then the request will end witha "Not Modified" response.
+ * This is an efficient way to utilise http level caching in your application.
+ *
+ * Make sure that the ETag is a unique hash for the contents of your response.
+ */
 function cache_by_etag($etag) {
   $GLOBALS['HTTP_RESPONSE']['ETAG'] = $etag;
   if ($GLOBALS['HTTP_RESPONSE']['ETAG'] === request_header('If-Match')) {
-    throw new HttpNotModified(array('ETag: ' . $etag));
+    throw new http_NotModified(array('ETag: ' . $etag));
   }
 }
 
+/**
+ * Sets the http status code of the response.
+ */
 function response_set_status($code) {
   $GLOBALS['HTTP_RESPONSE']['STATUS'] = $code;
 }
 
-function response_set_header($key, $value) {
+/**
+ * Replaces a http response header.
+ *
+ * Use instead of `header`
+ */
+function response_replace_header($key, $value) {
   $headers = array();
   foreach ($GLOBALS['HTTP_RESPONSE']['HEADERS'] as $h) {
     if (strtolower($h[0]) != strtolower($key)) {
@@ -148,10 +158,20 @@ function response_set_header($key, $value) {
   response_add_header($key, $value);
 }
 
+/**
+ * Adds a http response header.
+ *
+ * Use instead of `header`
+ */
 function response_add_header($key, $value) {
   $GLOBALS['HTTP_RESPONSE']['HEADERS'][] = array($key, $value);
 }
 
+/**
+ * Logs something to the debug log.
+ *
+ * Use it instead of `var_dump` and put a `tail -f` on the debug log.
+ */
 function debug($mixed) {
   static $process_id;
   if (!$process_id) {

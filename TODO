@@ -1,5 +1,5 @@
 documentation:
-  routes
+  routes/handlers
   plugins
   config
 
