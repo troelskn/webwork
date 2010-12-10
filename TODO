@@ -5,12 +5,12 @@ documentation:
 
 --
 
-url-helpers?
-session/cookies
-file upload (multipart)
-plugin assets?? -- symlinks?
-deploy-init (create database .. setup initial dirs?)
-tests
+improvements:
+  session/cookies
+  file upload (multipart)
+  plugin assets?? -- symlinks?
+  deploy-init (create database .. setup initial dirs?)
+  tests
 
 ---
 

@@ -88,6 +88,10 @@ function request_query($key = null, $default = null) {
 }
 
 function request_body($key = null, $default = null) {
+  if ($_SERVER['REQUEST_METHOD'] === 'PUT' && $_SERVER['CONTENT_TYPE'] === 'application/x-www-form-urlencoded' && empty($_POST)) {
+    parse_str(file_get_contents('php://input'), $buffer);
+    $_POST = $buffer;
+  }
   if ($key === null) {
     return $_POST;
   }
@@ -175,7 +179,7 @@ function response_add_header($key, $value) {
 function debug($mixed) {
   static $process_id;
   if (!$process_id) {
-    $process_id = substr(md5(microtime(true)), 0, 16);
+    $process_id = substr(md5(microtime(true)), 0, 8);
   }
   $debug_backtrace = debug_backtrace();
   $msg = "*** ".$process_id." ".date("Y-m-d H:i:s")." ".$debug_backtrace[0]['file']." : ".$debug_backtrace[0]['line']."\n".json_encode_pretty($mixed)."\n";
@@ -277,6 +281,8 @@ function url($href, $params = array()) {
 /**
  * Returns a URL to an arbitrary object.
  * Requires that object's class to have a named url-helper
+ *
+ * See `config/routes.inc.php`
  */
 function url_for($object, $params = array()) {
   $fn = get_class($object)."_url";
