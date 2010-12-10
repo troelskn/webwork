@@ -1,6 +1,6 @@
 <?php
 // You can make local overrides to these settings by creating a config.local.inc.php
-$database_connection = array(
+$GLOBALS['DATABASE_CONNECTION'] = array(
   'constructor' => 'create_pdo',
   'driver' => 'mysql',
   'host' => 'localhost',
@@ -13,12 +13,11 @@ $database_connection = array(
  * Returns a database connection object.
  */
 function db() {
-  global $database_connection;
-  if (!isset($database_connection['instance'])) {
-    $ctor = $database_connection['constructor'];
-    $database_connection['instance'] = call_user_func($ctor, $database_connection);
+  if (!isset($GLOBALS['DATABASE_CONNECTION']['instance'])) {
+    $ctor = $GLOBALS['DATABASE_CONNECTION']['constructor'];
+    $GLOBALS['DATABASE_CONNECTION']['instance'] = call_user_func($ctor, $GLOBALS['DATABASE_CONNECTION']);
   }
-  return $database_connection['instance'];
+  return $GLOBALS['DATABASE_CONNECTION']['instance'];
 }
 
 function create_pdo($params) {

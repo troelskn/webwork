@@ -1,16 +1,16 @@
 <?php
 $GLOBALS['HTTP_RESPONSE'] = array(
-  'STATUS' => 200,
-  'ETAG' => null,
-  'HEADERS' => array(
+  'status' => 200,
+  'etag' => null,
+  'headers' => array(
     array('Content-Type', 'text/html; charset=UTF-8')));
 
 $GLOBALS['RESPONSE_DOCUMENT'] = array(
-  'RENDER_LAYOUT' => 'default',
-  'TITLE' => 'No title',
-  'SCRIPS' => array(),
-  'STYLESHEETS' => array(),
-  'ONLOAD' => array(),
+  'render_layout' => 'default',
+  'title' => 'No title',
+  'scripts' => array(),
+  'stylesheets' => array(),
+  'onload' => array(),
 );
 
 function resolve_route($request_uri) {
@@ -48,23 +48,23 @@ function render_in_place($file_name, $params = array()) {
 }
 
 function set_layout($file_name) {
-  $GLOBALS['RESPONSE_DOCUMENT']['RENDER_LAYOUT'] = $file_name;
+  $GLOBALS['RESPONSE_DOCUMENT']['render_layout'] = $file_name;
 }
 
 function set_title($title) {
-  $GLOBALS['RESPONSE_DOCUMENT']['TITLE'] = $title;
+  $GLOBALS['RESPONSE_DOCUMENT']['title'] = $title;
 }
 
 function add_script($script) {
-  $GLOBALS['RESPONSE_DOCUMENT']['SCRIPS'] = $script;
+  $GLOBALS['RESPONSE_DOCUMENT']['scripts'] = $script;
 }
 
 function add_stylesheet($stylesheet) {
-  $GLOBALS['RESPONSE_DOCUMENT']['STYLESHEETS'] = $stylesheet;
+  $GLOBALS['RESPONSE_DOCUMENT']['stylesheets'] = $stylesheet;
 }
 
 function add_onload($onload) {
-  $GLOBALS['RESPONSE_DOCUMENT']['ONLOAD'] = $onload;
+  $GLOBALS['RESPONSE_DOCUMENT']['onload'] = $onload;
 }
 
 class http_Exception extends Exception {}
@@ -99,11 +99,17 @@ function request_body($key = null, $default = null) {
 }
 
 function request_header($key = null, $default = null) {
-  $HEADERS = apache_request_headers();
-  if ($key === null) {
-    return $HEADERS;
+  if (!isset($_SERVER['REQUEST_HEADERS'])) {
+    $_SERVER['REQUEST_HEADERS'] = array();
+    foreach (apache_request_headers() as $k => $v) {
+      $_SERVER['REQUEST_HEADERS'][strtolower($k)] = $v;
+    }
   }
-  return isset($HEADERS[$key]) ? $HEADERS[$key] : $default;
+  if ($key === null) {
+    return $_SERVER['REQUEST_HEADERS'];
+  }
+  $key = strtolower($key);
+  return isset($_SERVER['REQUEST_HEADERS'][$key]) ? $_SERVER['REQUEST_HEADERS'][$key] : $default;
 }
 
 function request_path() {
@@ -133,8 +139,8 @@ function request_method() {
  * Make sure that the ETag is a unique hash for the contents of your response.
  */
 function cache_by_etag($etag) {
-  $GLOBALS['HTTP_RESPONSE']['ETAG'] = $etag;
-  if ($GLOBALS['HTTP_RESPONSE']['ETAG'] === request_header('If-Match')) {
+  $GLOBALS['HTTP_RESPONSE']['etag'] = $etag;
+  if ($GLOBALS['HTTP_RESPONSE']['etag'] === request_header('If-Match')) {
     throw new http_NotModified(array('ETag: ' . $etag));
   }
 }
@@ -143,7 +149,7 @@ function cache_by_etag($etag) {
  * Sets the http status code of the response.
  */
 function response_set_status($code) {
-  $GLOBALS['HTTP_RESPONSE']['STATUS'] = $code;
+  $GLOBALS['HTTP_RESPONSE']['status'] = $code;
 }
 
 /**
@@ -153,12 +159,12 @@ function response_set_status($code) {
  */
 function response_replace_header($key, $value) {
   $headers = array();
-  foreach ($GLOBALS['HTTP_RESPONSE']['HEADERS'] as $h) {
+  foreach ($GLOBALS['HTTP_RESPONSE']['headers'] as $h) {
     if (strtolower($h[0]) != strtolower($key)) {
       $headers[] = $h;
     }
   }
-  $GLOBALS['HTTP_RESPONSE']['HEADERS'] = $headers;
+  $GLOBALS['HTTP_RESPONSE']['headers'] = $headers;
   response_add_header($key, $value);
 }
 
@@ -168,7 +174,7 @@ function response_replace_header($key, $value) {
  * Use instead of `header`
  */
 function response_add_header($key, $value) {
-  $GLOBALS['HTTP_RESPONSE']['HEADERS'][] = array($key, $value);
+  $GLOBALS['HTTP_RESPONSE']['headers'][] = array($key, $value);
 }
 
 /**
