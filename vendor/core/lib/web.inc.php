@@ -56,15 +56,15 @@ function set_title($title) {
 }
 
 function add_script($script) {
-  $GLOBALS['RESPONSE_DOCUMENT']['scripts'] = $script;
+  $GLOBALS['RESPONSE_DOCUMENT']['scripts'][] = $script;
 }
 
 function add_stylesheet($stylesheet) {
-  $GLOBALS['RESPONSE_DOCUMENT']['stylesheets'] = $stylesheet;
+  $GLOBALS['RESPONSE_DOCUMENT']['stylesheets'][] = $stylesheet;
 }
 
 function add_onload($onload) {
-  $GLOBALS['RESPONSE_DOCUMENT']['onload'] = $onload;
+  $GLOBALS['RESPONSE_DOCUMENT']['onload'][] = $onload;
 }
 
 class http_Exception extends Exception {}
