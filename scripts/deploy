@@ -7,7 +7,7 @@ DEPLOY_SOURCE=$(dirname $(dirname $0))
 [ -z "$DEPLOY_PATH" ] && DEPLOY_PATH=${DEPLOY_ROOT}/revisions/${DEPLOY_TIMESTAMP}
 DEPLOY_IDENTITY_FILE=$(realpath ~/.ssh/deploykey.pem)
 
-LINE_COLOR=`echo -en '\e[32m'`
+LINE_COLOR=`echo -en '\e[33m'`
 LINE_COLOR_RESET=`echo -en '\e[00m'`
 
 echo "* Deploying to ${DEPLOY_SERVER}"
