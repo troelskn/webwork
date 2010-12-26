@@ -7,7 +7,7 @@ ob_start();
 try {
   render_in_place(resolve_route(request_uri()));
   if (!headers_sent()) {
-    if (isset($GLOBALS['RESPONSE_DOCUMENT']['render_layout'])) {
+    if ($GLOBALS['RESPONSE_DOCUMENT']['render_layout']) {
       $content = ob_get_clean();
       ob_start();
       render_in_place($GLOBALS['RESPONSE_DOCUMENT']['render_layout'].'_layout', array_merge($GLOBALS['RESPONSE_DOCUMENT'], array('content' => $content)));
@@ -30,12 +30,14 @@ try {
 } catch (http_NotFound $ex) {
   header("HTTP/1.1 404 Not Found");
   header('Content-Type: text/plain');
+  echo "HTTP/1.1 404 Not Found.\n\n";
   echo "The requested page could not be found.\n";
   echo request_method(), " ", request_uri(), "\n\n";
   echo str_repeat(" ", 512);
 } catch (Exception $ex) {
   header("HTTP/1.1 500 Internal Server Error");
   header('Content-Type: text/plain');
+  echo "HTTP/1.1 500 Internal Server Error.\n\n";
   echo "Error Resolving request\n\n";
   echo request_method(), " ", request_uri(), "\n\n";
   if ($GLOBALS['ENVIRONMENT'] === 'development') {
