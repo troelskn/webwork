@@ -7,13 +7,13 @@ ob_start();
 try {
   render_in_place(resolve_route(request()->uri()));
   if (!headers_sent()) {
-    if ($GLOBALS['RESPONSE_DOCUMENT']['render_layout']) {
+    if (document()->layout()) {
       $content = ob_get_clean();
       ob_start();
-      render_in_place($GLOBALS['RESPONSE_DOCUMENT']['render_layout'].'_layout', array_merge($GLOBALS['RESPONSE_DOCUMENT'], array('content' => $content)));
+      render_in_place(document()->layout().'_layout', array_merge(document()->exportVariables(), array('content' => $content)));
     }
-    header("HTTP/1.1 ".$GLOBALS['HTTP_RESPONSE']['status']);
-    foreach ($GLOBALS['HTTP_RESPONSE']['headers'] as $header) {
+    header("HTTP/1.1 ".response()->status());
+    foreach (response()->headers() as $header) {
       header($header[0].": ".$header[1]);
     }
     header("X-Processing-Time: " . number_format(microtime(true) - $__benchmark_start, 4));

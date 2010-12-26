@@ -1,18 +1,4 @@
 <?php
-$GLOBALS['HTTP_RESPONSE'] = array(
-  'status' => 200,
-  'etag' => null,
-  'headers' => array(
-    array('Content-Type', 'text/html; charset=UTF-8')));
-
-$GLOBALS['RESPONSE_DOCUMENT'] = array(
-  'render_layout' => 'default',
-  'title' => 'No title',
-  'scripts' => array(),
-  'stylesheets' => array(),
-  'onload' => array(),
-);
-
 function resolve_route($request_uri) {
   foreach ($GLOBALS['ROUTES'] as $pattern => $handler) {
     if (preg_match($pattern, $request_uri, $reg)) {
@@ -47,24 +33,24 @@ function render_in_place($file_name, $params = array()) {
   throw new Exception("Unable to render handler '$file_name'");
 }
 
-function set_layout($file_name) {
-  $GLOBALS['RESPONSE_DOCUMENT']['render_layout'] = $file_name;
+/**
+ * Returns the global response document wrapper
+ */
+function document() {
+  if (!isset($GLOBALS['document_instance'])) {
+    $GLOBALS['document_instance'] = new http_ResponseDocument();
+  }
+  return $GLOBALS['document_instance'];
 }
 
-function set_title($title) {
-  $GLOBALS['RESPONSE_DOCUMENT']['title'] = $title;
-}
-
-function add_script($script) {
-  $GLOBALS['RESPONSE_DOCUMENT']['scripts'][] = $script;
-}
-
-function add_stylesheet($stylesheet) {
-  $GLOBALS['RESPONSE_DOCUMENT']['stylesheets'][] = $stylesheet;
-}
-
-function add_onload($onload) {
-  $GLOBALS['RESPONSE_DOCUMENT']['onload'][] = $onload;
+/**
+ * Returns the global http response wrapper
+ */
+function response() {
+  if (!isset($GLOBALS['response_instance'])) {
+    $GLOBALS['response_instance'] = new http_Response();
+  }
+  return $GLOBALS['response_instance'];
 }
 
 /**
@@ -208,49 +194,119 @@ class http_Request {
 }
 
 /**
- * Sets the response ETag.
- * If the request specifies an ETag, then the request will end witha "Not Modified" response.
- * This is an efficient way to utilise http level caching in your application.
- *
- * Make sure that the ETag is a unique hash for the contents of your response.
+ * Wraps access to the response document.
  */
-function cache_by_etag($etag) {
-  $GLOBALS['HTTP_RESPONSE']['etag'] = $etag;
-  if ($GLOBALS['HTTP_RESPONSE']['etag'] === request_header('If-Match')) {
-    throw new http_NotModified(array('ETag: ' . $etag));
+class http_ResponseDocument {
+  protected $render_layout = 'default';
+  protected $title = 'No title';
+  protected $scripts = array();
+  protected $stylesheets = array();
+  protected $onload = array();
+  /**
+   * Sets the document layout. Set to NULL to not have a layout rendered.
+   */
+  function setLayout($file_name) {
+    $this->render_layout = $file_name;
+  }
+
+  function layout() {
+    return $this->render_layout;
+  }
+
+  /**
+   * Sets the document title.
+   */
+  function setTitle($title) {
+    $this->title = $title;
+  }
+
+  /**
+   * Adds an external javascript file to the head of the document.
+   */
+  function addScript($script) {
+    $this->scripts[] = $script;
+  }
+
+  /**
+   * Adds an external style sheet file to the head of the document.
+   */
+  function addStylesheet($stylesheet) {
+    $this->stylesheets[] = $stylesheet;
+  }
+
+  /**
+   * Adds a piece of inline javascript code to execute on page load.
+   */
+  function addOnload($onload) {
+    $this->onload[] = $onload;
+  }
+
+  /**
+   * Returns the variables set on the document.
+   */
+  function exportVariables() {
+    return get_object_vars($this);
   }
 }
 
-/**
- * Sets the http status code of the response.
- */
-function response_set_status($code) {
-  $GLOBALS['HTTP_RESPONSE']['status'] = $code;
-}
+class http_Response {
+  protected $status = 200;
+  protected $headers = array(
+    array('Content-Type', 'text/html; charset=UTF-8'));
 
-/**
- * Replaces a http response header.
- *
- * Use instead of `header`
- */
-function response_replace_header($key, $value) {
-  $headers = array();
-  foreach ($GLOBALS['HTTP_RESPONSE']['headers'] as $h) {
-    if (strtolower($h[0]) != strtolower($key)) {
-      $headers[] = $h;
+  /**
+   * Sets the response ETag.
+   * If the request specifies an ETag, then the request will end witha "Not Modified" response.
+   * This is an efficient way to utilise http level caching in your application.
+   *
+   * Make sure that the ETag is a unique hash for the contents of your response.
+   */
+  function cacheByEtag($etag) {
+    if ($etag === request()->header('If-Match')) {
+      throw new http_NotModified(array('ETag: ' . $etag));
     }
+    $this->replaceHeader('ETag', $etag);
   }
-  $GLOBALS['HTTP_RESPONSE']['headers'] = $headers;
-  response_add_header($key, $value);
-}
 
-/**
- * Adds a http response header.
- *
- * Use instead of `header`
- */
-function response_add_header($key, $value) {
-  $GLOBALS['HTTP_RESPONSE']['headers'][] = array($key, $value);
+  /**
+   * Sets the http status code of the response.
+   */
+  function setStatus($code) {
+    $this->status = $code;
+  }
+
+  function status() {
+    return $this->status;
+  }
+
+  /**
+   * Replaces a http response header.
+   *
+   * Use instead of `header`
+   */
+  function replaceHeader($key, $value) {
+    $headers = array();
+    foreach ($this->headers as $h) {
+      if (strtolower($h[0]) != strtolower($key)) {
+        $headers[] = $h;
+      }
+    }
+    $this->headers = $headers;
+    $this->headers[] = array($key, $value);
+  }
+
+  /**
+   * Adds a http response header.
+   *
+   * Use instead of `header`
+   */
+  function addHeader($key, $value) {
+    $this->headers[] = array($key, $value);
+  }
+
+  function headers() {
+    return $this->headers;
+  }
 }
 
 class http_DefaultCookieAccess {

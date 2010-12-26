@@ -37,11 +37,11 @@ Now configure Apache to serve `myapp/public` as the web root. Make sure that `mo
 
 Check that everything is working by opening your site, eg. browse to `http://localhost/`. You should see a welcome message. This page is being rendered from `handlers/root.php` which is simply a plain php file. If you go open it in a text editor, you will see a couple of function calls. These are core webwork hooks. Let's take them one by one:
 
-    set_title("It Works");
+    document()->setTitle("It Works");
 
 As the name suggests, this sets a variable for the html-documents `<title>` tag.
 
-    add_stylesheet('/res/main.css');
+    document()->addStylesheet('/res/main.css');
 
 This adds an external style sheet reference to the document header.
 
@@ -51,15 +51,15 @@ The `e` function is shorthand for escape-and-echo. It simply outputs a string in
 
 If you pick "View Source" in your browser, you'll notice that there are some additional markup in the output. Specifically the main `<head>` and `<body>` boilerplate stuff. This is generated from a *layout*  file. In this case, the default layout is used. See in `handlers/default_layout.php`. If you don't want a layout to be rendered, you can disable it by calling:
 
-    set_layout(false);
+    document()->setLayout(false);
 
 Or if you want a different layout, you can do so with:
 
-    set_layout('funky');
+    document()->setLayout('funky');
 
 In which case the file `handlers/funky_layout.php` will be used instead.
 
-As you may have guessed, there are a couple more helpers for putting stuff in the document layout. The function `add_script` adds an external javascript file reference, and `add_onload` adds a piece of inline javascript code to be executed on document load.
+As you may have guessed, there are a couple more helpers for putting stuff in the document layout. The function `addScript` adds an external javascript file reference, and `addOnload` adds a piece of inline javascript code to be executed on document load.
 
 A final, useful function to use in rendering output, is the `render` function. Calling it will execute (include) a handler and return the output. This is used for small snippets of reusable code.
 

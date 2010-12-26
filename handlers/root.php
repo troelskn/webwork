@@ -1,6 +1,6 @@
 <?php
-set_title("It Works");
-add_stylesheet('/res/main.css');
+document()->setTitle("It Works");
+document()->addStylesheet('/res/main.css');
 ?>
 <h1>Welcome To Your Webwork Application</h1>
 <p>
