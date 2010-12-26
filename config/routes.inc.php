@@ -14,7 +14,7 @@ $GLOBALS['ROUTES']['~^/$~'] = "root";
 // to your handler through `request_param`.
 // For example:
 //
-//   $GLOBALS['ROUTES']['~^/users/(?P<user_id>\d+)?~'] = "users";
+//   $GLOBALS['ROUTES']['~^/users/(?P<user_id>\d+)~'] = "users";
 //
 // Will make an id available in `request_param('user_id')`.
 //
