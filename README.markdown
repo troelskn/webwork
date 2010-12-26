@@ -33,7 +33,7 @@ To get started with webwork, make a clone of the repository.
 
     $ git clone git://github.com/troelskn/webwork.git myapp
 
-Now configure Apache to serve `myapp/public` as the web root. Make sure that `mod_rewrite` is enabled, and that `AllowOverride` is allowed.
+Now configure Apache to serve `myapp/public` as the web root. Make sure that `mod_rewrite` is enabled, and that your site is configured with `AllowOverride All`.
 
 Check that everything is working by opening your site, eg. browse to `http://localhost/`. You should see a welcome message. This page is being rendered from `handlers/root.php` which is simply a plain php file. If you go open it in a text editor, you will see a couple of function calls. These are core webwork hooks. Let's take them one by one:
 
