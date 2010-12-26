@@ -31,7 +31,7 @@ function html_link($url, $title = null, $options = array()) {
 function html_form_tag($method = 'post', $action = null, $options = array()) {
   $method = strtolower($method);
   $html = '<form';
-  $options['action'] = $action ? $action : request_uri();
+  $options['action'] = $action ? $action : request()->uri();
   $options['method'] = $method === 'get' ? 'get' : 'post';
   foreach ($options as $k => $v) {
     if ($v !== null) {

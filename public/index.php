@@ -5,7 +5,7 @@ require_once 'web.inc.php';
 require_once 'html_helpers.inc.php';
 ob_start();
 try {
-  render_in_place(resolve_route(request_uri()));
+  render_in_place(resolve_route(request()->uri()));
   if (!headers_sent()) {
     if ($GLOBALS['RESPONSE_DOCUMENT']['render_layout']) {
       $content = ob_get_clean();
@@ -32,14 +32,14 @@ try {
   header('Content-Type: text/plain');
   echo "HTTP/1.1 404 Not Found.\n\n";
   echo "The requested page could not be found.\n";
-  echo request_method(), " ", request_uri(), "\n\n";
+  echo request()->method(), " ", request()->uri(), "\n\n";
   echo str_repeat(" ", 512);
 } catch (Exception $ex) {
   header("HTTP/1.1 500 Internal Server Error");
   header('Content-Type: text/plain');
   echo "HTTP/1.1 500 Internal Server Error.\n\n";
   echo "Error Resolving request\n\n";
-  echo request_method(), " ", request_uri(), "\n\n";
+  echo request()->method(), " ", request()->uri(), "\n\n";
   if ($GLOBALS['ENVIRONMENT'] === 'development') {
     echo $ex;
     echo str_repeat(" ", 512);

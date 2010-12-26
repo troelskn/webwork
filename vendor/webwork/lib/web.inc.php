@@ -17,7 +17,7 @@ function resolve_route($request_uri) {
   foreach ($GLOBALS['ROUTES'] as $pattern => $handler) {
     if (preg_match($pattern, $request_uri, $reg)) {
       array_shift($reg);
-      $_SERVER['REQUEST_ARGS'] = $reg;
+      request()->setParams($reg);
       return $handler;
     }
   }
@@ -67,68 +67,144 @@ function add_onload($onload) {
   $GLOBALS['RESPONSE_DOCUMENT']['onload'][] = $onload;
 }
 
+/**
+ * Returns the global http request wrapper
+ */
+function request() {
+  if (!isset($GLOBALS['request_instance'])) {
+    $GLOBALS['request_instance'] = new http_Request();
+  }
+  return $GLOBALS['request_instance'];
+}
+
+/**
+ * Returns the global cookie access wrapper
+ */
+function cookie() {
+  if (!isset($GLOBALS['cookie_instance'])) {
+    $GLOBALS['cookie_instance'] = new http_DefaultCookieAccess();
+  }
+  return $GLOBALS['cookie_instance'];
+}
+
+/**
+ * Returns the global session access wrapper
+ */
+function session() {
+  if (!isset($GLOBALS['session_instance'])) {
+    $GLOBALS['session_instance'] = new http_DefaultSessionAccess(cookie());
+  }
+  return $GLOBALS['session_instance'];
+}
+
 class http_Exception extends Exception {}
 class http_NotModified extends http_Exception {}
 class http_MethodNotAllowed extends http_Exception {}
 class http_NotFound extends http_Exception {}
 class http_SeeOther extends http_Exception {}
 
-function request_param($key = null, $default = null) {
-  if ($key === null) {
-    return $_SERVER['REQUEST_PARAMS'];
-  }
-  return isset($_SERVER['REQUEST_PARAMS'][$key]) ? $_SERVER['REQUEST_PARAMS'][$key] : $default;
-}
-
-function request_query($key = null, $default = null) {
-  if ($key === null) {
-    return $_GET;
-  }
-  return isset($_GET[$key]) ? $_GET[$key] : $default;
-}
-
-function request_body($key = null, $default = null) {
-  if ($_SERVER['REQUEST_METHOD'] === 'PUT' && $_SERVER['CONTENT_TYPE'] === 'application/x-www-form-urlencoded' && empty($_POST)) {
-    parse_str(file_get_contents('php://input'), $buffer);
-    $_POST = $buffer;
-  }
-  if ($key === null) {
-    return $_POST;
-  }
-  return isset($_POST[$key]) ? $_POST[$key] : $default;
-}
-
-function request_header($key = null, $default = null) {
-  if (!isset($_SERVER['REQUEST_HEADERS'])) {
-    $_SERVER['REQUEST_HEADERS'] = array();
+/**
+ * Wraps incoming http request
+ */
+class http_Request {
+  protected $body;
+  protected $headers;
+  protected $params;
+  protected $files;
+  function __construct($file_access = null) {
+    if ($_SERVER['REQUEST_METHOD'] === 'PUT' && $_SERVER['CONTENT_TYPE'] === 'application/x-www-form-urlencoded' && empty($_POST)) {
+      parse_str(file_get_contents('php://input'), $buffer);
+      $this->body = $buffer;
+    } else {
+      $this->body = $_POST;
+    }
+    $this->headers = array();
     foreach (apache_request_headers() as $k => $v) {
-      $_SERVER['REQUEST_HEADERS'][strtolower($k)] = $v;
+      $this->headers[strtolower($k)] = $v;
+    }
+    $file_access = $file_access ? $file_access : new http_DefaultUploadedFileAccess();
+    $this->files = array();
+    foreach ($_FILES as $key => $file) {
+      if (isset($file['tmp_name']) && is_array($file['tmp_name'])) {
+        $file_info = array();
+        for ($i = 0; $i < count($file['tmp_name']); $i++) {
+          $file_info[$i] = array();
+          $file_info[$i]['tmp_name'] = $file['tmp_name'][$i];
+          $file_info[$i]['name'] = $file['name'][$i];
+          $file_info[$i]['type'] = $file['type'][$i];
+          $file_info[$i]['size'] = $file['size'][$i];
+          $file_info[$i]['error'] = $file['error'][$i];
+        }
+        if (array_key_exists('name', $file_info)) {
+          $this->files[$key] = new http_UploadedFile($file_info, $key, $file_access);
+        } else {
+          $this->files[$key] = array();
+          foreach ($file_info as $file_info_struct) {
+            $this->files[$key][] = new http_UploadedFile($file_info_struct, $key, $file_access);
+          }
+        }
+      }
     }
   }
-  if ($key === null) {
-    return $_SERVER['REQUEST_HEADERS'];
+
+  function setParams($params) {
+    $this->params = $params;
   }
-  $key = strtolower($key);
-  return isset($_SERVER['REQUEST_HEADERS'][$key]) ? $_SERVER['REQUEST_HEADERS'][$key] : $default;
-}
 
-function request_path() {
-  return rtrim(preg_replace('~[?].*$~', '', request_uri()), '/');
-}
-
-function request_uri() {
-  return $_SERVER['REQUEST_URI'];
-}
-
-function request_subview() {
-  if (preg_match('~[?]([^=&]+)(&|$)~', request_uri(), $reg)) {
-    return $reg[1];
+  function param($key = null, $default = null) {
+    if ($key === null) {
+      return $this->params;
+    }
+    return isset($this->params[$key]) ? $this->params[$key] : $default;
   }
-}
 
-function request_method() {
-  $real_http_method = strtolower($_SERVER['REQUEST_METHOD']);
-  return $real_http_method === 'post' ? request_body('_method', 'post') : $real_http_method;
+  function query($key = null, $default = null) {
+    if ($key === null) {
+      return $_GET;
+    }
+    return isset($_GET[$key]) ? $_GET[$key] : $default;
+  }
+
+  function body($key = null, $default = null) {
+    if ($key === null) {
+      return $this->body;
+    }
+    return isset($this->body[$key]) ? $this->body[$key] : $default;
+  }
+
+  function header($key = null, $default = null) {
+    if ($key === null) {
+      return $this->headers;
+    }
+    $key = strtolower($key);
+    return isset($this->headers[$key]) ? $this->headers[$key] : $default;
+  }
+
+  function file($key = null) {
+    if ($key === null) {
+      return $this->files;
+    }
+    return isset($this->files[$key]) ? $this->files[$key] : $default;
+  }
+
+  function path() {
+    return rtrim(preg_replace('~[?].*$~', '', $this->uri()), '/');
+  }
+
+  function uri() {
+    return $_SERVER['REQUEST_URI'];
+  }
+
+  function subview() {
+    if (preg_match('~[?]([^=&]+)(&|$)~', $this->uri(), $reg)) {
+      return $reg[1];
+    }
+  }
+
+  function method() {
+    $real_http_method = strtolower($_SERVER['REQUEST_METHOD']);
+    return $real_http_method === 'post' ? $this->body('_method', 'post') : $real_http_method;
+  }
 }
 
 /**
@@ -175,6 +251,159 @@ function response_replace_header($key, $value) {
  */
 function response_add_header($key, $value) {
   $GLOBALS['HTTP_RESPONSE']['headers'][] = array($key, $value);
+}
+
+class http_DefaultCookieAccess {
+  /** @var string */
+  protected $domain;
+  /** @var string */
+  protected $raw;
+  /**
+    * @param string
+    * @param array
+    * @return null
+    */
+  function __construct($domain, $raw) {
+    $this->domain = $domain === 'localhost' ? false : $domain;
+    $this->raw = $raw;
+  }
+  function has($key) {
+    return isset($this->raw[$key]);
+  }
+  function get($key, $default = null) {
+    if ($key === null) {
+      return $this->raw;
+    }
+    return isset($this->raw[$key]) ? $this->raw[$key] : $default;
+  }
+  function set($key, $value, $expire = 0, $secure = false, $httponly = false) {
+    if ($value === null) {
+      setcookie($key, '', time() - 42000, '/');
+      unset($this->raw[$key]);
+    } else {
+      setcookie($key, $value, $expire, '/', $this->domain, $secure, $httponly);
+      $this->raw[$key] = $value;
+    }
+  }
+  function all() {
+    return $this->raw;
+  }
+}
+
+class http_DefaultSessionAccess {
+  /** @var CookieAccess */
+  protected $cookie_access;
+  /**
+    * @param DefaultCookieAccess
+    * @return null
+    */
+  function __construct($cookie_access) {
+    $this->cookie_access = $cookie_access;
+  }
+  protected function autoStart() {
+    if (!session_id()) {
+      session_start();
+    }
+  }
+  function has($key) {
+    $this->autoStart();
+    return isset($_SESSION[$key]);
+  }
+  function get($key, $default = null) {
+    $this->autoStart();
+    if ($key === null) {
+      return $_SESSION;
+    }
+    return isset($_SESSION[$key]) ? $_SESSION[$key] : $default;
+  }
+  function set($key, $value) {
+    $this->autoStart();
+    $_SESSION[$key] = $value;
+    return $value;
+  }
+  function close() {
+    session_id() && session_write_close();
+  }
+  function destroy() {
+    $this->autoStart();
+    $_SESSION = array();
+    if ($this->cookie_access->has(session_name())) {
+      $this->cookie_access->set(session_name(), null);
+    }
+    session_destroy();
+    $filename = realpath(session_save_path()) . DIRECTORY_SEPARATOR . session_id();
+    if (is_file($filename) && is_writable($filename)) {
+      unlink($filename);
+    }
+  }
+  function sessionId() {
+    $this->autoStart();
+    return session_id();
+  }
+  function regenerateId() {
+    return session_regenerate_id();
+  }
+}
+
+class http_DefaultUploadedFileAccess {
+  function copy($tmp_name, $path_destination) {
+    $this->ensureDirectory(dirname($path_destination));
+    if (is_uploaded_file($tmp_name)) {
+      move_uploaded_file($tmp_name, $path_destination);
+    } else {
+      throw new Exception("Fileinfo is not a valid uploaded file");
+    }
+  }
+  protected function mkdir($path) {
+    mkdir($path);
+  }
+  protected function ensureDirectory($dir) {
+    if (!is_dir($dir)) {
+      $this->ensureDirectory(dirname($dir));
+      $this->mkdir($dir);
+    }
+  }
+}
+
+/**
+ * Wrapper around an uploaded file
+ */
+class http_UploadedFile {
+  protected $key;
+  protected $name;
+  protected $tmp_name;
+  protected $size;
+  protected $type;
+  protected $file_access;
+  function __construct($file_data, $key, $file_access) {
+    $this->key = $key;
+    $this->name = $file_data['name'];
+    $this->tmp_name = $file_data['tmp_name'];
+    $this->size = $file_data['size'];
+    $this->type = $file_data['type'];
+    $this->file_access = $file_access;
+  }
+  function __serialize() {
+    throw new Exception("Can't serialize an uploaded file. Copy file to a permanent storage.");
+  }
+  function key() {
+    return $this->key;
+  }
+  function name() {
+    return $this->name;
+  }
+  function type() {
+    return $this->type;
+  }
+  function size() {
+    return $this->size;
+  }
+  function writeTo($path_destination) {
+    if ($this->size() === 0) {
+      throw new Exception("Filesize is zero");
+    }
+    $this->file_access->copy($this->tmp_name, $path_destination);
+  }
 }
 
 /**
