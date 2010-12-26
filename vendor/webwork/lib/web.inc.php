@@ -35,6 +35,8 @@ function render_in_place($file_name, $params = array()) {
 
 /**
  * Returns the global response document wrapper
+ *
+ * @returns http_ResponseDocument
  */
 function document() {
   if (!isset($GLOBALS['document_instance'])) {
@@ -45,6 +47,8 @@ function document() {
 
 /**
  * Returns the global http response wrapper
+ *
+ * @returns http_Response
  */
 function response() {
   if (!isset($GLOBALS['response_instance'])) {
@@ -55,6 +59,8 @@ function response() {
 
 /**
  * Returns the global http request wrapper
+ *
+ * @returns http_Request
  */
 function request() {
   if (!isset($GLOBALS['request_instance'])) {
@@ -65,20 +71,24 @@ function request() {
 
 /**
  * Returns the global cookie access wrapper
+ *
+ * @returns http_CookieAccess
  */
 function cookie() {
   if (!isset($GLOBALS['cookie_instance'])) {
-    $GLOBALS['cookie_instance'] = new http_DefaultCookieAccess();
+    $GLOBALS['cookie_instance'] = new http_CookieAccess();
   }
   return $GLOBALS['cookie_instance'];
 }
 
 /**
  * Returns the global session access wrapper
+ *
+ * @returns http_SessionAccess
  */
 function session() {
   if (!isset($GLOBALS['session_instance'])) {
-    $GLOBALS['session_instance'] = new http_DefaultSessionAccess(cookie());
+    $GLOBALS['session_instance'] = new http_SessionAccess(cookie());
   }
   return $GLOBALS['session_instance'];
 }
@@ -108,7 +118,7 @@ class http_Request {
     foreach (apache_request_headers() as $k => $v) {
       $this->headers[strtolower($k)] = $v;
     }
-    $file_access = $file_access ? $file_access : new http_DefaultUploadedFileAccess();
+    $file_access = $file_access ? $file_access : new http_UploadedFileAccess();
     $this->files = array();
     foreach ($_FILES as $key => $file) {
       if (isset($file['tmp_name']) && is_array($file['tmp_name'])) {
@@ -309,7 +319,7 @@ class http_Response {
   }
 }
 
-class http_DefaultCookieAccess {
+class http_CookieAccess {
   /** @var string */
   protected $domain;
   /** @var string */
@@ -346,11 +356,11 @@ class http_DefaultCookieAccess {
   }
 }
 
-class http_DefaultSessionAccess {
+class http_SessionAccess {
   /** @var CookieAccess */
   protected $cookie_access;
   /**
-    * @param DefaultCookieAccess
+    * @param http_CookieAccess
     * @return null
     */
   function __construct($cookie_access) {
@@ -401,7 +411,7 @@ class http_DefaultSessionAccess {
   }
 }
 
-class http_DefaultUploadedFileAccess {
+class http_UploadedFileAccess {
   function copy($tmp_name, $path_destination) {
     $this->ensureDirectory(dirname($path_destination));
     if (is_uploaded_file($tmp_name)) {
