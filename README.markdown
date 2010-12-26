@@ -41,9 +41,9 @@ Check that everything is working by opening your site, eg. browse to `http://loc
 
 As the name suggests, this sets a variable for the html-documents `<title>` tag.
 
-    add_stylesheet(url('/res/main.css'));
+    add_stylesheet('/res/main.css');
 
-This adds an external style sheet reference to the document.
+This adds an external style sheet reference to the document header.
 
     ... <?php e(__FILE__); ?>
 
