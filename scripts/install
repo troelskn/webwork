@@ -1,5 +1,6 @@
 #!/bin/bash
 REVISION_ROOT=$(dirname $(dirname $0))
+ALL_REVISIONS_ROOT=$(dirname ${REVISION_ROOT})
 [ -z "$DEPLOY_ROOT" ] && exit -1
 echo chown www-data:www-data ${REVISION_ROOT}
 sudo chown www-data:www-data ${REVISION_ROOT}
@@ -16,3 +17,6 @@ echo "Running migrations"
 pushd ${DEPLOY_ROOT}/current
 scripts/migrate
 popd
+
+echo "Removing old versions"
+sudo find ${ALL_REVISIONS_ROOT} -maxdepth 1 -mtime +1 -type d -not -path ${REVISION_ROOT} -exec rm -rf '{}' \;
