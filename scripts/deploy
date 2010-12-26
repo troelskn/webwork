@@ -11,8 +11,8 @@ LINE_COLOR=`echo -en '\e[33m'`
 LINE_COLOR_RESET=`echo -en '\e[00m'`
 
 echo "* Deploying to ${DEPLOY_SERVER}"
-echo "> rsync -a -e 'ssh -i ${DEPLOY_IDENTITY_FILE}' --exclude=config.local.inc.php ${DEPLOY_SOURCE} ${DEPLOY_USER}@${DEPLOY_SERVER}:${DEPLOY_PATH}${LINE_COLOR}"
-rsync -a -e "ssh -i ${DEPLOY_IDENTITY_FILE}" --exclude=config.local.inc.php ${DEPLOY_SOURCE} ${DEPLOY_USER}@${DEPLOY_SERVER}:${DEPLOY_PATH}
+echo "> rsync -a -e 'ssh -i ${DEPLOY_IDENTITY_FILE}' --exclude=*.local.inc.php ${DEPLOY_SOURCE} ${DEPLOY_USER}@${DEPLOY_SERVER}:${DEPLOY_PATH}${LINE_COLOR}"
+rsync -a -e "ssh -i ${DEPLOY_IDENTITY_FILE}" --exclude=*.local.inc.php ${DEPLOY_SOURCE} ${DEPLOY_USER}@${DEPLOY_SERVER}:${DEPLOY_PATH}
 echo "${LINE_COLOR_RESET}> ssh -i ${DEPLOY_IDENTITY_FILE} ${DEPLOY_USER}@${DEPLOY_SERVER} 'export DEPLOY_ROOT=${DEPLOY_ROOT} && ${DEPLOY_PATH}/scripts/install'${LINE_COLOR}"
 ssh -i ${DEPLOY_IDENTITY_FILE} ${DEPLOY_USER}@${DEPLOY_SERVER} "export DEPLOY_ROOT=${DEPLOY_ROOT} && ${DEPLOY_PATH}/scripts/install"
 echo "${LINE_COLOR_RESET}* Done"
