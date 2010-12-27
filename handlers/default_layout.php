@@ -9,6 +9,9 @@
 <?php endforeach; ?>
   </head>
   <body>
+    <?php foreach (get_flash_messages() as $flash): ?>
+    <p class="flash-<?php e($flash['type']); ?>"><?php e($flash['message']); ?></p>
+    <?php endforeach; ?>
     <?php echo $content; ?>
   </body>
 <?php foreach ($onload as $javascript): ?>

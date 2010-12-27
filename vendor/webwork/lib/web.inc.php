@@ -95,6 +95,24 @@ function session() {
   return $GLOBALS['session_instance'];
 }
 
+/**
+ * Adds a flash message
+ */
+function flash_message($message, $type = "notice") {
+  $flash_messages = session()->get('flash_message', array());
+  $flash_messages[] = array('message' => $message, 'type' => $type);
+  session()->set('flash_message', $flash_messages);
+}
+
+/**
+ * Gets flash messages and clears the buffer.
+ */
+function get_flash_messages() {
+  $flash_messages = session()->get('flash_message', array());
+  session()->set('flash_message', array());
+  return $flash_messages;
+}
+
 class http_Exception extends Exception {
   function __construct($headers = array()) {
     $this->headers = $headers;
