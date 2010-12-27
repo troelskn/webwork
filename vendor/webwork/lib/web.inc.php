@@ -210,6 +210,27 @@ class http_Request {
     $real_http_method = strtolower($_SERVER['REQUEST_METHOD']);
     return $real_http_method === 'post' ? $this->body('_method', 'post') : $real_http_method;
   }
+
+  function isGet() {
+    return $this->method() == 'get';
+  }
+
+  function isPost() {
+    return $this->method() == 'post';
+  }
+
+  function isPut() {
+    return $this->method() == 'put';
+  }
+
+  function isDelete() {
+    return $this->method() == 'delete';
+  }
+
+  function isXhr() {
+    throw new Exception("TODO");
+  }
+
 }
 
 /**
