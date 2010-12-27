@@ -1,9 +1,11 @@
 <?php
-function resolve_route($request_uri) {
-  foreach ($GLOBALS['ROUTES'] as $pattern => $handler) {
-    if (preg_match($pattern, $request_uri, $reg)) {
+function resolve_route($request, $routes) {
+  $request_uri = $request->uri();
+  $request_method = strtoupper($request->method());
+  foreach ($routes as $pattern => $handler) {
+    if (preg_match($pattern, $request_method . $request_uri, $reg) || preg_match($pattern, $request_uri, $reg)) {
       array_shift($reg);
-      request()->setParams($reg);
+      $request->setParams($reg);
       return $handler;
     }
   }

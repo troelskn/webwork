@@ -5,7 +5,7 @@ require_once 'web.inc.php';
 require_once 'html_helpers.inc.php';
 ob_start();
 try {
-  render_in_place(resolve_route(request()->uri()));
+  render_in_place(resolve_route(request(), $GLOBALS['ROUTES']));
   if (!headers_sent()) {
     if (document()->layout()) {
       $content = ob_get_clean();
