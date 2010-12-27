@@ -20,6 +20,9 @@ function db() {
   return $GLOBALS['DATABASE_CONNECTION']['instance'];
 }
 
+/**
+ * Default db constructor.
+ */
 function create_pdo($params) {
   $dsn = $params['driver'].":host=".$params['host'].";dbname=".$params['database'].";charset=UTF-8";
   return new pdo($dsn, $params['user'], $params['pass']);
