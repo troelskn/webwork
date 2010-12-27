@@ -21,10 +21,12 @@ try {
   }
 } catch (http_SeeOther $ex) {
   header("HTTP/1.1 303 See Other");
-  header('Location: ' . $ex->getMessage());
+  foreach ($ex->headers() as $header) {
+    header($header);
+  }
 } catch (http_NotModified $ex) {
   header("HTTP/1.1 304 Not Modified");
-  foreach ($ex->getMessage() as $header) {
+  foreach ($ex->headers() as $header) {
     header($header);
   }
 } catch (http_NotFound $ex) {

@@ -95,7 +95,14 @@ function session() {
   return $GLOBALS['session_instance'];
 }
 
-class http_Exception extends Exception {}
+class http_Exception extends Exception {
+  function __construct($headers = array()) {
+    $this->headers = $headers;
+  }
+  function headers() {
+    return $this->headers;
+  }
+}
 class http_NotModified extends http_Exception {}
 class http_MethodNotAllowed extends http_Exception {}
 class http_NotFound extends http_Exception {}
@@ -278,6 +285,14 @@ class http_Response {
       throw new http_NotModified(array('ETag: ' . $etag));
     }
     $this->replaceHeader('ETag', $etag);
+  }
+
+  /**
+   * Redirects browser to another location, with a "303 See Other" status.
+   * This should be used after POST to redirect to a valid GET url.
+   */
+  function seeOther($location) {
+    throw new http_SeeOther(array('Location: ' . $location));
   }
 
   /**
