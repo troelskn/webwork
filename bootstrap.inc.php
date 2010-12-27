@@ -13,6 +13,13 @@ $GLOBALS['ENVIRONMENT'] = isset($_SERVER['ENVIRONMENT']) ? strtolower($_SERVER['
 $GLOBALS['APPLICATION_ROOT'] = dirname(__FILE__);
 $GLOBALS['HTTP_ROOT'] = 'http://localhost/';
 set_include_path(get_include_path() . PATH_SEPARATOR . $GLOBALS['APPLICATION_ROOT'].'/lib/');
+// Register thirdparty plugins
+foreach (scandir($GLOBALS['APPLICATION_ROOT'].'/vendor') as $plugin) {
+  if (substr($plugin, 0, 1) !== '.') {
+    set_include_path(
+      get_include_path() . PATH_SEPARATOR . $GLOBALS['APPLICATION_ROOT'].'/vendor/'.$plugin.'/lib');
+  }
+}
 
 // Load environment
 // Include default config
@@ -33,11 +40,9 @@ if (is_file($GLOBALS['APPLICATION_ROOT'].'/config/environments/'.$GLOBALS['ENVIR
 // Load routes
 include($GLOBALS['APPLICATION_ROOT'].'/config/routes.inc.php');
 
-// Register thirdparty plugins
+// Init plugins
 foreach (scandir($GLOBALS['APPLICATION_ROOT'].'/vendor') as $plugin) {
   if (substr($plugin, 0, 1) !== '.') {
-    set_include_path(
-      get_include_path() . PATH_SEPARATOR . $GLOBALS['APPLICATION_ROOT'].'/vendor/'.$plugin.'/lib');
     if (is_file($GLOBALS['APPLICATION_ROOT'].'/vendor/'.$plugin.'/bootstrap.inc.php')) {
       include($GLOBALS['APPLICATION_ROOT'].'/vendor/'.$plugin.'/bootstrap.inc.php');
     }
