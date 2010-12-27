@@ -125,6 +125,7 @@ class http_NotModified extends http_Exception {}
 class http_MethodNotAllowed extends http_Exception {}
 class http_NotFound extends http_Exception {}
 class http_SeeOther extends http_Exception {}
+class http_Unauthorized extends http_Exception {}
 
 /**
  * Wraps incoming http request

@@ -29,6 +29,11 @@ try {
   foreach ($ex->headers() as $header) {
     header($header);
   }
+} catch (http_Unauthorized $ex) {
+  header("HTTP/1.1 401 Unauthorized");
+  foreach ($ex->headers() as $header) {
+    header($header);
+  }
 } catch (http_NotFound $ex) {
   header("HTTP/1.1 404 Not Found");
   header('Content-Type: text/plain');
