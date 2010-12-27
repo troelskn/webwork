@@ -78,7 +78,7 @@ function request() {
  */
 function cookie() {
   if (!isset($GLOBALS['cookie_instance'])) {
-    $GLOBALS['cookie_instance'] = new http_CookieAccess();
+    $GLOBALS['cookie_instance'] = new http_CookieAccess(request()->serverName(), $_COOKIE);
   }
   return $GLOBALS['cookie_instance'];
 }
@@ -204,6 +204,10 @@ class http_Request {
     if (preg_match('~[?]([^=&]+)(&|$)~', $this->uri(), $reg)) {
       return $reg[1];
     }
+  }
+
+  function serverName() {
+    return $_SERVER['SERVER_NAME'];
   }
 
   function method() {
