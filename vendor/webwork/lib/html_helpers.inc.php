@@ -51,7 +51,7 @@ function html_form_tag($method = 'post', $action = null, $options = array()) {
 }
 
 /**
- * Genereates an opening form closing tag
+ * Genereates an html form closing tag
  */
 function html_form_tag_end() {
   return '</form>';
