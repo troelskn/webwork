@@ -33,12 +33,16 @@ function html_form_tag($method = 'post', $action = null, $options = array()) {
   $html = '<form';
   $options['action'] = $action ? $action : request()->uri();
   $options['method'] = $method === 'get' ? 'get' : 'post';
+  $options['accept-charset'] = 'UTF-8';
   foreach ($options as $k => $v) {
     if ($v !== null) {
       $html .= ' ' . htmlspecialchars($k) . '="' . htmlspecialchars($v) . '"';
     }
   }
   $html .= ">\n";
+  // http://railssnowman.info/
+  $html .= '<input type="hidden" name="_utf8" value="&#9731;" />
+';
   if ($method !== 'get' && $method !== 'post') {
     $html .= '<input type="hidden" name="_method" value="' . htmlspecialchars($method) . '" />
 ';
