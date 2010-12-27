@@ -7,7 +7,7 @@ $migrations_dirs = array($GLOBALS['APPLICATION_ROOT'].'/migrations');
 foreach (scandir($GLOBALS['APPLICATION_ROOT'].'/vendor') as $plugin) {
   if (substr($plugin, 0, 1) !== '.') {
     if (is_dir($GLOBALS['APPLICATION_ROOT'].'/vendor/'.$plugin.'/migrations')) {
-      $directories[] = $GLOBALS['APPLICATION_ROOT'].'/vendor/'.$plugin.'/migrations';
+      $migrations_dirs[] = $GLOBALS['APPLICATION_ROOT'].'/vendor/'.$plugin.'/migrations';
     }
   }
 }
