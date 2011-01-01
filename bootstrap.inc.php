@@ -14,8 +14,10 @@ $GLOBALS['APPLICATION_ROOT'] = dirname(__FILE__);
 $GLOBALS['HTTP_ROOT'] = 'http://localhost/';
 set_include_path(get_include_path() . PATH_SEPARATOR . $GLOBALS['APPLICATION_ROOT'].'/lib/');
 // Register thirdparty plugins
+$GLOBALS['PLUGINS'] = array();
 foreach (scandir($GLOBALS['APPLICATION_ROOT'].'/vendor') as $plugin) {
   if (substr($plugin, 0, 1) !== '.') {
+    $GLOBALS['PLUGINS'][$plugin] = $GLOBALS['APPLICATION_ROOT'].'/vendor/'.$plugin;
     set_include_path(
       get_include_path() . PATH_SEPARATOR . $GLOBALS['APPLICATION_ROOT'].'/vendor/'.$plugin.'/lib');
   }
@@ -41,11 +43,9 @@ if (is_file($GLOBALS['APPLICATION_ROOT'].'/config/environments/'.$GLOBALS['ENVIR
 include($GLOBALS['APPLICATION_ROOT'].'/config/routes.inc.php');
 
 // Init plugins
-foreach (scandir($GLOBALS['APPLICATION_ROOT'].'/vendor') as $plugin) {
-  if (substr($plugin, 0, 1) !== '.') {
-    if (is_file($GLOBALS['APPLICATION_ROOT'].'/vendor/'.$plugin.'/bootstrap.inc.php')) {
-      include($GLOBALS['APPLICATION_ROOT'].'/vendor/'.$plugin.'/bootstrap.inc.php');
-    }
+foreach ($GLOBALS['PLUGINS'] as $plugin => $path) {
+  if (is_file($path.'/bootstrap.inc.php')) {
+    include($path.'/bootstrap.inc.php');
   }
 }
 

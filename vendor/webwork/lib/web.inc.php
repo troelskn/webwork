@@ -24,12 +24,10 @@ function render_in_place($file_name, $params = array()) {
     include($GLOBALS['APPLICATION_ROOT'].'/handlers/'.$file_name.'.php');
     return;
   }
-  foreach (scandir($GLOBALS['APPLICATION_ROOT'].'/vendor') as $plugin) {
-    if (substr($plugin, 0, 1) !== '.') {
-      if (is_file($GLOBALS['APPLICATION_ROOT'].'/vendor/'.$plugin.'/handlers/'.$file_name.'.php')) {
-        include($GLOBALS['APPLICATION_ROOT'].'/vendor/'.$plugin.'/handlers/'.$file_name.'.php');
-        return;
-      }
+  foreach ($GLOBALS['PLUGINS'] as $plugin => $path) {
+    if (is_file($path.'/handlers/'.$file_name.'.php')) {
+      include($path.'/handlers/'.$file_name.'.php');
+      return;
     }
   }
   throw new Exception("Unable to render handler '$file_name'");
