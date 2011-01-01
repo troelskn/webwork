@@ -1,1 +1,2 @@
 config/*.local.inc.php
+config/environments/*.local.php
