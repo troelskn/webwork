@@ -1,8 +1,6 @@
 <?php
 $GLOBALS['DATABASE_CONNECTION'] = array(
-  'driver' => 'mysql',
-  'host' => 'localhost',
-  'database' => 'application_development',
+  'dsn' => "mysql:host=localhost;dbname=application_development;charset=UTF-8";
   'user' => 'root',
-  'pass' => null,
+  'pass' => null
 );

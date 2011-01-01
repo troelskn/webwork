@@ -1,10 +1,14 @@
 <?php
 // You can make local overrides to these settings by creating an environment.local.inc.php
 $GLOBALS['DATABASE_CONNECTION'] = array(
-  'constructor' => 'create_pdo');
+  'constructor' => 'create_pdo',
+  'user' => null,
+  'pass' => null
+);
 
 $GLOBALS['POSTMAN'] = array(
-  'constructor' => 'create_dummy_postman');
+  'constructor' => 'create_dummy_postman'
+);
 
 /**
  * Returns a database connection object.
@@ -21,8 +25,7 @@ function db() {
  * Default db constructor.
  */
 function create_pdo($params) {
-  $dsn = $params['driver'].":host=".$params['host'].";dbname=".$params['database'].";charset=UTF-8";
-  return new pdo($dsn, $params['user'], $params['pass']);
+  return new pdo($params['dsn'], $params['user'], $params['pass']);
 }
 
 /**
