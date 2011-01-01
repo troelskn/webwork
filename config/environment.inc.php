@@ -1,17 +1,10 @@
 <?php
-// You can make local overrides to these settings by creating a config.local.inc.php
+// You can make local overrides to these settings by creating an environment.local.inc.php
 $GLOBALS['DATABASE_CONNECTION'] = array(
-  'constructor' => 'create_pdo',
-  'driver' => 'mysql',
-  'host' => 'localhost',
-  'database' => 'application_development',
-  'user' => 'root',
-  'pass' => null,
-);
+  'constructor' => 'create_pdo');
 
 $GLOBALS['POSTMAN'] = array(
   'constructor' => 'create_dummy_postman');
-
 
 /**
  * Returns a database connection object.
@@ -50,6 +43,9 @@ function create_dummy_postman($params) {
   return new PostmanDummy();
 }
 
+/**
+ * Just a dummy implementation. Should be replaced with somethin that *actually* mails out.
+ */
 class PostmanDummy {
   function deliver($template, $data = array()) {
     debug("PostmanDummy#deliver $template");
