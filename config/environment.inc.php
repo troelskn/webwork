@@ -9,6 +9,10 @@ $GLOBALS['DATABASE_CONNECTION'] = array(
   'pass' => null,
 );
 
+$GLOBALS['POSTMAN'] = array(
+  'constructor' => 'create_dummy_postman');
+
+
 /**
  * Returns a database connection object.
  */
@@ -26,4 +30,28 @@ function db() {
 function create_pdo($params) {
   $dsn = $params['driver'].":host=".$params['host'].";dbname=".$params['database'].";charset=UTF-8";
   return new pdo($dsn, $params['user'], $params['pass']);
+}
+
+/**
+ * Returns a postman object.
+ */
+function postman() {
+  if (!isset($GLOBALS['POSTMAN']['instance'])) {
+    $ctor = $GLOBALS['POSTMAN']['constructor'];
+    $GLOBALS['POSTMAN']['instance'] = call_user_func($ctor, $GLOBALS['POSTMAN']);
+  }
+  return $GLOBALS['POSTMAN']['instance'];
+}
+
+/**
+ * Default postman constructor.
+ */
+function create_dummy_postman($params) {
+  return new PostmanDummy();
+}
+
+class PostmanDummy {
+  function deliver($template, $data = array()) {
+    debug("PostmanDummy#deliver $template");
+  }
 }
