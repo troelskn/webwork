@@ -1,6 +1,7 @@
 <?php
 // This file contains global configuration settings, that are common for all environments
 // You can make local overrides to these settings by creating an environment.local.inc.php
+date_default_timezone_set('Europe/Copenhagen');
 $GLOBALS['DATABASE_CONNECTION'] = array(
   'constructor' => 'create_pdo',
   'user' => null,
