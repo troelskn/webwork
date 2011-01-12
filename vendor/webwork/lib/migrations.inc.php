@@ -8,6 +8,10 @@ class Migrations {
   }
 
   function setup() {
+    if ($this->getAttribute(PDO::ATTR_DRIVER_NAME) === 'mysql') {
+      // set default storage-engine to innodb
+      $this->db->exec("SET storage_engine=INNODB");
+    }
     // Create migrations table, if it doesn't exist
     if (!in_array('schema_migrations', $this->getTables())) {
       $this->db->exec("CREATE TABLE schema_migrations ( version varchar(255) NOT NULL, UNIQUE KEY unique_schema_migrations (version) )");
