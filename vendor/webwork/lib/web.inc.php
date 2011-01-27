@@ -195,45 +195,45 @@ class http_Request {
    * Returns a named parameter, as parsed from the URL.
    * If no `$key` is passed, it returns a hash of all parameters.
    */
-  function param($key = null, $default = null) {
+  function param($key = null) {
     if ($key === null) {
       return $this->params;
     }
-    return isset($this->params[$key]) ? $this->params[$key] : $default;
+    return isset($this->params[$key]) ? $this->params[$key] : null;
   }
 
   /**
    * Returns a query string parameter (GET parameter).
    * If no `$key` is passed, it returns a hash of all parameters.
    */
-  function query($key = null, $default = null) {
+  function query($key = null) {
     if ($key === null) {
       return $_GET;
     }
-    return isset($_GET[$key]) ? $_GET[$key] : $default;
+    return isset($_GET[$key]) ? $_GET[$key] : null;
   }
 
   /**
    * Returns a form-encoded body-parameter (POST parameter).
    * If no `$key` is passed, it returns a hash of all parameters.
    */
-  function body($key = null, $default = null) {
+  function body($key = null) {
     if ($key === null) {
       return $this->body;
     }
-    return isset($this->body[$key]) ? $this->body[$key] : $default;
+    return isset($this->body[$key]) ? $this->body[$key] : null;
   }
 
   /**
    * Returns a request header.
    * If no `$key` is passed, it returns a hash of all headers.
    */
-  function header($key = null, $default = null) {
+  function header($key = null) {
     if ($key === null) {
       return $this->headers;
     }
     $key = strtolower($key);
-    return isset($this->headers[$key]) ? $this->headers[$key] : $default;
+    return isset($this->headers[$key]) ? $this->headers[$key] : null;
   }
 
   /**
@@ -244,7 +244,7 @@ class http_Request {
     if ($key === null) {
       return $this->files;
     }
-    return isset($this->files[$key]) ? $this->files[$key] : $default;
+    return isset($this->files[$key]) ? $this->files[$key] : null;
   }
 
   /**
@@ -479,11 +479,11 @@ class http_CookieAccess {
   /**
    * Returns a cookie, or if no $key is passed it returns a hash of all cookies.
    */
-  function get($key = null, $default = null) {
+  function get($key = null) {
     if ($key === null) {
       return $this->raw;
     }
-    return isset($this->raw[$key]) ? $this->raw[$key] : $default;
+    return isset($this->raw[$key]) ? $this->raw[$key] : null;
   }
 
   /**
@@ -534,12 +534,12 @@ class http_SessionAccess {
   /**
    * Returns a session value, or if no $key is passed it returns a hash of all session values.
    */
-  function get($key, $default = null) {
+  function get($key) {
     $this->autoStart();
     if ($key === null) {
       return $_SESSION;
     }
-    return isset($_SESSION[$key]) ? $_SESSION[$key] : $default;
+    return isset($_SESSION[$key]) ? $_SESSION[$key] : null;
   }
 
   /**
