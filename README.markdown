@@ -75,7 +75,7 @@ Webwork comes with the following wrappers for HTTP:
 * `cookie()`
 * `session()`
 
-The API documentation lists which methods are available for each of these.
+See `vendor/webwork/docs/web.inc.php` for details about each of these.
 
 Routing & URLs
 ---
@@ -93,12 +93,13 @@ Instead of hardcoding URL's throughout your application, we recommend that you c
 
 A common pattern is to have a url helper for model classes. If, for example, your application has a class `User`, you should also have a helper called `user_url($user)`. If you follow this recipe, you can use the higher level helper `url_for()`, which will take any object and return the proper link for it.
 
-In addition to url helpers, webwork comes with a collection of html-helper functions that can be used for rendering common html form elements. All of these are prefixed with `html_`. For example `html_link()` that generates an `a`-tag. The API documentation list all of these core helpers, but you can of course create your own.
+In addition to url helpers, webwork comes with a collection of html-helper functions that can be used for rendering common html form elements. All of these are prefixed with `html_`. For example `html_link()` that generates an `a`-tag. You can see a description of each of the core html helpers in: `vendor/webwork/docs/html_helpers.inc.php`.
+
 
 TODO
 --
 
-A few more features of the framework, that are - for now - undocumented. Have a look at the sources, if you are curious.
+A few more features of the framework, that are - for now - undocumented. You can some info out of looking at the annotated sources under `vendor/webwork/docs/`
 
 * Configuration/environments
 * Deployment
