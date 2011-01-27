@@ -5,14 +5,20 @@ DEPLOY_SOURCE=$(dirname $(dirname $0))
 [ -z "$DEPLOY_SERVER" ] && DEPLOY_SERVER=example.com
 [ -z "$DEPLOY_ROOT" ] && DEPLOY_ROOT=/var/sites/example.com
 [ -z "$DEPLOY_PATH" ] && DEPLOY_PATH=${DEPLOY_ROOT}/revisions/${DEPLOY_TIMESTAMP}
-DEPLOY_IDENTITY_FILE=$(realpath ~/.ssh/deploykey.pem)
+if [ -z "$DEPLOY_IDENTITY_FILE" ]
+then
+    OPT_DEPLOY_IDENTITY_FILE=""
+    [ -f "~/.ssh/deploykey.pem"] && OPT_DEPLOY_IDENTITY_FILE="-i $(realpath ~/.ssh/deploykey.pem)"
+else
+    OPT_DEPLOY_IDENTITY_FILE="-i ${DEPLOY_IDENTITY_FILE}"
+fi
 
-LINE_COLOR=`echo -en '\e[33m'`
-LINE_COLOR_RESET=`echo -en '\e[00m'`
+LINE_COLOR="$(printf '\033[33m')"
+LINE_COLOR_RESET="$(printf '\033[00m')"
 
 echo "* Deploying to ${DEPLOY_SERVER}"
-echo "> rsync -a -e 'ssh -i ${DEPLOY_IDENTITY_FILE}' --exclude=*.local.inc.php ${DEPLOY_SOURCE} ${DEPLOY_USER}@${DEPLOY_SERVER}:${DEPLOY_PATH}${LINE_COLOR}"
-rsync -a -e "ssh -i ${DEPLOY_IDENTITY_FILE}" --exclude=*.local.inc.php ${DEPLOY_SOURCE} ${DEPLOY_USER}@${DEPLOY_SERVER}:${DEPLOY_PATH}
-echo "${LINE_COLOR_RESET}> ssh -i ${DEPLOY_IDENTITY_FILE} ${DEPLOY_USER}@${DEPLOY_SERVER} 'export DEPLOY_ROOT=${DEPLOY_ROOT} && ${DEPLOY_PATH}/scripts/install'${LINE_COLOR}"
-ssh -i ${DEPLOY_IDENTITY_FILE} ${DEPLOY_USER}@${DEPLOY_SERVER} "export DEPLOY_ROOT=${DEPLOY_ROOT} && ${DEPLOY_PATH}/scripts/install"
+echo "> rsync -a -e 'ssh ${OPT_DEPLOY_IDENTITY_FILE}' --exclude=*.local.inc.php ${DEPLOY_SOURCE} ${DEPLOY_USER}@${DEPLOY_SERVER}:${DEPLOY_PATH}${LINE_COLOR}"
+rsync -a -e "ssh ${OPT_DEPLOY_IDENTITY_FILE}" --exclude=*.local.inc.php ${DEPLOY_SOURCE} ${DEPLOY_USER}@${DEPLOY_SERVER}:${DEPLOY_PATH}
+echo "${LINE_COLOR_RESET}> ssh ${OPT_DEPLOY_IDENTITY_FILE} ${DEPLOY_USER}@${DEPLOY_SERVER} 'export DEPLOY_ROOT=${DEPLOY_ROOT} && ${DEPLOY_PATH}/scripts/install'${LINE_COLOR}"
+ssh ${OPT_DEPLOY_IDENTITY_FILE} ${DEPLOY_USER}@${DEPLOY_SERVER} "export DEPLOY_ROOT=${DEPLOY_ROOT} && ${DEPLOY_PATH}/scripts/install"
 echo "${LINE_COLOR_RESET}* Done"
