@@ -169,10 +169,17 @@ class http_Request {
     }
   }
 
+  /**
+   * Sets the `$params` hash. Is used from the dispatcher, and should generally not be accessed from user land code.
+   */
   function setParams($params) {
     $this->params = $params;
   }
 
+  /**
+   * Returns a named parameter, as parsed from the URL.
+   * If no `$key` is passed, it returns a hash of all parameters.
+   */
   function param($key = null, $default = null) {
     if ($key === null) {
       return $this->params;
@@ -180,6 +187,10 @@ class http_Request {
     return isset($this->params[$key]) ? $this->params[$key] : $default;
   }
 
+  /**
+   * Returns a query string parameter (GET parameter).
+   * If no `$key` is passed, it returns a hash of all parameters.
+   */
   function query($key = null, $default = null) {
     if ($key === null) {
       return $_GET;
@@ -187,6 +198,10 @@ class http_Request {
     return isset($_GET[$key]) ? $_GET[$key] : $default;
   }
 
+  /**
+   * Returns a form-encoded body-parameter (POST parameter).
+   * If no `$key` is passed, it returns a hash of all parameters.
+   */
   function body($key = null, $default = null) {
     if ($key === null) {
       return $this->body;
@@ -194,6 +209,10 @@ class http_Request {
     return isset($this->body[$key]) ? $this->body[$key] : $default;
   }
 
+  /**
+   * Returns a request header.
+   * If no `$key` is passed, it returns a hash of all headers.
+   */
   function header($key = null, $default = null) {
     if ($key === null) {
       return $this->headers;
@@ -202,6 +221,10 @@ class http_Request {
     return isset($this->headers[$key]) ? $this->headers[$key] : $default;
   }
 
+  /**
+   * Returns a file, from a multipart encoded request.
+   * If no `$key` is passed, it returns a hash of all files.
+   */
   function file($key = null) {
     if ($key === null) {
       return $this->files;
@@ -209,49 +232,78 @@ class http_Request {
     return isset($this->files[$key]) ? $this->files[$key] : $default;
   }
 
+  /**
+   * Returns the *path* element of the requested uri.
+   */
   function path() {
     return rtrim(preg_replace('~[?].*$~', '', $this->uri()), '/');
   }
 
+  /**
+   * Returns the full requested uri.
+   */
   function uri() {
     return $_SERVER['REQUEST_URI'];
   }
 
+  /**
+   * Returns the *subview* part of the request.
+   */
   function subview() {
     if (preg_match('~[?]([^=&]+)(&|$)~', $this->uri(), $reg)) {
       return $reg[1];
     }
   }
 
+  /**
+   * Returns the hostname part of the requested uri.
+   */
   function serverName() {
     return $_SERVER['SERVER_NAME'];
   }
 
+  /**
+   * Returns the HTTP method.
+   */
   function method() {
     $real_http_method = strtolower($_SERVER['REQUEST_METHOD']);
     return $real_http_method === 'post' ? $this->body('_method', 'post') : $real_http_method;
   }
 
+  /**
+   * Returns true if the request method is GET.
+   */
   function isGet() {
     return $this->method() == 'get';
   }
 
+  /**
+   * Returns true if the request method is POST.
+   */
   function isPost() {
     return $this->method() == 'post';
   }
 
+  /**
+   * Returns true if the request method is PUT.
+   */
   function isPut() {
     return $this->method() == 'put';
   }
 
+  /**
+   * Returns true if the request method is DELETE.
+   */
   function isDelete() {
     return $this->method() == 'delete';
   }
 
+  /**
+   * Returns true if the request is made from XmlHttpRequest (Javascript aka. Ajax).
+   */
   function isXhr() {
     throw new Exception("TODO");
   }
-
 }
 
 /**
@@ -270,6 +322,9 @@ class http_ResponseDocument {
     $this->render_layout = $file_name;
   }
 
+  /**
+   * Returns the current document layout file.
+   */
   function layout() {
     return $this->render_layout;
   }
@@ -344,6 +399,9 @@ class http_Response {
     $this->status = $code;
   }
 
+  /**
+   * Returns the HTTP status code.
+   */
   function status() {
     return $this->status;
   }
@@ -373,6 +431,9 @@ class http_Response {
     $this->headers[] = array($key, $value);
   }
 
+  /**
+   * Returns a hash of all response headers to be sent.
+   */
   function headers() {
     return $this->headers;
   }

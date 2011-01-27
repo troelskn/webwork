@@ -11,12 +11,12 @@
 $GLOBALS['ROUTES']['~^GET/$~'] = "root";
 //
 // If you put capturing parentheses in the regexp, then those will be available
-// to your handler through `request_param`.
+// to your handler through `request()->param()`.
 // For example:
 //
 //   $GLOBALS['ROUTES']['~^/users/(?P<user_id>\d+)~'] = "users";
 //
-// Will make an id available in `request_param('user_id')`.
+// Will make an id available in `request()->param('user_id')`.
 //
 // Routes are resolved in the order that they are defined, so if an
 // input matches multiple routes, it will go with the first defined one.

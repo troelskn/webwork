@@ -24,7 +24,7 @@ Requirements
 
 * Webwork is tested with PHP 5.2, but should work on any PHP 5.X installation.
 
-* You need to route all requests to `public/index.php`. The usual configuration would be with Apache - in which case you'll need to have `mod_rewrite` enabled. The `public/.htaccess` file will configure this for you.
+* Webwork is only tested with Apache, but it should be simple to configure it for other web servers.
 
 Your first application
 --
@@ -63,15 +63,36 @@ As you may have guessed, there are a couple more helpers for putting stuff in th
 
 A final, useful function to use in rendering output, is the `render` function. Calling it will execute (include) a handler and return the output. This is used for small snippets of reusable code.
 
+Input/Output wrappers
+---
+
+Webwork has an abstraction that wraps access to the HTTP request and response. While you can still use PHP's native interfaces, it is recommended to use the wrappers instead. Not only do they provide a richer and more uniform API, but using them also ensures that your code can be stubbed out for tests etc.
+
+Webwork comes with the following wrappers for HTTP:
+
+* `request()`
+* `response()`
+* `cookie()`
+* `session()`
+
+The API documentation lists which methods are available for each of these.
+
+Routing & URLs
+---
+
+Webwork has a simple routing mechanism which is used to map incoming requests to the proper handler. You can see how it work in the function `resolve_route` and in `public/index.php`. Basically, the global variable `$GLOBALS['ROUTES']` is a hash of `regular-expression => handler`. The request uri is matched against each of these in turn and the first match is rendered.
+
+Note that named captures are supported and available through `requests()->param()`.
+
+To see a list of all routes, you can run the script in `scripts/routes` from the console.
+
 TODO
 --
 
 A few more features of the framework, that are - for now - undocumented. Have a look at the sources, if you are curious.
 
-* Input/Output (HTTP interaction)
-* Routing & URLs
 * HTML helpers
 * Configuration/environments
 * Deployment
-* Migrations
+* Database and Migrations
 * Plugins
