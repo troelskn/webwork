@@ -82,16 +82,24 @@ Routing & URLs
 
 Webwork has a simple routing mechanism which is used to map incoming requests to the proper handler. You can see how it work in the function `resolve_route` and in `public/index.php`. Basically, the global variable `$GLOBALS['ROUTES']` is a hash of `regular-expression => handler`. The request uri is matched against each of these in turn and the first match is rendered.
 
-Note that named captures are supported and available through `requests()->param()`.
+Routes are defined in the file `config/routes.inc.php`. See this file for some more examples.
 
 To see a list of all routes, you can run the script in `scripts/routes` from the console.
+
+HTML helpers
+---
+
+Instead of hardcoding URL's throughout your application, we recommend that you create helper-function to generate URLs. These should be placed in the `routes.inc.php` file. Such function should be postfixed with `_url` - Eg. `root_url()` or `users_url()`.
+
+A common pattern is to have a url helper for model classes. If, for example, your application has a class `User`, you should also have a helper called `user_url($user)`. If you follow this recipe, you can use the higher level helper `url_for()`, which will take any object and return the proper link for it.
+
+In addition to url helpers, webwork comes with a collection of html-helper functions that can be used for rendering common html form elements. All of these are prefixed with `html_`. For example `html_link()` that generates an `a`-tag. The API documentation list all of these core helpers, but you can of course create your own.
 
 TODO
 --
 
 A few more features of the framework, that are - for now - undocumented. Have a look at the sources, if you are curious.
 
-* HTML helpers
 * Configuration/environments
 * Deployment
 * Database and Migrations

@@ -1,0 +1,1164 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>web.inc.php</title>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+    <style>/*--------------------- Layout and Typography ----------------------------*/
+body { font-family: 'Palatino Linotype', 'Book Antiqua', Palatino, FreeSerif, serif; font-size: 15px; line-height: 22px; color: #252519; margin: 0; padding: 0;
+}
+a { color: #261a3b;
+} a:visited { color: #261a3b; }
+p { margin: 0 0 15px 0;
+}
+h1, h2, h3, h4, h5, h6 { margin: 40px 0 15px 0;
+} h3, h4, h5, h6 { margin-top: 20px; }
+#container { position: relative;
+}
+#background { position: fixed; top: 0; left: 575px; right: 0; bottom: 0; background: #f5f5ff; border-left: 1px solid #e5e5ee; z-index: -1;
+}
+#jump_to, #jump_page { background: white; -webkit-box-shadow: 0 0 25px #777; -moz-box-shadow: 0 0 25px #777; -webkit-border-bottom-left-radius: 5px; -moz-border-radius-bottomleft: 5px; font: 10px Arial; text-transform: uppercase; cursor: pointer; text-align: right;
+}
+#jump_to, #jump_wrapper { position: fixed; right: 0; top: 0; padding: 5px 10px;
+} #jump_wrapper { padding: 0; display: none; } #jump_to:hover #jump_wrapper { display: block; } #jump_page { padding: 5px 0 3px; margin: 0 0 25px 25px; overflow:hidden; } #jump_page .source { display: block; padding: 5px 10px; text-decoration: none; border-top: 1px solid #eee; float:left; min-width:180px; text-align:left; text-transform:none; font-size:11px; } #jump_page .source:hover { background: #f5f5ff; } #jump_page .source:first-child { }
+table td { border: 0; outline: 0;
+} td.docs, th.docs { max-width: 450px; min-width: 450px; min-height: 5px; padding: 10px 25px 1px 50px; overflow-x: hidden; vertical-align: top; text-align: left; } .docs pre { margin: 15px 0 15px; padding-left: 15px; } .docs p tt, .docs p code { background: #f8f8ff; border: 1px solid #dedede; font-size: 12px; padding: 0 0.2em; } .pilwrap { position: relative; } .pilcrow { font: 12px Arial; text-decoration: none; color: #454545; position: absolute; top: 3px; left: -20px; padding: 1px 2px; opacity: 0; -webkit-transition: opacity 0.2s linear; } td.docs:hover .pilcrow { opacity: 1; } td.code, th.code { padding: 14px 15px 16px 25px; width: 100%; vertical-align: top; background: #f5f5ff; border-left: 1px solid #e5e5ee; } pre, tt, code { font-size: 12px; line-height: 18px; font-family: Monaco, Consolas, "Lucida Console", monospace; margin: 0; padding: 0; } /*---------------------- Syntax Highlighting -----------------------------*/
+td.linenos { background-color: #f0f0f0; padding-right: 10px; }
+span.lineno { background-color: #f0f0f0; padding: 0 5px 0 5px; }
+body .hll { background-color: #ffffcc }
+body .c { color: #408080; font-style: italic } /* Comment */
+body .err { border: 1px solid #FF0000 } /* Error */
+body .k { color: #954121 } /* Keyword */
+body .o { color: #666666 } /* Operator */
+body .cm { color: #408080; font-style: italic } /* Comment.Multiline */
+body .cp { color: #BC7A00 } /* Comment.Preproc */
+body .c1 { color: #408080; font-style: italic } /* Comment.Single */
+body .cs { color: #408080; font-style: italic } /* Comment.Special */
+body .gd { color: #A00000 } /* Generic.Deleted */
+body .ge { font-style: italic } /* Generic.Emph */
+body .gr { color: #FF0000 } /* Generic.Error */
+body .gh { color: #000080; font-weight: bold } /* Generic.Heading */
+body .gi { color: #00A000 } /* Generic.Inserted */
+body .go { color: #808080 } /* Generic.Output */
+body .gp { color: #000080; font-weight: bold } /* Generic.Prompt */
+body .gs { font-weight: bold } /* Generic.Strong */
+body .gu { color: #800080; font-weight: bold } /* Generic.Subheading */
+body .gt { color: #0040D0 } /* Generic.Traceback */
+body .kc { color: #954121 } /* Keyword.Constant */
+body .kd { color: #954121; font-weight: bold } /* Keyword.Declaration */
+body .kn { color: #954121; font-weight: bold } /* Keyword.Namespace */
+body .kp { color: #954121 } /* Keyword.Pseudo */
+body .kr { color: #954121; font-weight: bold } /* Keyword.Reserved */
+body .kt { color: #B00040 } /* Keyword.Type */
+body .m { color: #666666 } /* Literal.Number */
+body .s { color: #219161 } /* Literal.String */
+body .na { color: #7D9029 } /* Name.Attribute */
+body .nb { color: #954121 } /* Name.Builtin */
+body .nc { color: #0000FF; font-weight: bold } /* Name.Class */
+body .no { color: #880000 } /* Name.Constant */
+body .nd { color: #AA22FF } /* Name.Decorator */
+body .ni { color: #999999; font-weight: bold } /* Name.Entity */
+body .ne { color: #D2413A; font-weight: bold } /* Name.Exception */
+body .nf { color: #0000FF } /* Name.Function */
+body .nl { color: #A0A000 } /* Name.Label */
+body .nn { color: #0000FF; font-weight: bold } /* Name.Namespace */
+body .nt { color: #954121; font-weight: bold } /* Name.Tag */
+body .nv { color: #19469D } /* Name.Variable */
+body .ow { color: #AA22FF; font-weight: bold } /* Operator.Word */
+body .w { color: #bbbbbb } /* Text.Whitespace */
+body .mf { color: #666666 } /* Literal.Number.Float */
+body .mh { color: #666666 } /* Literal.Number.Hex */
+body .mi { color: #666666 } /* Literal.Number.Integer */
+body .mo { color: #666666 } /* Literal.Number.Oct */
+body .sb { color: #219161 } /* Literal.String.Backtick */
+body .sc { color: #219161 } /* Literal.String.Char */
+body .sd { color: #219161; font-style: italic } /* Literal.String.Doc */
+body .s2 { color: #219161 } /* Literal.String.Double */
+body .se { color: #BB6622; font-weight: bold } /* Literal.String.Escape */
+body .sh { color: #219161 } /* Literal.String.Heredoc */
+body .si { color: #BB6688; font-weight: bold } /* Literal.String.Interpol */
+body .sx { color: #954121 } /* Literal.String.Other */
+body .sr { color: #BB6688 } /* Literal.String.Regex */
+body .s1 { color: #219161 } /* Literal.String.Single */
+body .ss { color: #19469D } /* Literal.String.Symbol */
+body .bp { color: #954121 } /* Name.Builtin.Pseudo */
+body .vc { color: #19469D } /* Name.Variable.Class */
+body .vg { color: #19469D } /* Name.Variable.Global */
+body .vi { color: #19469D } /* Name.Variable.Instance */
+body .il { color: #666666 } /* Literal.Number.Integer.Long */ /********** PHP Comment Additions ********/
+td.docs .docparam {color:#DB251A;font-weight:bold;}
+</style>
+</head>
+<body>
+    <div id="container">
+        <div id="background"></div>
+                    <div id="jump_to">
+                Jump To &hellip;
+                <div id="jump_wrapper">
+                    <div id="jump_page">
+                                                                                                                                            <a class="source" href="./web.inc.html">web.inc.php</a>
+                                                                                                                                            <a class="source" href="./html_helpers.inc.html">html_helpers.inc.php</a>
+                                                                                                                                            <a class="source" href="./index.html">index.php</a>
+                                                                                                                                            <a class="source" href="./bootstrap.inc.html">bootstrap.inc.php</a>
+                                                                                                                                            <a class="source" href="./environment.inc.html">environment.inc.php</a>
+                                            </div>
+                </div>
+            </div>
+                <table cellpadding="0" cellspacing="0">
+            <thead>
+                <tr>
+                    <th class="docs"><h1>web.inc.php</h1></th>
+                    <th class="code"></th>
+                </tr>
+            </thead>
+            <tbody>
+                                    <tr id="section-0">
+                        <td class="docs">
+                            <div class="pilwrap">
+                                <a class="pilcrow" href="#section-0">&#182;</a>
+                            </div>
+                            <p>Resolves which handler to execute, based on the given request. See <code>config/routes.inc.php</code> for details on routing.</p>
+                        </td>
+                        <td class="code"><div class="highlight"><pre><span class="k">function</span> <span class="nf">resolve_route</span><span class="p">(</span><span class="nv">$request</span><span class="p">,</span> <span class="nv">$routes</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nv">$request_uri</span> <span class="o">=</span> <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">uri</span><span class="p">();</span>
+  <span class="nv">$request_method</span> <span class="o">=</span> <span class="nb">strtoupper</span><span class="p">(</span><span class="nv">$request</span><span class="o">-&gt;</span><span class="na">method</span><span class="p">());</span>
+  <span class="k">foreach</span> <span class="p">(</span><span class="nv">$routes</span> <span class="k">as</span> <span class="nv">$pattern</span> <span class="o">=&gt;</span> <span class="nv">$handler</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nb">preg_match</span><span class="p">(</span><span class="nv">$pattern</span><span class="p">,</span> <span class="nv">$request_method</span> <span class="o">.</span> <span class="nv">$request_uri</span><span class="p">,</span> <span class="nv">$reg</span><span class="p">)</span> <span class="o">||</span> <span class="nb">preg_match</span><span class="p">(</span><span class="nv">$pattern</span><span class="p">,</span> <span class="nv">$request_uri</span><span class="p">,</span> <span class="nv">$reg</span><span class="p">))</span> <span class="p">{</span>
+      <span class="nb">array_shift</span><span class="p">(</span><span class="nv">$reg</span><span class="p">);</span>
+      <span class="nv">$request</span><span class="o">-&gt;</span><span class="na">setParams</span><span class="p">(</span><span class="nv">$reg</span><span class="p">);</span>
+      <span class="k">return</span> <span class="nv">$handler</span><span class="p">;</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+  <span class="k">throw</span> <span class="k">new</span> <span class="nx">http_NotFound</span><span class="p">();</span>
+<span class="p">}</span></pre></div></td>
+                    </tr>
+                                    <tr id="section-1">
+                        <td class="docs">
+                            <div class="pilwrap">
+                                <a class="pilcrow" href="#section-1">&#182;</a>
+                            </div>
+                            <p>Renders a handler and returns the output as a string.</p>
+                        </td>
+                        <td class="code"><div class="highlight"><pre><span class="k">function</span> <span class="nf">render</span><span class="p">(</span><span class="nv">$file_name</span><span class="p">,</span> <span class="nv">$params</span> <span class="o">=</span> <span class="k">array</span><span class="p">())</span> <span class="p">{</span>
+  <span class="nb">ob_start</span><span class="p">();</span>
+  <span class="nx">render_in_place</span><span class="p">(</span><span class="nv">$file_name</span><span class="p">,</span> <span class="nv">$params</span><span class="p">);</span>
+  <span class="k">return</span> <span class="nb">ob_get_clean</span><span class="p">();</span>
+<span class="p">}</span></pre></div></td>
+                    </tr>
+                                    <tr id="section-2">
+                        <td class="docs">
+                            <div class="pilwrap">
+                                <a class="pilcrow" href="#section-2">&#182;</a>
+                            </div>
+                            <p>Renders a handler in place (Eg. outputs it directly to the current output buffer).
+ Handlers can be placed in the application or in plugins.
+ You can optionally pass a hash of parameters as the second argument, which will be made available as variables in the handler.
+ A handler is a flat php file placed in the <code>handlers/</code> folder.</p>
+                        </td>
+                        <td class="code"><div class="highlight"><pre><span class="k">function</span> <span class="nf">render_in_place</span><span class="p">(</span><span class="nv">$file_name</span><span class="p">,</span> <span class="nv">$params</span> <span class="o">=</span> <span class="k">array</span><span class="p">())</span> <span class="p">{</span>
+  <span class="nb">extract</span><span class="p">(</span><span class="nv">$params</span><span class="p">);</span>
+  <span class="k">if</span> <span class="p">(</span><span class="nb">is_file</span><span class="p">(</span><span class="nv">$GLOBALS</span><span class="p">[</span><span class="s1">&#39;APPLICATION_ROOT&#39;</span><span class="p">]</span><span class="o">.</span><span class="s1">&#39;/handlers/&#39;</span><span class="o">.</span><span class="nv">$file_name</span><span class="o">.</span><span class="s1">&#39;.php&#39;</span><span class="p">))</span> <span class="p">{</span>
+    <span class="k">include</span><span class="p">(</span><span class="nv">$GLOBALS</span><span class="p">[</span><span class="s1">&#39;APPLICATION_ROOT&#39;</span><span class="p">]</span><span class="o">.</span><span class="s1">&#39;/handlers/&#39;</span><span class="o">.</span><span class="nv">$file_name</span><span class="o">.</span><span class="s1">&#39;.php&#39;</span><span class="p">);</span>
+    <span class="k">return</span><span class="p">;</span>
+  <span class="p">}</span>
+  <span class="k">foreach</span> <span class="p">(</span><span class="nv">$GLOBALS</span><span class="p">[</span><span class="s1">&#39;PLUGINS&#39;</span><span class="p">]</span> <span class="k">as</span> <span class="nv">$plugin</span> <span class="o">=&gt;</span> <span class="nv">$path</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nb">is_file</span><span class="p">(</span><span class="nv">$path</span><span class="o">.</span><span class="s1">&#39;/handlers/&#39;</span><span class="o">.</span><span class="nv">$file_name</span><span class="o">.</span><span class="s1">&#39;.php&#39;</span><span class="p">))</span> <span class="p">{</span>
+      <span class="k">include</span><span class="p">(</span><span class="nv">$path</span><span class="o">.</span><span class="s1">&#39;/handlers/&#39;</span><span class="o">.</span><span class="nv">$file_name</span><span class="o">.</span><span class="s1">&#39;.php&#39;</span><span class="p">);</span>
+      <span class="k">return</span><span class="p">;</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+  <span class="k">throw</span> <span class="k">new</span> <span class="nx">Exception</span><span class="p">(</span><span class="s2">&quot;Unable to render handler &#39;</span><span class="si">$file_name</span><span class="s2">&#39;&quot;</span><span class="p">);</span>
+<span class="p">}</span></pre></div></td>
+                    </tr>
+                                    <tr id="section-3">
+                        <td class="docs">
+                            <div class="pilwrap">
+                                <a class="pilcrow" href="#section-3">&#182;</a>
+                            </div>
+                            <p>Returns the global response document wrapper</p>
+
+<p><em class='docparam'>@returns</em> http_ResponseDocument</p>
+                        </td>
+                        <td class="code"><div class="highlight"><pre><span class="k">function</span> <span class="nf">document</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nb">isset</span><span class="p">(</span><span class="nv">$GLOBALS</span><span class="p">[</span><span class="s1">&#39;document_instance&#39;</span><span class="p">]))</span> <span class="p">{</span>
+    <span class="nv">$GLOBALS</span><span class="p">[</span><span class="s1">&#39;document_instance&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">http_ResponseDocument</span><span class="p">();</span>
+  <span class="p">}</span>
+  <span class="k">return</span> <span class="nv">$GLOBALS</span><span class="p">[</span><span class="s1">&#39;document_instance&#39;</span><span class="p">];</span>
+<span class="p">}</span></pre></div></td>
+                    </tr>
+                                    <tr id="section-4">
+                        <td class="docs">
+                            <div class="pilwrap">
+                                <a class="pilcrow" href="#section-4">&#182;</a>
+                            </div>
+                            <p>Returns the global http response wrapper</p>
+
+<p><em class='docparam'>@returns</em> http_Response</p>
+                        </td>
+                        <td class="code"><div class="highlight"><pre><span class="k">function</span> <span class="nf">response</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nb">isset</span><span class="p">(</span><span class="nv">$GLOBALS</span><span class="p">[</span><span class="s1">&#39;response_instance&#39;</span><span class="p">]))</span> <span class="p">{</span>
+    <span class="nv">$GLOBALS</span><span class="p">[</span><span class="s1">&#39;response_instance&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">http_Response</span><span class="p">();</span>
+  <span class="p">}</span>
+  <span class="k">return</span> <span class="nv">$GLOBALS</span><span class="p">[</span><span class="s1">&#39;response_instance&#39;</span><span class="p">];</span>
+<span class="p">}</span></pre></div></td>
+                    </tr>
+                                    <tr id="section-5">
+                        <td class="docs">
+                            <div class="pilwrap">
+                                <a class="pilcrow" href="#section-5">&#182;</a>
+                            </div>
+                            <p>Returns the global http request wrapper</p>
+
+<p><em class='docparam'>@returns</em> http_Request</p>
+                        </td>
+                        <td class="code"><div class="highlight"><pre><span class="k">function</span> <span class="nf">request</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nb">isset</span><span class="p">(</span><span class="nv">$GLOBALS</span><span class="p">[</span><span class="s1">&#39;request_instance&#39;</span><span class="p">]))</span> <span class="p">{</span>
+    <span class="nv">$GLOBALS</span><span class="p">[</span><span class="s1">&#39;request_instance&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">http_Request</span><span class="p">();</span>
+  <span class="p">}</span>
+  <span class="k">return</span> <span class="nv">$GLOBALS</span><span class="p">[</span><span class="s1">&#39;request_instance&#39;</span><span class="p">];</span>
+<span class="p">}</span></pre></div></td>
+                    </tr>
+                                    <tr id="section-6">
+                        <td class="docs">
+                            <div class="pilwrap">
+                                <a class="pilcrow" href="#section-6">&#182;</a>
+                            </div>
+                            <p>Returns the global cookie access wrapper</p>
+
+<p><em class='docparam'>@returns</em> http_CookieAccess</p>
+                        </td>
+                        <td class="code"><div class="highlight"><pre><span class="k">function</span> <span class="nf">cookie</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nb">isset</span><span class="p">(</span><span class="nv">$GLOBALS</span><span class="p">[</span><span class="s1">&#39;cookie_instance&#39;</span><span class="p">]))</span> <span class="p">{</span>
+    <span class="nv">$GLOBALS</span><span class="p">[</span><span class="s1">&#39;cookie_instance&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">http_CookieAccess</span><span class="p">(</span><span class="nx">request</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">serverName</span><span class="p">(),</span> <span class="nv">$_COOKIE</span><span class="p">);</span>
+  <span class="p">}</span>
+  <span class="k">return</span> <span class="nv">$GLOBALS</span><span class="p">[</span><span class="s1">&#39;cookie_instance&#39;</span><span class="p">];</span>
+<span class="p">}</span></pre></div></td>
+                    </tr>
+                                    <tr id="section-7">
+                        <td class="docs">
+                            <div class="pilwrap">
+                                <a class="pilcrow" href="#section-7">&#182;</a>
+                            </div>
+                            <p>Returns the global session access wrapper</p>
+
+<p><em class='docparam'>@returns</em> http_SessionAccess</p>
+                        </td>
+                        <td class="code"><div class="highlight"><pre><span class="k">function</span> <span class="nf">session</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nb">isset</span><span class="p">(</span><span class="nv">$GLOBALS</span><span class="p">[</span><span class="s1">&#39;session_instance&#39;</span><span class="p">]))</span> <span class="p">{</span>
+    <span class="nv">$GLOBALS</span><span class="p">[</span><span class="s1">&#39;session_instance&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">http_SessionAccess</span><span class="p">(</span><span class="nx">cookie</span><span class="p">());</span>
+  <span class="p">}</span>
+  <span class="k">return</span> <span class="nv">$GLOBALS</span><span class="p">[</span><span class="s1">&#39;session_instance&#39;</span><span class="p">];</span>
+<span class="p">}</span></pre></div></td>
+                    </tr>
+                                    <tr id="section-8">
+                        <td class="docs">
+                            <div class="pilwrap">
+                                <a class="pilcrow" href="#section-8">&#182;</a>
+                            </div>
+                            <p>Adds a flash message</p>
+                        </td>
+                        <td class="code"><div class="highlight"><pre><span class="k">function</span> <span class="nf">flash_message</span><span class="p">(</span><span class="nv">$message</span><span class="p">,</span> <span class="nv">$type</span> <span class="o">=</span> <span class="s2">&quot;notice&quot;</span><span class="p">)</span> <span class="p">{</span>
+  <span class="nv">$flash_messages</span> <span class="o">=</span> <span class="nx">session</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;flash_message&#39;</span><span class="p">,</span> <span class="k">array</span><span class="p">());</span>
+  <span class="nv">$flash_messages</span><span class="p">[]</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span><span class="s1">&#39;message&#39;</span> <span class="o">=&gt;</span> <span class="nv">$message</span><span class="p">,</span> <span class="s1">&#39;type&#39;</span> <span class="o">=&gt;</span> <span class="nv">$type</span><span class="p">);</span>
+  <span class="nx">session</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">set</span><span class="p">(</span><span class="s1">&#39;flash_message&#39;</span><span class="p">,</span> <span class="nv">$flash_messages</span><span class="p">);</span>
+<span class="p">}</span></pre></div></td>
+                    </tr>
+                                    <tr id="section-9">
+                        <td class="docs">
+                            <div class="pilwrap">
+                                <a class="pilcrow" href="#section-9">&#182;</a>
+                            </div>
+                            <p>Gets flash messages and clears the buffer.</p>
+                        </td>
+                        <td class="code"><div class="highlight"><pre><span class="k">function</span> <span class="nf">get_flash_messages</span><span class="p">()</span> <span class="p">{</span>
+  <span class="nv">$flash_messages</span> <span class="o">=</span> <span class="nx">session</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">get</span><span class="p">(</span><span class="s1">&#39;flash_message&#39;</span><span class="p">,</span> <span class="k">array</span><span class="p">());</span>
+  <span class="nx">session</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">set</span><span class="p">(</span><span class="s1">&#39;flash_message&#39;</span><span class="p">,</span> <span class="k">array</span><span class="p">());</span>
+  <span class="k">return</span> <span class="nv">$flash_messages</span><span class="p">;</span>
+<span class="p">}</span></pre></div></td>
+                    </tr>
+                                    <tr id="section-10">
+                        <td class="docs">
+                            <div class="pilwrap">
+                                <a class="pilcrow" href="#section-10">&#182;</a>
+                            </div>
+                            <p>HTTP exception are used internally to stop the rendering and output right away.</p>
+                        </td>
+                        <td class="code"><div class="highlight"><pre><span class="k">class</span> <span class="nc">http_Exception</span> <span class="k">extends</span> <span class="nx">Exception</span> <span class="p">{</span>
+  <span class="k">function</span> <span class="nf">__construct</span><span class="p">(</span><span class="nv">$headers</span> <span class="o">=</span> <span class="k">array</span><span class="p">())</span> <span class="p">{</span>
+    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">headers</span> <span class="o">=</span> <span class="nv">$headers</span><span class="p">;</span>
+  <span class="p">}</span>
+  <span class="k">function</span> <span class="nf">headers</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">headers</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+<span class="k">class</span> <span class="nc">http_NotModified</span> <span class="k">extends</span> <span class="nx">http_Exception</span> <span class="p">{}</span>
+<span class="k">class</span> <span class="nc">http_MethodNotAllowed</span> <span class="k">extends</span> <span class="nx">http_Exception</span> <span class="p">{}</span>
+<span class="k">class</span> <span class="nc">http_NotFound</span> <span class="k">extends</span> <span class="nx">http_Exception</span> <span class="p">{}</span>
+<span class="k">class</span> <span class="nc">http_SeeOther</span> <span class="k">extends</span> <span class="nx">http_Exception</span> <span class="p">{}</span>
+<span class="k">class</span> <span class="nc">http_Unauthorized</span> <span class="k">extends</span> <span class="nx">http_Exception</span> <span class="p">{}</span></pre></div></td>
+                    </tr>
+                                    <tr id="section-11">
+                        <td class="docs">
+                            <div class="pilwrap">
+                                <a class="pilcrow" href="#section-11">&#182;</a>
+                            </div>
+                            <p>Wraps incoming http request</p>
+                        </td>
+                        <td class="code"><div class="highlight"><pre><span class="k">class</span> <span class="nc">http_Request</span> <span class="p">{</span>
+  <span class="k">protected</span> <span class="nv">$body</span><span class="p">;</span>
+  <span class="k">protected</span> <span class="nv">$headers</span><span class="p">;</span>
+  <span class="k">protected</span> <span class="nv">$params</span><span class="p">;</span>
+  <span class="k">protected</span> <span class="nv">$files</span><span class="p">;</span>
+  <span class="k">function</span> <span class="nf">__construct</span><span class="p">(</span><span class="nv">$file_access</span> <span class="o">=</span> <span class="k">null</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nv">$_SERVER</span><span class="p">[</span><span class="s1">&#39;REQUEST_METHOD&#39;</span><span class="p">]</span> <span class="o">===</span> <span class="s1">&#39;PUT&#39;</span> <span class="o">&amp;&amp;</span> <span class="nv">$_SERVER</span><span class="p">[</span><span class="s1">&#39;CONTENT_TYPE&#39;</span><span class="p">]</span> <span class="o">===</span> <span class="s1">&#39;application/x-www-form-urlencoded&#39;</span> <span class="o">&amp;&amp;</span> <span class="k">empty</span><span class="p">(</span><span class="nv">$_POST</span><span class="p">))</span> <span class="p">{</span>
+      <span class="nb">parse_str</span><span class="p">(</span><span class="nb">file_get_contents</span><span class="p">(</span><span class="s1">&#39;php://input&#39;</span><span class="p">),</span> <span class="nv">$buffer</span><span class="p">);</span>
+      <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">body</span> <span class="o">=</span> <span class="nv">$buffer</span><span class="p">;</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+      <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">body</span> <span class="o">=</span> <span class="nv">$_POST</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">headers</span> <span class="o">=</span> <span class="k">array</span><span class="p">();</span>
+    <span class="k">foreach</span> <span class="p">(</span><span class="nb">apache_request_headers</span><span class="p">()</span> <span class="k">as</span> <span class="nv">$k</span> <span class="o">=&gt;</span> <span class="nv">$v</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">headers</span><span class="p">[</span><span class="nb">strtolower</span><span class="p">(</span><span class="nv">$k</span><span class="p">)]</span> <span class="o">=</span> <span class="nv">$v</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="nv">$file_access</span> <span class="o">=</span> <span class="nv">$file_access</span> <span class="o">?</span> <span class="nv">$file_access</span> <span class="o">:</span> <span class="k">new</span> <span class="nx">http_UploadedFileAccess</span><span class="p">();</span>
+    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">files</span> <span class="o">=</span> <span class="k">array</span><span class="p">();</span>
+    <span class="k">foreach</span> <span class="p">(</span><span class="nv">$_FILES</span> <span class="k">as</span> <span class="nv">$key</span> <span class="o">=&gt;</span> <span class="nv">$file</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">if</span> <span class="p">(</span><span class="nb">isset</span><span class="p">(</span><span class="nv">$file</span><span class="p">[</span><span class="s1">&#39;tmp_name&#39;</span><span class="p">])</span> <span class="o">&amp;&amp;</span> <span class="nb">is_array</span><span class="p">(</span><span class="nv">$file</span><span class="p">[</span><span class="s1">&#39;tmp_name&#39;</span><span class="p">]))</span> <span class="p">{</span>
+        <span class="nv">$file_info</span> <span class="o">=</span> <span class="k">array</span><span class="p">();</span>
+        <span class="k">for</span> <span class="p">(</span><span class="nv">$i</span> <span class="o">=</span> <span class="m">0</span><span class="p">;</span> <span class="nv">$i</span> <span class="o">&lt;</span> <span class="nb">count</span><span class="p">(</span><span class="nv">$file</span><span class="p">[</span><span class="s1">&#39;tmp_name&#39;</span><span class="p">]);</span> <span class="nv">$i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+          <span class="nv">$file_info</span><span class="p">[</span><span class="nv">$i</span><span class="p">]</span> <span class="o">=</span> <span class="k">array</span><span class="p">();</span>
+          <span class="nv">$file_info</span><span class="p">[</span><span class="nv">$i</span><span class="p">][</span><span class="s1">&#39;tmp_name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nv">$file</span><span class="p">[</span><span class="s1">&#39;tmp_name&#39;</span><span class="p">][</span><span class="nv">$i</span><span class="p">];</span>
+          <span class="nv">$file_info</span><span class="p">[</span><span class="nv">$i</span><span class="p">][</span><span class="s1">&#39;name&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nv">$file</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">][</span><span class="nv">$i</span><span class="p">];</span>
+          <span class="nv">$file_info</span><span class="p">[</span><span class="nv">$i</span><span class="p">][</span><span class="s1">&#39;type&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nv">$file</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">][</span><span class="nv">$i</span><span class="p">];</span>
+          <span class="nv">$file_info</span><span class="p">[</span><span class="nv">$i</span><span class="p">][</span><span class="s1">&#39;size&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nv">$file</span><span class="p">[</span><span class="s1">&#39;size&#39;</span><span class="p">][</span><span class="nv">$i</span><span class="p">];</span>
+          <span class="nv">$file_info</span><span class="p">[</span><span class="nv">$i</span><span class="p">][</span><span class="s1">&#39;error&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nv">$file</span><span class="p">[</span><span class="s1">&#39;error&#39;</span><span class="p">][</span><span class="nv">$i</span><span class="p">];</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nb">array_key_exists</span><span class="p">(</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="nv">$file_info</span><span class="p">))</span> <span class="p">{</span>
+          <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">files</span><span class="p">[</span><span class="nv">$key</span><span class="p">]</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">http_UploadedFile</span><span class="p">(</span><span class="nv">$file_info</span><span class="p">,</span> <span class="nv">$key</span><span class="p">,</span> <span class="nv">$file_access</span><span class="p">);</span>
+        <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+          <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">files</span><span class="p">[</span><span class="nv">$key</span><span class="p">]</span> <span class="o">=</span> <span class="k">array</span><span class="p">();</span>
+          <span class="k">foreach</span> <span class="p">(</span><span class="nv">$file_info</span> <span class="k">as</span> <span class="nv">$file_info_struct</span><span class="p">)</span> <span class="p">{</span>
+            <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">files</span><span class="p">[</span><span class="nv">$key</span><span class="p">][]</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">http_UploadedFile</span><span class="p">(</span><span class="nv">$file_info_struct</span><span class="p">,</span> <span class="nv">$key</span><span class="p">,</span> <span class="nv">$file_access</span><span class="p">);</span>
+          <span class="p">}</span>
+        <span class="p">}</span>
+      <span class="p">}</span>
+    <span class="p">}</span>
+  <span class="p">}</span></pre></div></td>
+                    </tr>
+                                    <tr id="section-12">
+                        <td class="docs">
+                            <div class="pilwrap">
+                                <a class="pilcrow" href="#section-12">&#182;</a>
+                            </div>
+                            <p>Sets the <code>$params</code> hash. Is used from the dispatcher, and should generally not be accessed from user land code.</p>
+                        </td>
+                        <td class="code"><div class="highlight"><pre>  <span class="k">function</span> <span class="nf">setParams</span><span class="p">(</span><span class="nv">$params</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">params</span> <span class="o">=</span> <span class="nv">$params</span><span class="p">;</span>
+  <span class="p">}</span></pre></div></td>
+                    </tr>
+                                    <tr id="section-13">
+                        <td class="docs">
+                            <div class="pilwrap">
+                                <a class="pilcrow" href="#section-13">&#182;</a>
+                            </div>
+                            <p>Returns a named parameter, as parsed from the URL.
+ If no <code>$key</code> is passed, it returns a hash of all parameters.</p>
+                        </td>
+                        <td class="code"><div class="highlight"><pre>  <span class="k">function</span> <span class="nf">param</span><span class="p">(</span><span class="nv">$key</span> <span class="o">=</span> <span class="k">null</span><span class="p">,</span> <span class="nv">$default</span> <span class="o">=</span> <span class="k">null</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nv">$key</span> <span class="o">===</span> <span class="k">null</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">params</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="nb">isset</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">params</span><span class="p">[</span><span class="nv">$key</span><span class="p">])</span> <span class="o">?</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">params</span><span class="p">[</span><span class="nv">$key</span><span class="p">]</span> <span class="o">:</span> <span class="nv">$default</span><span class="p">;</span>
+  <span class="p">}</span></pre></div></td>
+                    </tr>
+                                    <tr id="section-14">
+                        <td class="docs">
+                            <div class="pilwrap">
+                                <a class="pilcrow" href="#section-14">&#182;</a>
+                            </div>
+                            <p>Returns a query string parameter (GET parameter).
+ If no <code>$key</code> is passed, it returns a hash of all parameters.</p>
+                        </td>
+                        <td class="code"><div class="highlight"><pre>  <span class="k">function</span> <span class="nf">query</span><span class="p">(</span><span class="nv">$key</span> <span class="o">=</span> <span class="k">null</span><span class="p">,</span> <span class="nv">$default</span> <span class="o">=</span> <span class="k">null</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nv">$key</span> <span class="o">===</span> <span class="k">null</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">return</span> <span class="nv">$_GET</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="nb">isset</span><span class="p">(</span><span class="nv">$_GET</span><span class="p">[</span><span class="nv">$key</span><span class="p">])</span> <span class="o">?</span> <span class="nv">$_GET</span><span class="p">[</span><span class="nv">$key</span><span class="p">]</span> <span class="o">:</span> <span class="nv">$default</span><span class="p">;</span>
+  <span class="p">}</span></pre></div></td>
+                    </tr>
+                                    <tr id="section-15">
+                        <td class="docs">
+                            <div class="pilwrap">
+                                <a class="pilcrow" href="#section-15">&#182;</a>
+                            </div>
+                            <p>Returns a form-encoded body-parameter (POST parameter).
+ If no <code>$key</code> is passed, it returns a hash of all parameters.</p>
+                        </td>
+                        <td class="code"><div class="highlight"><pre>  <span class="k">function</span> <span class="nf">body</span><span class="p">(</span><span class="nv">$key</span> <span class="o">=</span> <span class="k">null</span><span class="p">,</span> <span class="nv">$default</span> <span class="o">=</span> <span class="k">null</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nv">$key</span> <span class="o">===</span> <span class="k">null</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">body</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="nb">isset</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">body</span><span class="p">[</span><span class="nv">$key</span><span class="p">])</span> <span class="o">?</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">body</span><span class="p">[</span><span class="nv">$key</span><span class="p">]</span> <span class="o">:</span> <span class="nv">$default</span><span class="p">;</span>
+  <span class="p">}</span></pre></div></td>
+                    </tr>
+                                    <tr id="section-16">
+                        <td class="docs">
+                            <div class="pilwrap">
+                                <a class="pilcrow" href="#section-16">&#182;</a>
+                            </div>
+                            <p>Returns a request header.
+ If no <code>$key</code> is passed, it returns a hash of all headers.</p>
+                        </td>
+                        <td class="code"><div class="highlight"><pre>  <span class="k">function</span> <span class="nf">header</span><span class="p">(</span><span class="nv">$key</span> <span class="o">=</span> <span class="k">null</span><span class="p">,</span> <span class="nv">$default</span> <span class="o">=</span> <span class="k">null</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nv">$key</span> <span class="o">===</span> <span class="k">null</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">headers</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="nv">$key</span> <span class="o">=</span> <span class="nb">strtolower</span><span class="p">(</span><span class="nv">$key</span><span class="p">);</span>
+    <span class="k">return</span> <span class="nb">isset</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">headers</span><span class="p">[</span><span class="nv">$key</span><span class="p">])</span> <span class="o">?</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">headers</span><span class="p">[</span><span class="nv">$key</span><span class="p">]</span> <span class="o">:</span> <span class="nv">$default</span><span class="p">;</span>
+  <span class="p">}</span></pre></div></td>
+                    </tr>
+                                    <tr id="section-17">
+                        <td class="docs">
+                            <div class="pilwrap">
+                                <a class="pilcrow" href="#section-17">&#182;</a>
+                            </div>
+                            <p>Returns a file, from a multipart encoded request.
+ If no <code>$key</code> is passed, it returns a hash of all files.</p>
+                        </td>
+                        <td class="code"><div class="highlight"><pre>  <span class="k">function</span> <span class="nf">file</span><span class="p">(</span><span class="nv">$key</span> <span class="o">=</span> <span class="k">null</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nv">$key</span> <span class="o">===</span> <span class="k">null</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">files</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="nb">isset</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">files</span><span class="p">[</span><span class="nv">$key</span><span class="p">])</span> <span class="o">?</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">files</span><span class="p">[</span><span class="nv">$key</span><span class="p">]</span> <span class="o">:</span> <span class="nv">$default</span><span class="p">;</span>
+  <span class="p">}</span></pre></div></td>
+                    </tr>
+                                    <tr id="section-18">
+                        <td class="docs">
+                            <div class="pilwrap">
+                                <a class="pilcrow" href="#section-18">&#182;</a>
+                            </div>
+                            <p>Returns the <em>path</em> element of the requested uri.</p>
+                        </td>
+                        <td class="code"><div class="highlight"><pre>  <span class="k">function</span> <span class="nf">path</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nb">rtrim</span><span class="p">(</span><span class="nb">preg_replace</span><span class="p">(</span><span class="s1">&#39;~[?].*$~&#39;</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">uri</span><span class="p">()),</span> <span class="s1">&#39;/&#39;</span><span class="p">);</span>
+  <span class="p">}</span></pre></div></td>
+                    </tr>
+                                    <tr id="section-19">
+                        <td class="docs">
+                            <div class="pilwrap">
+                                <a class="pilcrow" href="#section-19">&#182;</a>
+                            </div>
+                            <p>Returns the full requested uri.</p>
+                        </td>
+                        <td class="code"><div class="highlight"><pre>  <span class="k">function</span> <span class="nf">uri</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nv">$_SERVER</span><span class="p">[</span><span class="s1">&#39;REQUEST_URI&#39;</span><span class="p">];</span>
+  <span class="p">}</span></pre></div></td>
+                    </tr>
+                                    <tr id="section-20">
+                        <td class="docs">
+                            <div class="pilwrap">
+                                <a class="pilcrow" href="#section-20">&#182;</a>
+                            </div>
+                            <p>Returns the <em>subview</em> part of the request.</p>
+                        </td>
+                        <td class="code"><div class="highlight"><pre>  <span class="k">function</span> <span class="nf">subview</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nb">preg_match</span><span class="p">(</span><span class="s1">&#39;~[?]([^=&amp;]+)(&amp;|$)~&#39;</span><span class="p">,</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">uri</span><span class="p">(),</span> <span class="nv">$reg</span><span class="p">))</span> <span class="p">{</span>
+      <span class="k">return</span> <span class="nv">$reg</span><span class="p">[</span><span class="m">1</span><span class="p">];</span>
+    <span class="p">}</span>
+  <span class="p">}</span></pre></div></td>
+                    </tr>
+                                    <tr id="section-21">
+                        <td class="docs">
+                            <div class="pilwrap">
+                                <a class="pilcrow" href="#section-21">&#182;</a>
+                            </div>
+                            <p>Returns the hostname part of the requested uri.</p>
+                        </td>
+                        <td class="code"><div class="highlight"><pre>  <span class="k">function</span> <span class="nf">serverName</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nv">$_SERVER</span><span class="p">[</span><span class="s1">&#39;SERVER_NAME&#39;</span><span class="p">];</span>
+  <span class="p">}</span></pre></div></td>
+                    </tr>
+                                    <tr id="section-22">
+                        <td class="docs">
+                            <div class="pilwrap">
+                                <a class="pilcrow" href="#section-22">&#182;</a>
+                            </div>
+                            <p>Returns the HTTP method.</p>
+                        </td>
+                        <td class="code"><div class="highlight"><pre>  <span class="k">function</span> <span class="nf">method</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nv">$real_http_method</span> <span class="o">=</span> <span class="nb">strtolower</span><span class="p">(</span><span class="nv">$_SERVER</span><span class="p">[</span><span class="s1">&#39;REQUEST_METHOD&#39;</span><span class="p">]);</span>
+    <span class="k">return</span> <span class="nv">$real_http_method</span> <span class="o">===</span> <span class="s1">&#39;post&#39;</span> <span class="o">?</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">body</span><span class="p">(</span><span class="s1">&#39;_method&#39;</span><span class="p">,</span> <span class="s1">&#39;post&#39;</span><span class="p">)</span> <span class="o">:</span> <span class="nv">$real_http_method</span><span class="p">;</span>
+  <span class="p">}</span></pre></div></td>
+                    </tr>
+                                    <tr id="section-23">
+                        <td class="docs">
+                            <div class="pilwrap">
+                                <a class="pilcrow" href="#section-23">&#182;</a>
+                            </div>
+                            <p>Returns true if the request method is GET.</p>
+                        </td>
+                        <td class="code"><div class="highlight"><pre>  <span class="k">function</span> <span class="nf">isGet</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">method</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;get&#39;</span><span class="p">;</span>
+  <span class="p">}</span></pre></div></td>
+                    </tr>
+                                    <tr id="section-24">
+                        <td class="docs">
+                            <div class="pilwrap">
+                                <a class="pilcrow" href="#section-24">&#182;</a>
+                            </div>
+                            <p>Returns true if the request method is POST.</p>
+                        </td>
+                        <td class="code"><div class="highlight"><pre>  <span class="k">function</span> <span class="nf">isPost</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">method</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;post&#39;</span><span class="p">;</span>
+  <span class="p">}</span></pre></div></td>
+                    </tr>
+                                    <tr id="section-25">
+                        <td class="docs">
+                            <div class="pilwrap">
+                                <a class="pilcrow" href="#section-25">&#182;</a>
+                            </div>
+                            <p>Returns true if the request method is PUT.</p>
+                        </td>
+                        <td class="code"><div class="highlight"><pre>  <span class="k">function</span> <span class="nf">isPut</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">method</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;put&#39;</span><span class="p">;</span>
+  <span class="p">}</span></pre></div></td>
+                    </tr>
+                                    <tr id="section-26">
+                        <td class="docs">
+                            <div class="pilwrap">
+                                <a class="pilcrow" href="#section-26">&#182;</a>
+                            </div>
+                            <p>Returns true if the request method is DELETE.</p>
+                        </td>
+                        <td class="code"><div class="highlight"><pre>  <span class="k">function</span> <span class="nf">isDelete</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">method</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;delete&#39;</span><span class="p">;</span>
+  <span class="p">}</span></pre></div></td>
+                    </tr>
+                                    <tr id="section-27">
+                        <td class="docs">
+                            <div class="pilwrap">
+                                <a class="pilcrow" href="#section-27">&#182;</a>
+                            </div>
+                            <p>Returns true if the request is made from XmlHttpRequest (Javascript aka. Ajax).</p>
+                        </td>
+                        <td class="code"><div class="highlight"><pre>  <span class="k">function</span> <span class="nf">isXhr</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">throw</span> <span class="k">new</span> <span class="nx">Exception</span><span class="p">(</span><span class="s2">&quot;TODO&quot;</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span></pre></div></td>
+                    </tr>
+                                    <tr id="section-28">
+                        <td class="docs">
+                            <div class="pilwrap">
+                                <a class="pilcrow" href="#section-28">&#182;</a>
+                            </div>
+                            <p>Wraps access to the response document.</p>
+                        </td>
+                        <td class="code"><div class="highlight"><pre><span class="k">class</span> <span class="nc">http_ResponseDocument</span> <span class="p">{</span>
+  <span class="k">protected</span> <span class="nv">$render_layout</span> <span class="o">=</span> <span class="s1">&#39;default&#39;</span><span class="p">;</span>
+  <span class="k">protected</span> <span class="nv">$title</span> <span class="o">=</span> <span class="s1">&#39;No title&#39;</span><span class="p">;</span>
+  <span class="k">protected</span> <span class="nv">$scripts</span> <span class="o">=</span> <span class="k">array</span><span class="p">();</span>
+  <span class="k">protected</span> <span class="nv">$stylesheets</span> <span class="o">=</span> <span class="k">array</span><span class="p">();</span>
+  <span class="k">protected</span> <span class="nv">$onload</span> <span class="o">=</span> <span class="k">array</span><span class="p">();</span></pre></div></td>
+                    </tr>
+                                    <tr id="section-29">
+                        <td class="docs">
+                            <div class="pilwrap">
+                                <a class="pilcrow" href="#section-29">&#182;</a>
+                            </div>
+                            <p>Sets the document layout. Set to NULL to not have a layout rendered.</p>
+                        </td>
+                        <td class="code"><div class="highlight"><pre>  <span class="k">function</span> <span class="nf">setLayout</span><span class="p">(</span><span class="nv">$file_name</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">render_layout</span> <span class="o">=</span> <span class="nv">$file_name</span><span class="p">;</span>
+  <span class="p">}</span></pre></div></td>
+                    </tr>
+                                    <tr id="section-30">
+                        <td class="docs">
+                            <div class="pilwrap">
+                                <a class="pilcrow" href="#section-30">&#182;</a>
+                            </div>
+                            <p>Returns the current document layout file.</p>
+                        </td>
+                        <td class="code"><div class="highlight"><pre>  <span class="k">function</span> <span class="nf">layout</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">render_layout</span><span class="p">;</span>
+  <span class="p">}</span></pre></div></td>
+                    </tr>
+                                    <tr id="section-31">
+                        <td class="docs">
+                            <div class="pilwrap">
+                                <a class="pilcrow" href="#section-31">&#182;</a>
+                            </div>
+                            <p>Sets the document title.</p>
+                        </td>
+                        <td class="code"><div class="highlight"><pre>  <span class="k">function</span> <span class="nf">setTitle</span><span class="p">(</span><span class="nv">$title</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">title</span> <span class="o">=</span> <span class="nv">$title</span><span class="p">;</span>
+  <span class="p">}</span></pre></div></td>
+                    </tr>
+                                    <tr id="section-32">
+                        <td class="docs">
+                            <div class="pilwrap">
+                                <a class="pilcrow" href="#section-32">&#182;</a>
+                            </div>
+                            <p>Adds an external javascript file to the head of the document.</p>
+                        </td>
+                        <td class="code"><div class="highlight"><pre>  <span class="k">function</span> <span class="nf">addScript</span><span class="p">(</span><span class="nv">$script</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">scripts</span><span class="p">[]</span> <span class="o">=</span> <span class="nv">$script</span><span class="p">;</span>
+  <span class="p">}</span></pre></div></td>
+                    </tr>
+                                    <tr id="section-33">
+                        <td class="docs">
+                            <div class="pilwrap">
+                                <a class="pilcrow" href="#section-33">&#182;</a>
+                            </div>
+                            <p>Adds an external style sheet file to the head of the document.</p>
+                        </td>
+                        <td class="code"><div class="highlight"><pre>  <span class="k">function</span> <span class="nf">addStylesheet</span><span class="p">(</span><span class="nv">$stylesheet</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">stylesheets</span><span class="p">[]</span> <span class="o">=</span> <span class="nv">$stylesheet</span><span class="p">;</span>
+  <span class="p">}</span></pre></div></td>
+                    </tr>
+                                    <tr id="section-34">
+                        <td class="docs">
+                            <div class="pilwrap">
+                                <a class="pilcrow" href="#section-34">&#182;</a>
+                            </div>
+                            <p>Adds a piece of inline javascript code to execute on page load.</p>
+                        </td>
+                        <td class="code"><div class="highlight"><pre>  <span class="k">function</span> <span class="nf">addOnload</span><span class="p">(</span><span class="nv">$onload</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">onload</span><span class="p">[]</span> <span class="o">=</span> <span class="nv">$onload</span><span class="p">;</span>
+  <span class="p">}</span></pre></div></td>
+                    </tr>
+                                    <tr id="section-35">
+                        <td class="docs">
+                            <div class="pilwrap">
+                                <a class="pilcrow" href="#section-35">&#182;</a>
+                            </div>
+                            <p>Returns the variables set on the document.</p>
+                        </td>
+                        <td class="code"><div class="highlight"><pre>  <span class="k">function</span> <span class="nf">exportVariables</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nb">get_object_vars</span><span class="p">(</span><span class="nv">$this</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">class</span> <span class="nc">http_Response</span> <span class="p">{</span>
+  <span class="k">protected</span> <span class="nv">$status</span> <span class="o">=</span> <span class="m">200</span><span class="p">;</span>
+  <span class="k">protected</span> <span class="nv">$headers</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span>
+    <span class="k">array</span><span class="p">(</span><span class="s1">&#39;Content-Type&#39;</span><span class="p">,</span> <span class="s1">&#39;text/html; charset=UTF-8&#39;</span><span class="p">));</span></pre></div></td>
+                    </tr>
+                                    <tr id="section-36">
+                        <td class="docs">
+                            <div class="pilwrap">
+                                <a class="pilcrow" href="#section-36">&#182;</a>
+                            </div>
+                            <p>Sets the response ETag.
+ If the request specifies an ETag, then the request will end witha "Not Modified" response.
+ This is an efficient way to utilise http level caching in your application.</p>
+
+<p>Make sure that the ETag is a unique hash for the contents of your response.</p>
+                        </td>
+                        <td class="code"><div class="highlight"><pre>  <span class="k">function</span> <span class="nf">cacheByEtag</span><span class="p">(</span><span class="nv">$etag</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nv">$etag</span> <span class="o">===</span> <span class="nx">request</span><span class="p">()</span><span class="o">-&gt;</span><span class="na">header</span><span class="p">(</span><span class="s1">&#39;If-Match&#39;</span><span class="p">))</span> <span class="p">{</span>
+      <span class="k">throw</span> <span class="k">new</span> <span class="nx">http_NotModified</span><span class="p">(</span><span class="k">array</span><span class="p">(</span><span class="s1">&#39;ETag: &#39;</span> <span class="o">.</span> <span class="nv">$etag</span><span class="p">));</span>
+    <span class="p">}</span>
+    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">replaceHeader</span><span class="p">(</span><span class="s1">&#39;ETag&#39;</span><span class="p">,</span> <span class="nv">$etag</span><span class="p">);</span>
+  <span class="p">}</span></pre></div></td>
+                    </tr>
+                                    <tr id="section-37">
+                        <td class="docs">
+                            <div class="pilwrap">
+                                <a class="pilcrow" href="#section-37">&#182;</a>
+                            </div>
+                            <p>Redirects browser to another location, with a "303 See Other" status.
+ This should be used after POST to redirect to a valid GET url.</p>
+                        </td>
+                        <td class="code"><div class="highlight"><pre>  <span class="k">function</span> <span class="nf">seeOther</span><span class="p">(</span><span class="nv">$location</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">throw</span> <span class="k">new</span> <span class="nx">http_SeeOther</span><span class="p">(</span><span class="k">array</span><span class="p">(</span><span class="s1">&#39;Location: &#39;</span> <span class="o">.</span> <span class="nv">$location</span><span class="p">));</span>
+  <span class="p">}</span></pre></div></td>
+                    </tr>
+                                    <tr id="section-38">
+                        <td class="docs">
+                            <div class="pilwrap">
+                                <a class="pilcrow" href="#section-38">&#182;</a>
+                            </div>
+                            <p>Sets the http status code of the response.</p>
+                        </td>
+                        <td class="code"><div class="highlight"><pre>  <span class="k">function</span> <span class="nf">setStatus</span><span class="p">(</span><span class="nv">$code</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">status</span> <span class="o">=</span> <span class="nv">$code</span><span class="p">;</span>
+  <span class="p">}</span></pre></div></td>
+                    </tr>
+                                    <tr id="section-39">
+                        <td class="docs">
+                            <div class="pilwrap">
+                                <a class="pilcrow" href="#section-39">&#182;</a>
+                            </div>
+                            <p>Returns the HTTP status code.</p>
+                        </td>
+                        <td class="code"><div class="highlight"><pre>  <span class="k">function</span> <span class="nf">status</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">status</span><span class="p">;</span>
+  <span class="p">}</span></pre></div></td>
+                    </tr>
+                                    <tr id="section-40">
+                        <td class="docs">
+                            <div class="pilwrap">
+                                <a class="pilcrow" href="#section-40">&#182;</a>
+                            </div>
+                            <p>Replaces a http response header.</p>
+
+<p>Use instead of <code>header</code></p>
+                        </td>
+                        <td class="code"><div class="highlight"><pre>  <span class="k">function</span> <span class="nf">replaceHeader</span><span class="p">(</span><span class="nv">$key</span><span class="p">,</span> <span class="nv">$value</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nv">$headers</span> <span class="o">=</span> <span class="k">array</span><span class="p">();</span>
+    <span class="k">foreach</span> <span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">headers</span> <span class="k">as</span> <span class="nv">$h</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">if</span> <span class="p">(</span><span class="nb">strtolower</span><span class="p">(</span><span class="nv">$h</span><span class="p">[</span><span class="m">0</span><span class="p">])</span> <span class="o">!=</span> <span class="nb">strtolower</span><span class="p">(</span><span class="nv">$key</span><span class="p">))</span> <span class="p">{</span>
+        <span class="nv">$headers</span><span class="p">[]</span> <span class="o">=</span> <span class="nv">$h</span><span class="p">;</span>
+      <span class="p">}</span>
+    <span class="p">}</span>
+    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">headers</span> <span class="o">=</span> <span class="nv">$headers</span><span class="p">;</span>
+    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">headers</span><span class="p">[]</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span><span class="nv">$key</span><span class="p">,</span> <span class="nv">$value</span><span class="p">);</span>
+  <span class="p">}</span></pre></div></td>
+                    </tr>
+                                    <tr id="section-41">
+                        <td class="docs">
+                            <div class="pilwrap">
+                                <a class="pilcrow" href="#section-41">&#182;</a>
+                            </div>
+                            <p>Adds a http response header.</p>
+
+<p>Use instead of <code>header</code></p>
+                        </td>
+                        <td class="code"><div class="highlight"><pre>  <span class="k">function</span> <span class="nf">addHeader</span><span class="p">(</span><span class="nv">$key</span><span class="p">,</span> <span class="nv">$value</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">headers</span><span class="p">[]</span> <span class="o">=</span> <span class="k">array</span><span class="p">(</span><span class="nv">$key</span><span class="p">,</span> <span class="nv">$value</span><span class="p">);</span>
+  <span class="p">}</span></pre></div></td>
+                    </tr>
+                                    <tr id="section-42">
+                        <td class="docs">
+                            <div class="pilwrap">
+                                <a class="pilcrow" href="#section-42">&#182;</a>
+                            </div>
+                            <p>Returns a hash of all response headers to be sent.</p>
+                        </td>
+                        <td class="code"><div class="highlight"><pre>  <span class="k">function</span> <span class="nf">headers</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">headers</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">class</span> <span class="nc">http_CookieAccess</span> <span class="p">{</span></pre></div></td>
+                    </tr>
+                                    <tr id="section-43">
+                        <td class="docs">
+                            <div class="pilwrap">
+                                <a class="pilcrow" href="#section-43">&#182;</a>
+                            </div>
+                            <p>@var string </p>
+                        </td>
+                        <td class="code"><div class="highlight"><pre>  <span class="k">protected</span> <span class="nv">$domain</span><span class="p">;</span></pre></div></td>
+                    </tr>
+                                    <tr id="section-44">
+                        <td class="docs">
+                            <div class="pilwrap">
+                                <a class="pilcrow" href="#section-44">&#182;</a>
+                            </div>
+                            <p>@var string </p>
+                        </td>
+                        <td class="code"><div class="highlight"><pre>  <span class="k">protected</span> <span class="nv">$raw</span><span class="p">;</span></pre></div></td>
+                    </tr>
+                                    <tr id="section-45">
+                        <td class="docs">
+                            <div class="pilwrap">
+                                <a class="pilcrow" href="#section-45">&#182;</a>
+                            </div>
+                            <p><em class='docparam'>@param</em> string
+<em class='docparam'>@param</em> array
+<em class='docparam'>@return</em> null</p>
+                        </td>
+                        <td class="code"><div class="highlight"><pre>  <span class="k">function</span> <span class="nf">__construct</span><span class="p">(</span><span class="nv">$domain</span><span class="p">,</span> <span class="nv">$raw</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">domain</span> <span class="o">=</span> <span class="nv">$domain</span> <span class="o">===</span> <span class="s1">&#39;localhost&#39;</span> <span class="o">?</span> <span class="k">false</span> <span class="o">:</span> <span class="nv">$domain</span><span class="p">;</span>
+    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">raw</span> <span class="o">=</span> <span class="nv">$raw</span><span class="p">;</span>
+  <span class="p">}</span></pre></div></td>
+                    </tr>
+                                    <tr id="section-46">
+                        <td class="docs">
+                            <div class="pilwrap">
+                                <a class="pilcrow" href="#section-46">&#182;</a>
+                            </div>
+                            <p>Returns true if a cookie has been set with the given $key</p>
+                        </td>
+                        <td class="code"><div class="highlight"><pre>  <span class="k">function</span> <span class="nf">has</span><span class="p">(</span><span class="nv">$key</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nb">isset</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">raw</span><span class="p">[</span><span class="nv">$key</span><span class="p">]);</span>
+  <span class="p">}</span></pre></div></td>
+                    </tr>
+                                    <tr id="section-47">
+                        <td class="docs">
+                            <div class="pilwrap">
+                                <a class="pilcrow" href="#section-47">&#182;</a>
+                            </div>
+                            <p>Returns a cookie, or if no $key is passed it returns a hash of all cookies.</p>
+                        </td>
+                        <td class="code"><div class="highlight"><pre>  <span class="k">function</span> <span class="nf">get</span><span class="p">(</span><span class="nv">$key</span> <span class="o">=</span> <span class="k">null</span><span class="p">,</span> <span class="nv">$default</span> <span class="o">=</span> <span class="k">null</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nv">$key</span> <span class="o">===</span> <span class="k">null</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">raw</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="nb">isset</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">raw</span><span class="p">[</span><span class="nv">$key</span><span class="p">])</span> <span class="o">?</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">raw</span><span class="p">[</span><span class="nv">$key</span><span class="p">]</span> <span class="o">:</span> <span class="nv">$default</span><span class="p">;</span>
+  <span class="p">}</span></pre></div></td>
+                    </tr>
+                                    <tr id="section-48">
+                        <td class="docs">
+                            <div class="pilwrap">
+                                <a class="pilcrow" href="#section-48">&#182;</a>
+                            </div>
+                            <p>Sets a cookie</p>
+                        </td>
+                        <td class="code"><div class="highlight"><pre>  <span class="k">function</span> <span class="nf">set</span><span class="p">(</span><span class="nv">$key</span><span class="p">,</span> <span class="nv">$value</span><span class="p">,</span> <span class="nv">$expire</span> <span class="o">=</span> <span class="m">0</span><span class="p">,</span> <span class="nv">$secure</span> <span class="o">=</span> <span class="k">false</span><span class="p">,</span> <span class="nv">$httponly</span> <span class="o">=</span> <span class="k">false</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nv">$value</span> <span class="o">===</span> <span class="k">null</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nb">setcookie</span><span class="p">(</span><span class="nv">$key</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="nb">time</span><span class="p">()</span> <span class="o">-</span> <span class="m">42000</span><span class="p">,</span> <span class="s1">&#39;/&#39;</span><span class="p">);</span>
+      <span class="nb">unset</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">raw</span><span class="p">[</span><span class="nv">$key</span><span class="p">]);</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+      <span class="nb">setcookie</span><span class="p">(</span><span class="nv">$key</span><span class="p">,</span> <span class="nv">$value</span><span class="p">,</span> <span class="nv">$expire</span><span class="p">,</span> <span class="s1">&#39;/&#39;</span><span class="p">,</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">domain</span><span class="p">,</span> <span class="nv">$secure</span><span class="p">,</span> <span class="nv">$httponly</span><span class="p">);</span>
+      <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">raw</span><span class="p">[</span><span class="nv">$key</span><span class="p">]</span> <span class="o">=</span> <span class="nv">$value</span><span class="p">;</span>
+    <span class="p">}</span>
+  <span class="p">}</span></pre></div></td>
+                    </tr>
+                                    <tr id="section-49">
+                        <td class="docs">
+                            <div class="pilwrap">
+                                <a class="pilcrow" href="#section-49">&#182;</a>
+                            </div>
+                            <p>Returns a hash of all cookies.</p>
+                        </td>
+                        <td class="code"><div class="highlight"><pre>  <span class="k">function</span> <span class="nf">all</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">raw</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">class</span> <span class="nc">http_SessionAccess</span> <span class="p">{</span></pre></div></td>
+                    </tr>
+                                    <tr id="section-50">
+                        <td class="docs">
+                            <div class="pilwrap">
+                                <a class="pilcrow" href="#section-50">&#182;</a>
+                            </div>
+                            <p>@var CookieAccess </p>
+                        </td>
+                        <td class="code"><div class="highlight"><pre>  <span class="k">protected</span> <span class="nv">$cookie_access</span><span class="p">;</span></pre></div></td>
+                    </tr>
+                                    <tr id="section-51">
+                        <td class="docs">
+                            <div class="pilwrap">
+                                <a class="pilcrow" href="#section-51">&#182;</a>
+                            </div>
+                            <p><em class='docparam'>@param</em> http_CookieAccess
+<em class='docparam'>@return</em> null</p>
+                        </td>
+                        <td class="code"><div class="highlight"><pre>  <span class="k">function</span> <span class="nf">__construct</span><span class="p">(</span><span class="nv">$cookie_access</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">cookie_access</span> <span class="o">=</span> <span class="nv">$cookie_access</span><span class="p">;</span>
+  <span class="p">}</span>
+  <span class="k">protected</span> <span class="k">function</span> <span class="nf">autoStart</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nb">session_id</span><span class="p">())</span> <span class="p">{</span>
+      <span class="nb">session_start</span><span class="p">();</span>
+    <span class="p">}</span>
+  <span class="p">}</span></pre></div></td>
+                    </tr>
+                                    <tr id="section-52">
+                        <td class="docs">
+                            <div class="pilwrap">
+                                <a class="pilcrow" href="#section-52">&#182;</a>
+                            </div>
+                            <p>Returns true if a cookie has been set with the given $key.</p>
+                        </td>
+                        <td class="code"><div class="highlight"><pre>  <span class="k">function</span> <span class="nf">has</span><span class="p">(</span><span class="nv">$key</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">autoStart</span><span class="p">();</span>
+    <span class="k">return</span> <span class="nb">isset</span><span class="p">(</span><span class="nv">$_SESSION</span><span class="p">[</span><span class="nv">$key</span><span class="p">]);</span>
+  <span class="p">}</span></pre></div></td>
+                    </tr>
+                                    <tr id="section-53">
+                        <td class="docs">
+                            <div class="pilwrap">
+                                <a class="pilcrow" href="#section-53">&#182;</a>
+                            </div>
+                            <p>Returns a session value, or if no $key is passed it returns a hash of all session values.</p>
+                        </td>
+                        <td class="code"><div class="highlight"><pre>  <span class="k">function</span> <span class="nf">get</span><span class="p">(</span><span class="nv">$key</span><span class="p">,</span> <span class="nv">$default</span> <span class="o">=</span> <span class="k">null</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">autoStart</span><span class="p">();</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nv">$key</span> <span class="o">===</span> <span class="k">null</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">return</span> <span class="nv">$_SESSION</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">return</span> <span class="nb">isset</span><span class="p">(</span><span class="nv">$_SESSION</span><span class="p">[</span><span class="nv">$key</span><span class="p">])</span> <span class="o">?</span> <span class="nv">$_SESSION</span><span class="p">[</span><span class="nv">$key</span><span class="p">]</span> <span class="o">:</span> <span class="nv">$default</span><span class="p">;</span>
+  <span class="p">}</span></pre></div></td>
+                    </tr>
+                                    <tr id="section-54">
+                        <td class="docs">
+                            <div class="pilwrap">
+                                <a class="pilcrow" href="#section-54">&#182;</a>
+                            </div>
+                            <p>Sets a session value</p>
+                        </td>
+                        <td class="code"><div class="highlight"><pre>  <span class="k">function</span> <span class="nf">set</span><span class="p">(</span><span class="nv">$key</span><span class="p">,</span> <span class="nv">$value</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">autoStart</span><span class="p">();</span>
+    <span class="nv">$_SESSION</span><span class="p">[</span><span class="nv">$key</span><span class="p">]</span> <span class="o">=</span> <span class="nv">$value</span><span class="p">;</span>
+    <span class="k">return</span> <span class="nv">$value</span><span class="p">;</span>
+  <span class="p">}</span></pre></div></td>
+                    </tr>
+                                    <tr id="section-55">
+                        <td class="docs">
+                            <div class="pilwrap">
+                                <a class="pilcrow" href="#section-55">&#182;</a>
+                            </div>
+                            <p>Closes a session, if it has been opened.</p>
+                        </td>
+                        <td class="code"><div class="highlight"><pre>  <span class="k">function</span> <span class="nf">close</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nb">session_id</span><span class="p">()</span> <span class="o">&amp;&amp;</span> <span class="nb">session_write_close</span><span class="p">();</span>
+  <span class="p">}</span></pre></div></td>
+                    </tr>
+                                    <tr id="section-56">
+                        <td class="docs">
+                            <div class="pilwrap">
+                                <a class="pilcrow" href="#section-56">&#182;</a>
+                            </div>
+                            <p>Destroys the current session</p>
+                        </td>
+                        <td class="code"><div class="highlight"><pre>  <span class="k">function</span> <span class="nf">destroy</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">autoStart</span><span class="p">();</span>
+    <span class="nv">$_SESSION</span> <span class="o">=</span> <span class="k">array</span><span class="p">();</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">cookie_access</span><span class="o">-&gt;</span><span class="na">has</span><span class="p">(</span><span class="nb">session_name</span><span class="p">()))</span> <span class="p">{</span>
+      <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">cookie_access</span><span class="o">-&gt;</span><span class="na">set</span><span class="p">(</span><span class="nb">session_name</span><span class="p">(),</span> <span class="k">null</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="nb">session_destroy</span><span class="p">();</span>
+    <span class="nv">$filename</span> <span class="o">=</span> <span class="nb">realpath</span><span class="p">(</span><span class="nb">session_save_path</span><span class="p">())</span> <span class="o">.</span> <span class="nx">DIRECTORY_SEPARATOR</span> <span class="o">.</span> <span class="nb">session_id</span><span class="p">();</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nb">is_file</span><span class="p">(</span><span class="nv">$filename</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="nb">is_writable</span><span class="p">(</span><span class="nv">$filename</span><span class="p">))</span> <span class="p">{</span>
+      <span class="nb">unlink</span><span class="p">(</span><span class="nv">$filename</span><span class="p">);</span>
+    <span class="p">}</span>
+  <span class="p">}</span></pre></div></td>
+                    </tr>
+                                    <tr id="section-57">
+                        <td class="docs">
+                            <div class="pilwrap">
+                                <a class="pilcrow" href="#section-57">&#182;</a>
+                            </div>
+                            <p>Returns the session id</p>
+                        </td>
+                        <td class="code"><div class="highlight"><pre>  <span class="k">function</span> <span class="nf">sessionId</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">autoStart</span><span class="p">();</span>
+    <span class="k">return</span> <span class="nb">session_id</span><span class="p">();</span>
+  <span class="p">}</span></pre></div></td>
+                    </tr>
+                                    <tr id="section-58">
+                        <td class="docs">
+                            <div class="pilwrap">
+                                <a class="pilcrow" href="#section-58">&#182;</a>
+                            </div>
+                            <p>Regenerates the session id.</p>
+                        </td>
+                        <td class="code"><div class="highlight"><pre>  <span class="k">function</span> <span class="nf">regenerateId</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nb">session_regenerate_id</span><span class="p">();</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">class</span> <span class="nc">http_UploadedFileAccess</span> <span class="p">{</span>
+  <span class="k">function</span> <span class="nf">copy</span><span class="p">(</span><span class="nv">$tmp_name</span><span class="p">,</span> <span class="nv">$path_destination</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">ensureDirectory</span><span class="p">(</span><span class="nb">dirname</span><span class="p">(</span><span class="nv">$path_destination</span><span class="p">));</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nb">is_uploaded_file</span><span class="p">(</span><span class="nv">$tmp_name</span><span class="p">))</span> <span class="p">{</span>
+      <span class="nb">move_uploaded_file</span><span class="p">(</span><span class="nv">$tmp_name</span><span class="p">,</span> <span class="nv">$path_destination</span><span class="p">);</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+      <span class="k">throw</span> <span class="k">new</span> <span class="nx">Exception</span><span class="p">(</span><span class="s2">&quot;Fileinfo is not a valid uploaded file&quot;</span><span class="p">);</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+  <span class="k">protected</span> <span class="k">function</span> <span class="nf">mkdir</span><span class="p">(</span><span class="nv">$path</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nb">mkdir</span><span class="p">(</span><span class="nv">$path</span><span class="p">);</span>
+  <span class="p">}</span>
+  <span class="k">protected</span> <span class="k">function</span> <span class="nf">ensureDirectory</span><span class="p">(</span><span class="nv">$dir</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nb">is_dir</span><span class="p">(</span><span class="nv">$dir</span><span class="p">))</span> <span class="p">{</span>
+      <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">ensureDirectory</span><span class="p">(</span><span class="nb">dirname</span><span class="p">(</span><span class="nv">$dir</span><span class="p">));</span>
+      <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">mkdir</span><span class="p">(</span><span class="nv">$dir</span><span class="p">);</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+<span class="p">}</span></pre></div></td>
+                    </tr>
+                                    <tr id="section-59">
+                        <td class="docs">
+                            <div class="pilwrap">
+                                <a class="pilcrow" href="#section-59">&#182;</a>
+                            </div>
+                            <p>Wrapper around an uploaded file</p>
+                        </td>
+                        <td class="code"><div class="highlight"><pre><span class="k">class</span> <span class="nc">http_UploadedFile</span> <span class="p">{</span>
+  <span class="k">protected</span> <span class="nv">$key</span><span class="p">;</span>
+  <span class="k">protected</span> <span class="nv">$name</span><span class="p">;</span>
+  <span class="k">protected</span> <span class="nv">$tmp_name</span><span class="p">;</span>
+  <span class="k">protected</span> <span class="nv">$size</span><span class="p">;</span>
+  <span class="k">protected</span> <span class="nv">$type</span><span class="p">;</span>
+  <span class="k">protected</span> <span class="nv">$file_access</span><span class="p">;</span>
+  <span class="k">function</span> <span class="nf">__construct</span><span class="p">(</span><span class="nv">$file_data</span><span class="p">,</span> <span class="nv">$key</span><span class="p">,</span> <span class="nv">$file_access</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">key</span> <span class="o">=</span> <span class="nv">$key</span><span class="p">;</span>
+    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">name</span> <span class="o">=</span> <span class="nv">$file_data</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">];</span>
+    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">tmp_name</span> <span class="o">=</span> <span class="nv">$file_data</span><span class="p">[</span><span class="s1">&#39;tmp_name&#39;</span><span class="p">];</span>
+    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">size</span> <span class="o">=</span> <span class="nv">$file_data</span><span class="p">[</span><span class="s1">&#39;size&#39;</span><span class="p">];</span>
+    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">type</span> <span class="o">=</span> <span class="nv">$file_data</span><span class="p">[</span><span class="s1">&#39;type&#39;</span><span class="p">];</span>
+    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">file_access</span> <span class="o">=</span> <span class="nv">$file_access</span><span class="p">;</span>
+  <span class="p">}</span>
+  <span class="k">function</span> <span class="nf">__serialize</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">throw</span> <span class="k">new</span> <span class="nx">Exception</span><span class="p">(</span><span class="s2">&quot;Can&#39;t serialize an uploaded file. Copy file to a permanent storage.&quot;</span><span class="p">);</span>
+  <span class="p">}</span>
+  <span class="k">function</span> <span class="nf">key</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">key</span><span class="p">;</span>
+  <span class="p">}</span>
+  <span class="k">function</span> <span class="nf">name</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">name</span><span class="p">;</span>
+  <span class="p">}</span>
+  <span class="k">function</span> <span class="nf">type</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">type</span><span class="p">;</span>
+  <span class="p">}</span>
+  <span class="k">function</span> <span class="nf">size</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">size</span><span class="p">;</span>
+  <span class="p">}</span>
+  <span class="k">function</span> <span class="nf">writeTo</span><span class="p">(</span><span class="nv">$path_destination</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">size</span><span class="p">()</span> <span class="o">===</span> <span class="m">0</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">throw</span> <span class="k">new</span> <span class="nx">Exception</span><span class="p">(</span><span class="s2">&quot;Filesize is zero&quot;</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="nv">$this</span><span class="o">-&gt;</span><span class="na">file_access</span><span class="o">-&gt;</span><span class="na">copy</span><span class="p">(</span><span class="nv">$this</span><span class="o">-&gt;</span><span class="na">tmp_name</span><span class="p">,</span> <span class="nv">$path_destination</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">}</span></pre></div></td>
+                    </tr>
+                                    <tr id="section-60">
+                        <td class="docs">
+                            <div class="pilwrap">
+                                <a class="pilcrow" href="#section-60">&#182;</a>
+                            </div>
+                            <p>Logs something to the debug log.</p>
+
+<p>Use it instead of <code>var_dump</code> and put a <code>tail -f</code> on the debug log.</p>
+                        </td>
+                        <td class="code"><div class="highlight"><pre><span class="k">function</span> <span class="nf">debug</span><span class="p">(</span><span class="nv">$mixed</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">static</span> <span class="nv">$process_id</span><span class="p">;</span>
+  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nv">$process_id</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nv">$process_id</span> <span class="o">=</span> <span class="nb">substr</span><span class="p">(</span><span class="nb">md5</span><span class="p">(</span><span class="nb">microtime</span><span class="p">(</span><span class="k">true</span><span class="p">)),</span> <span class="m">0</span><span class="p">,</span> <span class="m">8</span><span class="p">);</span>
+  <span class="p">}</span>
+  <span class="nv">$debug_backtrace</span> <span class="o">=</span> <span class="nb">debug_backtrace</span><span class="p">();</span>
+  <span class="nv">$msg</span> <span class="o">=</span> <span class="s2">&quot;*** &quot;</span><span class="o">.</span><span class="nv">$process_id</span><span class="o">.</span><span class="s2">&quot; &quot;</span><span class="o">.</span><span class="nb">date</span><span class="p">(</span><span class="s2">&quot;Y-m-d H:i:s&quot;</span><span class="p">)</span><span class="o">.</span><span class="s2">&quot; &quot;</span><span class="o">.</span><span class="nv">$debug_backtrace</span><span class="p">[</span><span class="m">0</span><span class="p">][</span><span class="s1">&#39;file&#39;</span><span class="p">]</span><span class="o">.</span><span class="s2">&quot; : &quot;</span><span class="o">.</span><span class="nv">$debug_backtrace</span><span class="p">[</span><span class="m">0</span><span class="p">][</span><span class="s1">&#39;line&#39;</span><span class="p">]</span><span class="o">.</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="nx">json_encode_pretty</span><span class="p">(</span><span class="nv">$mixed</span><span class="p">)</span><span class="o">.</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">;</span>
+  <span class="nb">error_log</span><span class="p">(</span><span class="nv">$msg</span><span class="p">,</span> <span class="m">3</span><span class="p">,</span> <span class="nv">$GLOBALS</span><span class="p">[</span><span class="s1">&#39;APPLICATION_ROOT&#39;</span><span class="p">]</span><span class="o">.</span><span class="s1">&#39;/log/debug.log&#39;</span><span class="p">);</span>
+<span class="p">}</span></pre></div></td>
+                    </tr>
+                                    <tr id="section-61">
+                        <td class="docs">
+                            <div class="pilwrap">
+                                <a class="pilcrow" href="#section-61">&#182;</a>
+                            </div>
+                            <p>Input an object, returns a json-ized string of said object, pretty-printed</p>
+
+<p><em class='docparam'>@param</em> mixed $obj The array or object to encode
+<em class='docparam'>@return</em> string JSON formatted output</p>
+                        </td>
+                        <td class="code"><div class="highlight"><pre><span class="k">function</span> <span class="nf">json_encode_pretty</span><span class="p">(</span><span class="nv">$obj</span><span class="p">,</span> <span class="nv">$indentation</span> <span class="o">=</span> <span class="m">0</span><span class="p">)</span> <span class="p">{</span>
+  <span class="k">switch</span> <span class="p">(</span><span class="nb">gettype</span><span class="p">(</span><span class="nv">$obj</span><span class="p">))</span> <span class="p">{</span>
+    <span class="k">case</span> <span class="s1">&#39;object&#39;</span><span class="o">:</span>
+      <span class="nv">$obj</span> <span class="o">=</span> <span class="nb">get_object_vars</span><span class="p">(</span><span class="nv">$obj</span><span class="p">);</span>
+    <span class="k">case</span> <span class="s1">&#39;array&#39;</span><span class="o">:</span>
+      <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nb">isset</span><span class="p">(</span><span class="nv">$obj</span><span class="p">[</span><span class="m">0</span><span class="p">]))</span> <span class="p">{</span>
+        <span class="nv">$arr_out</span> <span class="o">=</span> <span class="k">array</span><span class="p">();</span>
+        <span class="k">foreach</span> <span class="p">(</span><span class="nv">$obj</span> <span class="k">as</span> <span class="nv">$key</span> <span class="o">=&gt;</span> <span class="nv">$val</span><span class="p">)</span> <span class="p">{</span>
+          <span class="nv">$arr_out</span><span class="p">[]</span> <span class="o">=</span> <span class="s1">&#39;&quot;&#39;</span> <span class="o">.</span> <span class="nb">addslashes</span><span class="p">(</span><span class="nv">$key</span><span class="p">)</span> <span class="o">.</span> <span class="s1">&#39;&quot;: &#39;</span> <span class="o">.</span> <span class="nx">json_encode_pretty</span><span class="p">(</span><span class="nv">$val</span><span class="p">,</span> <span class="nv">$indentation</span> <span class="o">+</span> <span class="m">1</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nb">count</span><span class="p">(</span><span class="nv">$arr_out</span><span class="p">)</span> <span class="o">&lt;</span> <span class="m">2</span><span class="p">)</span> <span class="p">{</span>
+          <span class="k">return</span> <span class="s1">&#39;{&#39;</span> <span class="o">.</span> <span class="nb">implode</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">,</span> <span class="nv">$arr_out</span><span class="p">)</span> <span class="o">.</span> <span class="s1">&#39;}&#39;</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="s2">&quot;{\n&quot;</span> <span class="o">.</span> <span class="nb">str_repeat</span><span class="p">(</span><span class="s2">&quot;  &quot;</span><span class="p">,</span> <span class="nv">$indentation</span> <span class="o">+</span> <span class="m">1</span><span class="p">)</span> <span class="o">.</span> <span class="nb">implode</span><span class="p">(</span><span class="s2">&quot;,</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="nb">str_repeat</span><span class="p">(</span><span class="s2">&quot;  &quot;</span><span class="p">,</span> <span class="nv">$indentation</span> <span class="o">+</span> <span class="m">1</span><span class="p">),</span> <span class="nv">$arr_out</span><span class="p">)</span> <span class="o">.</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">.</span> <span class="nb">str_repeat</span><span class="p">(</span><span class="s2">&quot;  &quot;</span><span class="p">,</span> <span class="nv">$indentation</span><span class="p">)</span> <span class="o">.</span> <span class="s2">&quot;}&quot;</span><span class="p">;</span>
+      <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+        <span class="nv">$arr_out</span> <span class="o">=</span> <span class="k">array</span><span class="p">();</span>
+        <span class="nv">$ct</span> <span class="o">=</span> <span class="nb">count</span><span class="p">(</span><span class="nv">$obj</span><span class="p">);</span>
+        <span class="k">for</span> <span class="p">(</span><span class="nv">$j</span> <span class="o">=</span> <span class="m">0</span><span class="p">;</span> <span class="nv">$j</span> <span class="o">&lt;</span> <span class="nv">$ct</span><span class="p">;</span> <span class="nv">$j</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+          <span class="nv">$arr_out</span><span class="p">[]</span> <span class="o">=</span> <span class="nx">json_encode_pretty</span><span class="p">(</span><span class="nv">$obj</span><span class="p">[</span><span class="nv">$j</span><span class="p">],</span> <span class="nv">$indentation</span> <span class="o">+</span> <span class="m">1</span><span class="p">);</span>
+        <span class="p">}</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nb">count</span><span class="p">(</span><span class="nv">$arr_out</span><span class="p">)</span> <span class="o">&lt;</span> <span class="m">2</span><span class="p">)</span> <span class="p">{</span>
+          <span class="k">return</span> <span class="s1">&#39;[&#39;</span> <span class="o">.</span> <span class="nb">implode</span><span class="p">(</span><span class="s1">&#39;,&#39;</span><span class="p">,</span> <span class="nv">$arr_out</span><span class="p">)</span> <span class="o">.</span> <span class="s1">&#39;]&#39;</span><span class="p">;</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="s2">&quot;[</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">.</span> <span class="nb">str_repeat</span><span class="p">(</span><span class="s2">&quot;  &quot;</span><span class="p">,</span> <span class="nv">$indentation</span> <span class="o">+</span> <span class="m">1</span><span class="p">)</span> <span class="o">.</span> <span class="nb">implode</span><span class="p">(</span><span class="s2">&quot;,</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="nb">str_repeat</span><span class="p">(</span><span class="s2">&quot;  &quot;</span><span class="p">,</span> <span class="nv">$indentation</span> <span class="o">+</span> <span class="m">1</span><span class="p">),</span> <span class="nv">$arr_out</span><span class="p">)</span> <span class="o">.</span> <span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">.</span> <span class="nb">str_repeat</span><span class="p">(</span><span class="s2">&quot;  &quot;</span><span class="p">,</span> <span class="nv">$indentation</span><span class="p">)</span> <span class="o">.</span> <span class="s2">&quot;]&quot;</span><span class="p">;</span>
+      <span class="p">}</span>
+      <span class="k">break</span><span class="p">;</span>
+    <span class="k">case</span> <span class="s1">&#39;NULL&#39;</span><span class="o">:</span>
+      <span class="k">return</span> <span class="s1">&#39;null&#39;</span><span class="p">;</span>
+      <span class="k">break</span><span class="p">;</span>
+    <span class="k">case</span> <span class="s1">&#39;boolean&#39;</span><span class="o">:</span>
+      <span class="k">return</span> <span class="nv">$obj</span> <span class="o">?</span> <span class="s1">&#39;true&#39;</span> <span class="o">:</span> <span class="s1">&#39;false&#39;</span><span class="p">;</span>
+      <span class="k">break</span><span class="p">;</span>
+    <span class="k">case</span> <span class="s1">&#39;integer&#39;</span><span class="o">:</span>
+    <span class="k">case</span> <span class="s1">&#39;double&#39;</span><span class="o">:</span>
+      <span class="k">return</span> <span class="nv">$obj</span><span class="p">;</span>
+      <span class="k">break</span><span class="p">;</span>
+    <span class="k">case</span> <span class="s1">&#39;string&#39;</span><span class="o">:</span>
+    <span class="k">default</span><span class="o">:</span>
+      <span class="nv">$obj</span> <span class="o">=</span> <span class="nb">str_replace</span><span class="p">(</span><span class="k">array</span><span class="p">(</span><span class="s1">&#39;\\&#39;</span><span class="p">,</span><span class="s1">&#39;&quot;&#39;</span><span class="p">,),</span> <span class="k">array</span><span class="p">(</span><span class="s1">&#39;\\\\&#39;</span><span class="p">,</span><span class="s1">&#39;\&quot;&#39;</span><span class="p">),</span> <span class="nv">$obj</span><span class="p">);</span>
+      <span class="k">return</span> <span class="s1">&#39;&quot;&#39;</span> <span class="o">.</span> <span class="nv">$obj</span> <span class="o">.</span> <span class="s1">&#39;&quot;&#39;</span><span class="p">;</span>
+      <span class="k">break</span><span class="p">;</span>
+  <span class="p">}</span>
+<span class="p">}</span></pre></div></td>
+                    </tr>
+                                    <tr id="section-62">
+                        <td class="docs">
+                            <div class="pilwrap">
+                                <a class="pilcrow" href="#section-62">&#182;</a>
+                            </div>
+                            <p>Generates an URL</p>
+                        </td>
+                        <td class="code"><div class="highlight"><pre><span class="k">function</span> <span class="nf">url</span><span class="p">(</span><span class="nv">$href</span><span class="p">,</span> <span class="nv">$params</span> <span class="o">=</span> <span class="k">array</span><span class="p">())</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span><span class="nb">is_array</span><span class="p">(</span><span class="nv">$href</span><span class="p">))</span> <span class="p">{</span>
+    <span class="nv">$href</span> <span class="o">=</span> <span class="nb">implode</span><span class="p">(</span><span class="s1">&#39;/&#39;</span><span class="p">,</span> <span class="nb">array_map</span><span class="p">(</span><span class="s1">&#39;rawurlencode&#39;</span><span class="p">,</span> <span class="nv">$href</span><span class="p">));</span>
+  <span class="p">}</span>
+  <span class="k">if</span> <span class="p">(</span><span class="nb">strpos</span><span class="p">(</span><span class="nv">$href</span><span class="p">,</span> <span class="s1">&#39;#&#39;</span><span class="p">)</span> <span class="o">!==</span> <span class="k">false</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">list</span><span class="p">(</span><span class="nv">$href</span><span class="p">,</span> <span class="nv">$fragment</span><span class="p">)</span> <span class="o">=</span> <span class="nb">explode</span><span class="p">(</span><span class="s1">&#39;#&#39;</span><span class="p">,</span> <span class="nv">$href</span><span class="p">,</span> <span class="m">2</span><span class="p">);</span>
+    <span class="nv">$fragment</span> <span class="o">=</span> <span class="s2">&quot;#&quot;</span><span class="o">.</span><span class="nv">$fragment</span><span class="p">;</span>
+  <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+    <span class="nv">$fragment</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">;</span>
+  <span class="p">}</span>
+  <span class="k">if</span> <span class="p">(</span><span class="nb">strpos</span><span class="p">(</span><span class="nv">$href</span><span class="p">,</span> <span class="s1">&#39;?&#39;</span><span class="p">)</span> <span class="o">!==</span> <span class="k">false</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">list</span><span class="p">(</span><span class="nv">$href</span><span class="p">,</span> <span class="nv">$querystring</span><span class="p">)</span> <span class="o">=</span> <span class="nb">explode</span><span class="p">(</span><span class="s1">&#39;?&#39;</span><span class="p">,</span> <span class="nv">$href</span><span class="p">,</span> <span class="m">2</span><span class="p">);</span>
+    <span class="nb">parse_str</span><span class="p">(</span><span class="nv">$querystring</span><span class="p">,</span> <span class="nv">$embedded_params</span><span class="p">);</span>
+    <span class="nv">$params</span> <span class="o">=</span> <span class="nb">array_merge</span><span class="p">(</span><span class="nv">$embedded_params</span><span class="p">,</span> <span class="nv">$params</span><span class="p">);</span>
+  <span class="p">}</span>
+  <span class="nv">$assoc</span> <span class="o">=</span> <span class="k">array</span><span class="p">();</span>
+  <span class="nv">$indexed</span> <span class="o">=</span> <span class="k">array</span><span class="p">();</span>
+  <span class="k">foreach</span> <span class="p">(</span><span class="nv">$params</span> <span class="k">as</span> <span class="nv">$key</span> <span class="o">=&gt;</span> <span class="nv">$value</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nb">is_int</span><span class="p">(</span><span class="nv">$key</span><span class="p">))</span> <span class="p">{</span>
+      <span class="nv">$indexed</span><span class="p">[]</span> <span class="o">=</span> <span class="nb">rawurlencode</span><span class="p">(</span><span class="nv">$value</span><span class="p">);</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+      <span class="nv">$assoc</span><span class="p">[</span><span class="nv">$key</span><span class="p">]</span> <span class="o">=</span> <span class="nv">$value</span><span class="p">;</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+  <span class="nv">$querystring</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">;</span>
+  <span class="k">if</span> <span class="p">(</span><span class="nb">count</span><span class="p">(</span><span class="nv">$indexed</span><span class="p">)</span> <span class="o">&gt;</span> <span class="m">0</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nv">$querystring</span> <span class="o">=</span> <span class="nb">implode</span><span class="p">(</span><span class="s1">&#39;&amp;&#39;</span><span class="p">,</span> <span class="nv">$indexed</span><span class="p">);</span>
+  <span class="p">}</span>
+  <span class="nv">$assoc_string</span> <span class="o">=</span> <span class="nb">http_build_query</span><span class="p">(</span><span class="nv">$assoc</span><span class="p">);</span>
+  <span class="k">if</span> <span class="p">(</span><span class="nv">$assoc_string</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nv">$querystring</span><span class="p">)</span> <span class="p">{</span>
+      <span class="nv">$querystring</span> <span class="o">.=</span> <span class="s1">&#39;&amp;&#39;</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="nv">$querystring</span> <span class="o">.=</span> <span class="nv">$assoc_string</span><span class="p">;</span>
+  <span class="p">}</span>
+  <span class="k">return</span> <span class="nv">$href</span> <span class="o">.</span> <span class="p">(</span><span class="nv">$querystring</span> <span class="o">?</span> <span class="p">(</span><span class="s1">&#39;?&#39;</span> <span class="o">.</span> <span class="nv">$querystring</span><span class="p">)</span> <span class="o">:</span> <span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="o">.</span> <span class="nv">$fragment</span><span class="p">;</span>
+
+<span class="p">}</span></pre></div></td>
+                    </tr>
+                                    <tr id="section-63">
+                        <td class="docs">
+                            <div class="pilwrap">
+                                <a class="pilcrow" href="#section-63">&#182;</a>
+                            </div>
+                            <p>Returns a URL to an arbitrary object.
+ Requires that object's class to have a named url-helper</p>
+
+<p>See <code>config/routes.inc.php</code></p>
+                        </td>
+                        <td class="code"><div class="highlight"><pre><span class="k">function</span> <span class="nf">url_for</span><span class="p">(</span><span class="nv">$object</span><span class="p">,</span> <span class="nv">$params</span> <span class="o">=</span> <span class="k">array</span><span class="p">())</span> <span class="p">{</span>
+  <span class="nv">$fn</span> <span class="o">=</span> <span class="nb">get_class</span><span class="p">(</span><span class="nv">$object</span><span class="p">)</span><span class="o">.</span><span class="s2">&quot;_url&quot;</span><span class="p">;</span>
+  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nb">is_callable</span><span class="p">(</span><span class="nv">$fn</span><span class="p">))</span> <span class="p">{</span>
+    <span class="k">throw</span> <span class="k">new</span> <span class="nx">Exception</span><span class="p">(</span><span class="s2">&quot;Missing URL helper </span><span class="si">$fn</span><span class="s2">&quot;</span><span class="p">);</span>
+  <span class="p">}</span>
+  <span class="nv">$href</span> <span class="o">=</span> <span class="nv">$fn</span><span class="p">(</span><span class="nv">$object</span><span class="p">);</span>
+  <span class="k">if</span> <span class="p">(</span><span class="nb">count</span><span class="p">(</span><span class="nv">$params</span><span class="p">)</span> <span class="o">&gt;</span> <span class="m">0</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="nx">url</span><span class="p">(</span><span class="nv">$href</span><span class="p">,</span> <span class="nv">$params</span><span class="p">);</span>
+  <span class="p">}</span>
+  <span class="k">return</span> <span class="nv">$href</span><span class="p">;</span>
+<span class="p">}</span>
+</pre></div></pre></div></td>
+                    </tr>
+                            </tbody>
+        </table>
+    </div>
+</body>
+</html>

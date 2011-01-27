@@ -1,4 +1,7 @@
 <?php
+/**
+ * Resolves which handler to execute, based on the given request. See `config/routes.inc.php` for details on routing.
+ */
 function resolve_route($request, $routes) {
   $request_uri = $request->uri();
   $request_method = strtoupper($request->method());
@@ -12,12 +15,21 @@ function resolve_route($request, $routes) {
   throw new http_NotFound();
 }
 
+/**
+ * Renders a handler and returns the output as a string.
+ */
 function render($file_name, $params = array()) {
   ob_start();
   render_in_place($file_name, $params);
   return ob_get_clean();
 }
 
+/**
+ * Renders a handler in place (Eg. outputs it directly to the current output buffer).
+ * Handlers can be placed in the application or in plugins.
+ * You can optionally pass a hash of parameters as the second argument, which will be made available as variables in the handler.
+ * A handler is a flat php file placed in the `handlers/` folder.
+ */
 function render_in_place($file_name, $params = array()) {
   extract($params);
   if (is_file($GLOBALS['APPLICATION_ROOT'].'/handlers/'.$file_name.'.php')) {
@@ -111,6 +123,9 @@ function get_flash_messages() {
   return $flash_messages;
 }
 
+/**
+ * HTTP exception are used internally to stop the rendering and output right away.
+ */
 class http_Exception extends Exception {
   function __construct($headers = array()) {
     $this->headers = $headers;
@@ -453,15 +468,27 @@ class http_CookieAccess {
     $this->domain = $domain === 'localhost' ? false : $domain;
     $this->raw = $raw;
   }
+
+  /**
+   * Returns true if a cookie has been set with the given $key
+   */
   function has($key) {
     return isset($this->raw[$key]);
   }
-  function get($key, $default = null) {
+
+  /**
+   * Returns a cookie, or if no $key is passed it returns a hash of all cookies.
+   */
+  function get($key = null, $default = null) {
     if ($key === null) {
       return $this->raw;
     }
     return isset($this->raw[$key]) ? $this->raw[$key] : $default;
   }
+
+  /**
+   * Sets a cookie
+   */
   function set($key, $value, $expire = 0, $secure = false, $httponly = false) {
     if ($value === null) {
       setcookie($key, '', time() - 42000, '/');
@@ -471,6 +498,10 @@ class http_CookieAccess {
       $this->raw[$key] = $value;
     }
   }
+
+  /**
+   * Returns a hash of all cookies.
+   */
   function all() {
     return $this->raw;
   }
@@ -491,10 +522,18 @@ class http_SessionAccess {
       session_start();
     }
   }
+
+  /**
+   * Returns true if a cookie has been set with the given $key.
+   */
   function has($key) {
     $this->autoStart();
     return isset($_SESSION[$key]);
   }
+
+  /**
+   * Returns a session value, or if no $key is passed it returns a hash of all session values.
+   */
   function get($key, $default = null) {
     $this->autoStart();
     if ($key === null) {
@@ -502,14 +541,27 @@ class http_SessionAccess {
     }
     return isset($_SESSION[$key]) ? $_SESSION[$key] : $default;
   }
+
+  /**
+   * Sets a session value
+   */
   function set($key, $value) {
     $this->autoStart();
     $_SESSION[$key] = $value;
     return $value;
   }
+
+
+  /**
+   * Closes a session, if it has been opened.
+   */
   function close() {
     session_id() && session_write_close();
   }
+
+  /**
+   * Destroys the current session
+   */
   function destroy() {
     $this->autoStart();
     $_SESSION = array();
@@ -522,10 +574,18 @@ class http_SessionAccess {
       unlink($filename);
     }
   }
+
+  /**
+   * Returns the session id
+   */
   function sessionId() {
     $this->autoStart();
     return session_id();
   }
+
+  /**
+   * Regenerates the session id.
+   */
   function regenerateId() {
     return session_regenerate_id();
   }

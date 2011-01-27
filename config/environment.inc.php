@@ -1,13 +1,18 @@
 <?php
 // This file contains global configuration settings, that are common for all environments
-// You can make local overrides to these settings by creating an environment.local.inc.php
+// You can make local overrides to these settings by creating an `environment.local.inc.php`
+// Settings herein can be overridden per environment in the `config/environments/` folder.
+
+// Timezone settings. Adjust to fit your setup.
 date_default_timezone_set('Europe/Copenhagen');
+// Database connection settings
 $GLOBALS['DATABASE_CONNECTION'] = array(
   'constructor' => 'create_pdo',
   'user' => null,
   'pass' => null
 );
 
+// Mailer settings
 $GLOBALS['POSTMAN'] = array(
   'constructor' => 'create_dummy_postman'
 );
@@ -49,7 +54,7 @@ function create_dummy_postman($params) {
 }
 
 /**
- * Just a dummy implementation. Should be replaced with somethin that *actually* mails out.
+ * Just a dummy implementation. Should be replaced with something that *actually* mails out.
  */
 class PostmanDummy {
   function deliver($template, $data = array()) {

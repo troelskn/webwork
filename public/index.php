@@ -1,17 +1,24 @@
 <?php
+// This file is the main entrypoint of the web application
+// Start timer as the first thing
 $__benchmark_start = microtime(true);
+// Include framework code
 require_once '../bootstrap.inc.php';
 require_once 'web.inc.php';
 require_once 'html_helpers.inc.php';
+// Open a buffer so we can accesse headers during rendering.
 ob_start();
 try {
+  // Main dispatch mechanism. `resolve_route` maps the request uri to a handler name, then it gets rendered.
   render_in_place(resolve_route(request(), $GLOBALS['ROUTES']));
   if (!headers_sent()) {
+    // The main content is wrapped in a layout file, if any exists
     if (document()->layout()) {
       $content = ob_get_clean();
       ob_start();
       render_in_place(document()->layout().'_layout', array_merge(document()->exportVariables(), array('content' => $content)));
     }
+    // Output to client
     header("HTTP/1.1 ".response()->status());
     foreach (response()->headers() as $header) {
       header($header[0].": ".$header[1]);
@@ -20,21 +27,25 @@ try {
     ob_end_flush();
   }
 } catch (http_SeeOther $ex) {
+  // Processing was halted with a redirect
   header("HTTP/1.1 303 See Other");
   foreach ($ex->headers() as $header) {
     header($header);
   }
 } catch (http_NotModified $ex) {
+  // Processing was halted with a "not modified"
   header("HTTP/1.1 304 Not Modified");
   foreach ($ex->headers() as $header) {
     header($header);
   }
 } catch (http_Unauthorized $ex) {
+  // Processing was halted with an "unauthorized"
   header("HTTP/1.1 401 Unauthorized");
   foreach ($ex->headers() as $header) {
     header($header);
   }
 } catch (http_NotFound $ex) {
+  // Processing was halted with a "not found"
   header("HTTP/1.1 404 Not Found");
   header('Content-Type: text/plain');
   echo "HTTP/1.1 404 Not Found.\n\n";
@@ -42,6 +53,7 @@ try {
   echo request()->method(), " ", request()->uri(), "\n\n";
   echo str_repeat(" ", 512);
 } catch (Exception $ex) {
+  // Something went haywire. If in development mode, dump to screen.
   header("HTTP/1.1 500 Internal Server Error");
   header('Content-Type: text/plain');
   echo "HTTP/1.1 500 Internal Server Error.\n\n";
