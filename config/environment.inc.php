@@ -5,59 +5,40 @@
 
 // Timezone settings. Adjust to fit your setup.
 date_default_timezone_set('Europe/Copenhagen');
+
 // Database connection settings
 $GLOBALS['DATABASE_CONNECTION'] = array(
   'constructor' => 'create_pdo',
-  'user' => null,
-  'pass' => null
+  'username' => null,
+  'password' => null
 );
+
+// To use pdoext instead of plain pdo, uncomment this section:
+//
+// // Tell webwork to use pdoext
+// $GLOBALS['DATABASE_CONNECTION']['constructor'] = 'create_pdoext';
 
 // Mailer settings
 $GLOBALS['POSTMAN'] = array(
   'constructor' => 'create_dummy_postman'
 );
 
-/**
- * Returns a database connection object.
- */
-function db() {
-  if (!isset($GLOBALS['DATABASE_CONNECTION']['instance'])) {
-    $ctor = $GLOBALS['DATABASE_CONNECTION']['constructor'];
-    $GLOBALS['DATABASE_CONNECTION']['instance'] = call_user_func($ctor, $GLOBALS['DATABASE_CONNECTION']);
-  }
-  return $GLOBALS['DATABASE_CONNECTION']['instance'];
-}
-
-/**
- * Default db constructor.
- */
-function create_pdo($params) {
-  return new pdo($params['dsn'], $params['user'], $params['pass']);
-}
-
-/**
- * Returns a postman object.
- */
-function postman() {
-  if (!isset($GLOBALS['POSTMAN']['instance'])) {
-    $ctor = $GLOBALS['POSTMAN']['constructor'];
-    $GLOBALS['POSTMAN']['instance'] = call_user_func($ctor, $GLOBALS['POSTMAN']);
-  }
-  return $GLOBALS['POSTMAN']['instance'];
-}
-
-/**
- * Default postman constructor.
- */
-function create_dummy_postman($params) {
-  return new PostmanDummy();
-}
-
-/**
- * Just a dummy implementation. Should be replaced with something that *actually* mails out.
- */
-class PostmanDummy {
-  function deliver($template, $data = array()) {
-    debug("PostmanDummy#deliver $template");
-  }
-}
+// By default, no mails are sent through the dummy mailer. Configure a mailer by setting the constructor to swift mailer:
+//
+// // Tell webwork to use Swift mailer
+// $GLOBALS['POSTMAN']['constructor'] = 'create_swift_mailer_postman';
+//
+// Then use one of the following:
+//
+// // Mail through smtp
+// $GLOBALS['POSTMAN']['transport_type'] = 'smtp';
+// $GLOBALS['POSTMAN']['host'] = 'smtp.example.org';
+// $GLOBALS['POSTMAN']['port'] = 25;
+// $GLOBALS['POSTMAN']['username'] = 'username';
+// $GLOBALS['POSTMAN']['password'] = 'secret';
+//
+// // Mail through sendmail
+// $GLOBALS['POSTMAN']['transport_type'] = 'sendmail';
+//
+// // Mail through php mail
+// $GLOBALS['POSTMAN']['transport_type'] = 'mail';

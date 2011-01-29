@@ -32,17 +32,19 @@ function render($file_name, $params = array()) {
  */
 function render_in_place($file_name, $params = array()) {
   extract($params);
-  if (is_file($GLOBALS['APPLICATION_ROOT'].'/handlers/'.$file_name.'.php')) {
-    include($GLOBALS['APPLICATION_ROOT'].'/handlers/'.$file_name.'.php');
-    return;
+  include(resolve_file_with_plugins('/handlers/'.$file_name.'.php'));
+}
+
+function resolve_file_with_plugins($file_name) {
+  if (is_file($GLOBALS['APPLICATION_ROOT'].$file_name)) {
+    return $GLOBALS['APPLICATION_ROOT'].$file_name;
   }
   foreach ($GLOBALS['PLUGINS'] as $plugin => $path) {
-    if (is_file($path.'/handlers/'.$file_name.'.php')) {
-      include($path.'/handlers/'.$file_name.'.php');
-      return;
+    if (is_file($path.$file_name)) {
+      return $path.$file_name;
     }
   }
-  throw new Exception("Unable to render handler '$file_name'");
+  throw new Exception("Unable to resolve file '$file_name'");
 }
 
 /**
