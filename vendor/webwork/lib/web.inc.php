@@ -144,11 +144,13 @@ class http_Unauthorized extends http_Exception {}
  * Wraps incoming http request
  */
 class http_Request {
+  protected $query;
   protected $body;
   protected $headers;
   protected $params;
   protected $files;
-  function __construct($file_access = null) {
+  function __construct() {
+    $this->query = $_GET;
     if ($_SERVER['REQUEST_METHOD'] === 'PUT' && $_SERVER['CONTENT_TYPE'] === 'application/x-www-form-urlencoded' && empty($_POST)) {
       parse_str(file_get_contents('php://input'), $buffer);
       $this->body = $buffer;
@@ -159,7 +161,7 @@ class http_Request {
     foreach (apache_request_headers() as $k => $v) {
       $this->headers[strtolower($k)] = $v;
     }
-    $file_access = $file_access ? $file_access : new http_UploadedFileAccess();
+    $file_access = new http_UploadedFileAccess();
     $this->files = array();
     foreach ($_FILES as $key => $file) {
       if (isset($file['tmp_name']) && is_array($file['tmp_name'])) {
@@ -205,23 +207,37 @@ class http_Request {
   /**
    * Returns a query string parameter (GET parameter).
    * If no `$key` is passed, it returns a hash of all parameters.
+   * You can pass multiple parameters to access nested values. For example, to get the value in `foo[bar]`, call `query('foo', 'bar')`
    */
-  function query($key = null) {
-    if ($key === null) {
-      return $_GET;
+  function query() {
+    $keys = func_get_args();
+    $value = $this->query;
+    while (!empty($keys)) {
+      $key = array_shift($keys);
+      if (!isset($value[$key])) {
+        return null;
+      }
+      $value = $value[$key];
     }
-    return isset($_GET[$key]) ? $_GET[$key] : null;
+    return $value;
   }
 
   /**
    * Returns a form-encoded body-parameter (POST parameter).
    * If no `$key` is passed, it returns a hash of all parameters.
+   * You can pass multiple parameters to access nested values. For example, to get the value in `foo[bar]`, call `body('foo', 'bar')`
    */
-  function body($key = null) {
-    if ($key === null) {
-      return $this->body;
+  function body() {
+    $keys = func_get_args();
+    $value = $this->body;
+    while (!empty($keys)) {
+      $key = array_shift($keys);
+      if (!isset($value[$key])) {
+	return null;
+      }
+      $value = $value[$key];
     }
-    return isset($this->body[$key]) ? $this->body[$key] : null;
+    return $value;
   }
 
   /**
