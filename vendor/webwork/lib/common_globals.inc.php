@@ -28,7 +28,11 @@ function postman() {
  * Default db constructor.
  */
 function create_pdo($params) {
-  return new pdo($params['dsn'], $params['username'], $params['password']);
+  $db = new pdo($params['dsn'], $params['username'], $params['password']);
+  if (isset($params['log_file'])) {
+    $db->setLogging($params['log_file'], isset($params['log_time']) ? $params['log_time'] : null);
+  }
+  return $db;
 }
 
 /**

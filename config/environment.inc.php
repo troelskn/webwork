@@ -17,6 +17,10 @@ $GLOBALS['DATABASE_CONNECTION'] = array(
 //
 // // Tell webwork to use pdoext
 // $GLOBALS['DATABASE_CONNECTION']['constructor'] = 'create_pdoext';
+// // Enable logging
+// $GLOBALS['DATABASE_CONNECTION']['log_file'] = '/var/log/pdoext_log.txt';
+// // Only log slow queries
+// $GLOBALS['DATABASE_CONNECTION']['log_time'] = 0.5;
 
 // Mailer settings
 $GLOBALS['POSTMAN'] = array(
