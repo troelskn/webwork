@@ -300,7 +300,7 @@ class http_Request {
    */
   function method() {
     $real_http_method = strtolower($_SERVER['REQUEST_METHOD']);
-    return $real_http_method === 'post' ? $this->body('_method', 'post') : $real_http_method;
+    return $real_http_method === 'post' && $this->body('_method') ? $this->body('_method') : $real_http_method;
   }
 
   /**
