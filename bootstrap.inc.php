@@ -24,7 +24,7 @@ foreach (scandir($GLOBALS['APPLICATION_ROOT'].'/vendor') as $plugin) {
 }
 
 // Load various global functions/bindings used throughout the application
-require_once 'common_globals.inc.php');
+require_once 'common_globals.inc.php';
 
 // Load environment
 // Include default config

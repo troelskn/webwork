@@ -28,11 +28,7 @@ function postman() {
  * Default db constructor.
  */
 function create_pdo($params) {
-  $db = new pdo($params['dsn'], $params['username'], $params['password']);
-  if (isset($params['log_file'])) {
-    $db->setLogging($params['log_file'], isset($params['log_time']) ? $params['log_time'] : null);
-  }
-  return $db;
+  return new pdo($params['dsn'], $params['username'], $params['password']);
 }
 
 /**
@@ -41,7 +37,11 @@ function create_pdo($params) {
  */
 function create_pdoext($params) {
   require_once 'pdoext.inc.php';
-  return new pdoext_Connection($params['dsn'], $params['username'], $params['password'], true);
+  $db = new pdoext_Connection($params['dsn'], $params['username'], $params['password']);
+  if (isset($params['log_file'])) {
+    $db->setLogging($params['log_file'], isset($params['log_time']) ? $params['log_time'] : null);
+  }
+  return $db;
 }
 
 /**
