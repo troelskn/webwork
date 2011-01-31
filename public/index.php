@@ -52,6 +52,14 @@ try {
   echo "The requested page could not be found.\n";
   echo request()->method(), " ", request()->uri(), "\n\n";
   echo str_repeat(" ", 512);
+} catch (http_Gone $ex) {
+  // Processing was halted with a "gone"
+  header("HTTP/1.1 410 Gone");
+  header('Content-Type: text/plain');
+  echo "HTTP/1.1 410 Gone.\n\n";
+  echo "The requested resource is no longer available.\n";
+  echo request()->method(), " ", request()->uri(), "\n\n";
+  echo str_repeat(" ", 512);
 } catch (Exception $ex) {
   // Something went haywire. If in development mode, dump to screen.
   header("HTTP/1.1 500 Internal Server Error");
