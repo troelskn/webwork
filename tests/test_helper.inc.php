@@ -3,11 +3,13 @@ $_SERVER['ENVIRONMENT'] = 'test';
 require_once(dirname(__FILE__).'/../bootstrap.inc.php');
 require_once 'migrations.inc.php';
 
-echo "(re)creating test database ...";
-db()->exec('DROP DATABASE ' . $GLOBALS['DATABASE_CONNECTION']['database']);
-db()->exec('CREATE DATABASE ' . $GLOBALS['DATABASE_CONNECTION']['database']);
-$GLOBALS['DATABASE_CONNECTION']['instance'] = null; // closes connection
+if (preg_match('/;dbname=([^;]+)/', $GLOBALS['DATABASE_CONNECTION']['dsn'], $reg)) {
+  echo "(re)creating test database $reg[1] ...";
+  db()->exec('DROP DATABASE ' . $reg[1]);
+  db()->exec('CREATE DATABASE ' . $reg[1]);
+  $GLOBALS['DATABASE_CONNECTION']['instance'] = null; // closes connection
 echo " OK\n";
+}
 echo "Migrating ...";
 ob_start();
 include($GLOBALS['APPLICATION_ROOT'].'/scripts/migrate');

@@ -8,7 +8,7 @@ class Migrations {
   }
 
   function setup() {
-    if ($this->getAttribute(PDO::ATTR_DRIVER_NAME) === 'mysql') {
+    if ($this->db->getAttribute(PDO::ATTR_DRIVER_NAME) === 'mysql') {
       // set default storage-engine to innodb
       $this->db->exec("SET storage_engine=INNODB");
     }
@@ -19,11 +19,23 @@ class Migrations {
   }
 
   function getTables() {
-    $tables = array();
-    foreach ($this->db->query("show tables") as $row) {
-      $tables[] = $row[0];
+    switch ($this->db->getAttribute(PDO::ATTR_DRIVER_NAME)) {
+      case 'mysql':
+        $sql = "SHOW TABLES";
+        break;
+      case 'sqlite':
+        $sql = 'SELECT name FROM sqlite_master WHERE type = "table"';
+        break;
+      default:
+        throw new Exception("DB not supported");
     }
-    return $tables;
+    $result = $this->db->query($sql);
+    $result->setFetchMode(PDO::FETCH_NUM);
+    $meta = array();
+    foreach ($result as $row) {
+      $meta[] = $row[0];
+    }
+    return $meta;
   }
 
   function getVersions() {
@@ -123,11 +135,13 @@ class Fixtures {
     $arbitrary = array();
     $d = dir($this->dir_fixtures);
     while (false !== ($entry = $d->read())) {
-      $fullname = $this->dir_fixtures . DIRECTORY_SEPARATOR . $entry;
-      if (preg_match('/^([0-9]+)/', $entry, $reg) && is_file($fullname)) {
-        $prioritiesed[$reg[1]] = $fullname;
-      } elseif (is_file($fullname)) {
-        $arbitrary[] = $fullname;
+      if ($entry[0] != '.') {
+	$fullname = $this->dir_fixtures . DIRECTORY_SEPARATOR . $entry;
+	if (preg_match('/^([0-9]+)/', $entry, $reg) && is_file($fullname)) {
+	  $prioritiesed[$reg[1]] = $fullname;
+	} elseif (is_file($fullname)) {
+	  $arbitrary[] = $fullname;
+	}
       }
     }
     $d->close();
