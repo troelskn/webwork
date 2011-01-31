@@ -8,7 +8,7 @@
 //
 // By default, we've created a root route, that responds to a request for "/"
 //
-$GLOBALS['ROUTES']['~^GET/$~'] = "root";
+$GLOBALS['ROUTES']['~^GET/([?].*)?$~'] = "root";
 //
 // If you put capturing parentheses in the regexp, then those will be available
 // to your handler through `request()->param()`.
