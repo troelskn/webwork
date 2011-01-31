@@ -18,9 +18,9 @@ function resolve_route($request, $routes) {
 /**
  * Renders a handler and returns the output as a string.
  */
-function render($file_name, $params = array()) {
+function render($file_name, $render_params = array()) {
   ob_start();
-  render_in_place($file_name, $params);
+  render_in_place($file_name, $render_params);
   return ob_get_clean();
 }
 
@@ -30,8 +30,8 @@ function render($file_name, $params = array()) {
  * You can optionally pass a hash of parameters as the second argument, which will be made available as variables in the handler.
  * A handler is a flat php file placed in the `handlers/` folder.
  */
-function render_in_place($file_name, $params = array()) {
-  extract($params);
+function render_in_place($file_name, $render_params = array()) {
+  extract($render_params);
   include(resolve_file_with_plugins('/handlers/'.$file_name.'.php'));
 }
 
