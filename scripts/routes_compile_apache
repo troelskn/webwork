@@ -1,0 +1,44 @@
+#!/usr/bin/env php
+<?php
+require_once(dirname(__FILE__) . '/../bootstrap.inc.php');
+
+echo "
+RewriteEngine on
+
+RewriteCond %{REQUEST_FILENAME}  -d
+RewriteRule  ^.*$  -  [L]
+
+RewriteCond %{REQUEST_FILENAME}  -f
+RewriteRule  ^.*$  -  [L]
+
+";
+echo "# Generated rewrite rules for webwork application.", "\n";
+foreach ($GLOBALS['ROUTES'] as $pattern => $handler) {
+  // strip out capturing groups
+  $clean = preg_replace('~[(][?]P[<][^>]+[>]~', '(', $pattern);
+  // todo: pattern could match multiple methods
+  if (preg_match('~^(.)[\^]?(HEAD|GET|POST|PUT|DELETE)(.*).$~', $clean, $reg)) {
+    $meta = $reg[1];
+    $method = $reg[2];
+    $uri = $reg[3];
+  } else {
+    if (!preg_match('~^(.)(.*).$~', $clean, $reg)) {
+      throw new Exception("Parse error");
+    }
+    $meta = $reg[1];
+    $method = null;
+    $uri = $reg[2];
+  }
+  if ($meta != "/") {
+    // unescape pattern
+    $uri = str_replace("\\".$meta, $meta, $uri);
+    // escape slashes
+    $uri = str_replace("/", "\\/", $uri);
+  }
+  echo '# ', $pattern, ' => ', $handler, "\n";
+  if ($method) {
+    echo 'RewriteCond %{REQUEST_METHOD} !^(', $method,')', "\n";
+  }
+  echo 'RewriteRule ', $uri, ' index.php [L]', "\n\n";
+}
+
