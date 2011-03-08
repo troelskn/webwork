@@ -1,0 +1,9 @@
+#!/bin/sh
+if echo $1 | grep -Pq '^[a-z_]+$'
+then
+  touch migrations/$(date +"%Y%m%d%H%M%S")_$1.sql
+else
+  echo "USAGE: ${0} NAME_OF_MIGRATION"
+  echo "    NAME_OF_MIGRATION must be lowercase_underscore"
+  exit -1
+fi
