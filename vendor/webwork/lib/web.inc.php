@@ -111,7 +111,7 @@ function session() {
  * Adds a flash message
  */
 function flash_message($message, $type = "notice") {
-  $flash_messages = session()->get('flash_message', array());
+  $flash_messages = get_flash_messages();
   $flash_messages[] = array('message' => $message, 'type' => $type);
   session()->set('flash_message', $flash_messages);
 }
@@ -120,9 +120,9 @@ function flash_message($message, $type = "notice") {
  * Gets flash messages and clears the buffer.
  */
 function get_flash_messages() {
-  $flash_messages = session()->get('flash_message', array());
+  $flash_messages = session()->get('flash_message');
   session()->set('flash_message', array());
-  return $flash_messages;
+  return $flash_messages ? $flash_messages : array();
 }
 
 /**
@@ -555,10 +555,16 @@ class http_SessionAccess {
    */
   function get($key) {
     $this->autoStart();
-    if ($key === null) {
-      return $_SESSION;
+    $keys = func_get_args();
+    $value = $_SESSION;
+    while (!empty($keys)) {
+      $key = array_shift($keys);
+      if (!isset($value[$key])) {
+        return null;
+      }
+      $value = $value[$key];
     }
-    return isset($_SESSION[$key]) ? $_SESSION[$key] : null;
+    return $value;
   }
 
   /**
