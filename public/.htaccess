@@ -8,6 +8,9 @@ php_value html_errors            off
 php_value display_startup_errors on
 php_value display_errors         on
 
+# You don't want this crap around your app
+php_value magic_quotes_gpc       off
+
 # These settings routes all traffic, except concrete files, to the dispatcher
 DirectorySlash Off
 Options FollowSymLinks Indexes
