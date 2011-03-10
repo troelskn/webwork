@@ -1,0 +1,66 @@
+#!/usr/bin/env php
+<?php
+require_once(dirname(__FILE__) . '/../bootstrap.inc.php');
+
+function dir_tree($dir) {
+  $path = '';
+  $stack[] = $dir;
+  while ($stack) {
+    $thisdir = array_pop($stack);
+    if ($dircont = scandir($thisdir)) {
+      $i=0;
+      while (isset($dircont[$i])) {
+        if ($dircont[$i] !== '.' && $dircont[$i] !== '..') {
+          $current_file = "{$thisdir}/{$dircont[$i]}";
+          if (is_file($current_file)) {
+            $path[] = "{$thisdir}/{$dircont[$i]}";
+          } elseif (is_dir($current_file)) {
+            $path[] = "{$thisdir}/{$dircont[$i]}";
+            $stack[] = $current_file;
+          }
+        }
+        $i++;
+      }
+    }
+  }
+  return $path;
+}
+
+function get_classes_in_file($file_name) {
+  $content = file_get_contents($file_name);
+  $state = false;
+  $result = array();
+  foreach (token_get_all($content) as $token) {
+    if (is_array($token) && $token[0] === T_CLASS) {
+      $state = true;
+    } elseif ($state && is_array($token) && $token[0] === T_STRING) {
+      $result[$token[1]] = $file_name;
+      $state = false;
+    }
+  }
+  return $result;
+}
+
+$result = array();
+$cwd = getcwd();
+chdir($GLOBALS['APPLICATION_ROOT']);
+foreach (dir_tree('lib') as $file_name) {
+  if (preg_match('/[.]php$/', $file_name)) {
+    $result = array_merge(get_classes_in_file($file_name), $result);
+  }
+}
+foreach ($GLOBALS['PLUGINS'] as $plugin) {
+  foreach (dir_tree($plugin.'/lib') as $file_name) {
+    if (preg_match('/[.]php$/', $file_name)) {
+      $result = array_merge(get_classes_in_file($file_name), $result);
+    }
+  }
+}
+chdir($cwd);
+ksort($result);
+echo "<", "?php\n", '$', "GLOBALS['AUTOLOAD'] = array(\n";
+foreach ($result as $class => $file_name) {
+  $file_name = preg_replace('/^'.preg_quote($GLOBALS['APPLICATION_ROOT'].'/', '/').'/', '', $file_name);
+  echo "  '", $class, "' => '", $file_name, "',\n";
+}
+echo ");\n";

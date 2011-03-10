@@ -3,12 +3,17 @@ function exception_error_handler($errno, $errstr, $errfile, $errline ) {
   throw new ErrorException($errstr, 0, $errno, $errfile, $errline);
 }
 function autoloader($class) {
+  if (isset($GLOBALS['AUTOLOAD'][$class])) {
+    require_once($GLOBALS['AUTOLOAD']);
+    return true;
+  }
   return spl_autoload(str_replace('_', '/', $class));
 }
 error_reporting(E_ALL);
 set_error_handler('exception_error_handler');
 spl_autoload_register('autoloader');
 
+$GLOBALS['AUTOLOAD'] = array();
 $GLOBALS['ENVIRONMENT'] = isset($_SERVER['ENVIRONMENT']) ? strtolower($_SERVER['ENVIRONMENT']) : 'development';
 $GLOBALS['APPLICATION_ROOT'] = dirname(__FILE__);
 $GLOBALS['HTTP_ROOT'] = 'http://localhost/';
@@ -44,6 +49,11 @@ if (is_file($GLOBALS['APPLICATION_ROOT'].'/config/environments/'.$GLOBALS['ENVIR
 
 // Load routes
 include($GLOBALS['APPLICATION_ROOT'].'/config/routes.inc.php');
+
+// Include autoload mapping
+if (is_file($GLOBALS['APPLICATION_ROOT'].'/config/autoload.inc.php')) {
+  include($GLOBALS['APPLICATION_ROOT'].'/config/autoload.inc.php');
+}
 
 // Init plugins
 foreach ($GLOBALS['PLUGINS'] as $plugin => $path) {
