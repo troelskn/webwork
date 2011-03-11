@@ -41,8 +41,10 @@ function html_form_tag($method = 'post', $action = null, $options = array()) {
   }
   $html .= ">\n";
   // http://railssnowman.info/
-  $html .= '<input type="hidden" name="_utf8" value="&#9731;" />
+  if ($method != 'get') {
+    $html .= '<input type="hidden" name="_utf8" value="&#9731;" />
 ';
+  }
   if ($method !== 'get' && $method !== 'post') {
     $html .= '<input type="hidden" name="_method" value="' . htmlspecialchars($method) . '" />
 ';
