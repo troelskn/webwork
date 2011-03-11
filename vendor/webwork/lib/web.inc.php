@@ -791,7 +791,8 @@ function url($href, $params = array()) {
  * See `config/routes.inc.php`
  */
 function url_for($object, $params = array()) {
-  $fn = get_class($object)."_url";
+  $class_name = strtolower(preg_replace('/([a-z])([A-Z])/', '$1_$2', get_class($object)));
+  $fn = $class_name."_url";
   if (!is_callable($fn)) {
     throw new Exception("Missing URL helper $fn");
   }
