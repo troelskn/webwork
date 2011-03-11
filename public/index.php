@@ -28,24 +28,28 @@ try {
   }
 } catch (http_SeeOther $ex) {
   // Processing was halted with a redirect
+  ob_end_clean();
   header("HTTP/1.1 303 See Other");
   foreach ($ex->headers() as $header) {
     header($header);
   }
 } catch (http_NotModified $ex) {
   // Processing was halted with a "not modified"
+  ob_end_clean();
   header("HTTP/1.1 304 Not Modified");
   foreach ($ex->headers() as $header) {
     header($header);
   }
 } catch (http_Unauthorized $ex) {
   // Processing was halted with an "unauthorized"
+  ob_end_clean();
   header("HTTP/1.1 401 Unauthorized");
   foreach ($ex->headers() as $header) {
     header($header);
   }
 } catch (http_NotFound $ex) {
   // Processing was halted with a "not found"
+  ob_end_clean();
   header("HTTP/1.1 404 Not Found");
   header('Content-Type: text/plain');
   echo "HTTP/1.1 404 Not Found.\n\n";
@@ -54,6 +58,7 @@ try {
   echo str_repeat(" ", 512);
 } catch (http_Gone $ex) {
   // Processing was halted with a "gone"
+  ob_end_clean();
   header("HTTP/1.1 410 Gone");
   header('Content-Type: text/plain');
   echo "HTTP/1.1 410 Gone.\n\n";
@@ -62,6 +67,7 @@ try {
   echo str_repeat(" ", 512);
 } catch (Exception $ex) {
   // Something went haywire. If in development mode, dump to screen.
+  ob_end_clean();
   header("HTTP/1.1 500 Internal Server Error");
   header('Content-Type: text/plain');
   echo "HTTP/1.1 500 Internal Server Error.\n\n";
