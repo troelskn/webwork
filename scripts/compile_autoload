@@ -34,7 +34,7 @@ function get_classes_in_file($file_name) {
     if (is_array($token) && $token[0] === T_CLASS) {
       $state = true;
     } elseif ($state && is_array($token) && $token[0] === T_STRING) {
-      $result[$token[1]] = $file_name;
+      $result[strtolower($token[1])] = $file_name;
       $state = false;
     }
   }

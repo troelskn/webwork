@@ -3,8 +3,9 @@ function exception_error_handler($errno, $errstr, $errfile, $errline ) {
   throw new ErrorException($errstr, 0, $errno, $errfile, $errline);
 }
 function autoloader($class) {
-  if (isset($GLOBALS['AUTOLOAD'][$class])) {
-    require_once($GLOBALS['AUTOLOAD']);
+  $c = strtolower($class);
+  if (isset($GLOBALS['AUTOLOAD'][$c])) {
+    require_once($GLOBALS['AUTOLOAD'][$c]);
     return true;
   }
   return spl_autoload(str_replace('_', '/', $class));
