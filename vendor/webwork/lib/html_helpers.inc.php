@@ -154,6 +154,7 @@ function html_checkbox($name, $checked = false, $options = array()) {
     $options['label'] = null;
     $html .= '<label>';
   }
+  $html .= html_hidden_field($name, 'off');
   $html .= '<input type="checkbox"';
   $options['name'] = $name;
   $options['value'] = 'on';
