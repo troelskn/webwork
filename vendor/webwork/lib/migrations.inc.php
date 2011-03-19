@@ -14,7 +14,7 @@ class Migrations {
     }
     // Create migrations table, if it doesn't exist
     if (!in_array('schema_migrations', $this->getTables())) {
-      $this->db->exec("CREATE TABLE schema_migrations ( version varchar(255) NOT NULL, UNIQUE KEY unique_schema_migrations (version) )");
+      $this->db->exec("CREATE TABLE schema_migrations ( version varchar(255) NOT NULL PRIMARY KEY )");
     }
   }
 
