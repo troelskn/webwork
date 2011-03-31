@@ -1,0 +1,15 @@
+#!/usr/bin/env php
+<?php
+require_once(dirname(__FILE__) . '/../bootstrap.inc.php');
+require_once('web.inc.php');
+$ignore = array (
+  'GLOBALS', 'HTTP_ENV_VARS', 'argv', 'argc', '_POST', 'HTTP_POST_VARS',
+  '_GET', 'HTTP_GET_VARS', '_COOKIE', 'HTTP_COOKIE_VARS', '_SERVER',
+  'HTTP_SERVER_VARS', '_FILES', 'HTTP_POST_FILES', '_REQUEST', 'data', 'ignore');
+$data = array();
+foreach (array_keys($GLOBALS) as $k) {
+  if (!in_array($k, $ignore)) {
+    $data[$k] = $GLOBALS[$k];
+  }
+}
+echo json_encode_pretty($data);
