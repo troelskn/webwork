@@ -1,0 +1,30 @@
+#!/usr/bin/env php
+<?php
+require_once(dirname(__FILE__) . '/../bootstrap.inc.php');
+require_once 'migrations.inc.php';
+
+if (!isset($argv[1])) {
+  echo "USAGE: $argv[0] [PLUGIN|all]\n";
+  exit -1;
+}
+$migrations_dirs = array();
+if ($argv[1] == 'all') {
+  foreach (scandir($GLOBALS['APPLICATION_ROOT'].'/vendor') as $plugin) {
+    if (substr($plugin, 0, 1) !== '.') {
+      if (is_dir($GLOBALS['APPLICATION_ROOT'].'/vendor/'.$plugin.'/migrations')) {
+        $migrations_dirs[] = $GLOBALS['APPLICATION_ROOT'].'/vendor/'.$plugin.'/migrations';
+      }
+    }
+  }
+} else {
+  if (is_dir($GLOBALS['APPLICATION_ROOT'].'/vendor/'.$argv[1].'/migrations')) {
+    $migrations_dirs[] = $GLOBALS['APPLICATION_ROOT'].'/vendor/'.$argv[1].'/migrations';
+  }
+}
+
+$m = new Migrations(db(), $migrations_dirs);
+$m->setup();
+foreach ($m->getOutstanding() as $version) {
+  $m->migrateVersion($version);
+}
+echo "Database up to date.\n";

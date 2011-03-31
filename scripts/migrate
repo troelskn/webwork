@@ -4,14 +4,6 @@ require_once(dirname(__FILE__) . '/../bootstrap.inc.php');
 require_once 'migrations.inc.php';
 
 $migrations_dirs = array($GLOBALS['APPLICATION_ROOT'].'/migrations');
-foreach (scandir($GLOBALS['APPLICATION_ROOT'].'/vendor') as $plugin) {
-  if (substr($plugin, 0, 1) !== '.') {
-    if (is_dir($GLOBALS['APPLICATION_ROOT'].'/vendor/'.$plugin.'/migrations')) {
-      $migrations_dirs[] = $GLOBALS['APPLICATION_ROOT'].'/vendor/'.$plugin.'/migrations';
-    }
-  }
-}
-
 $m = new Migrations(db(), $migrations_dirs);
 $m->setup();
 foreach ($m->getOutstanding() as $version) {
