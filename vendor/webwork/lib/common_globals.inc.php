@@ -41,6 +41,9 @@ function create_pdoext($params) {
   if (isset($params['log_file'])) {
     $db->setLogging($params['log_file'], isset($params['log_time']) ? $params['log_time'] : null);
   }
+  if (preg_match('/^mysql:.*;charset=UTF-8$/', $params['dsn'])) {
+    $db->query("SET NAMES UTF8");
+  }
   return $db;
 }
 
