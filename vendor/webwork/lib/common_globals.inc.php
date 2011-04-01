@@ -38,6 +38,12 @@ function create_pdo($params) {
 function create_pdoext($params) {
   require_once 'pdoext.inc.php';
   $db = new pdoext_Connection($params['dsn'], $params['username'], $params['password']);
+  if (isset($params['object_cache']) && $params['object_cache']) {
+    $db->enableCache();
+  }
+  if (isset($params['table_gateway_mapping'])) {
+    $db->setTableGatewayMapping($params['table_mapping']);
+  }
   if (isset($params['log_file'])) {
     $db->setLogging($params['log_file'], isset($params['log_time']) ? $params['log_time'] : null);
   }
