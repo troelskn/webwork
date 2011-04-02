@@ -40,6 +40,13 @@ try {
   foreach ($ex->headers() as $header) {
     header($header);
   }
+} catch (http_BadRequest $ex) {
+  // Processing was halted with a "bad request"
+  ob_end_clean();
+  header("HTTP/1.1 400 Bad Request");
+  foreach ($ex->headers() as $header) {
+    header($header);
+  }
 } catch (http_Unauthorized $ex) {
   // Processing was halted with an "unauthorized"
   ob_end_clean();
