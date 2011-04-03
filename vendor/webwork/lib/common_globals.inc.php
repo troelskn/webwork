@@ -41,8 +41,8 @@ function create_pdoext($params) {
   if (isset($params['object_cache']) && $params['object_cache']) {
     $db->enableCache();
   }
-  if (isset($params['table_gateway_mapping'])) {
-    $db->setTableGatewayMapping($params['table_gateway_mapping']);
+  if (isset($params['table_name_mapping'])) {
+    $db->setTableNameMapping($params['table_name_mapping']);
   }
   if (isset($params['log_file'])) {
     $db->setLogging($params['log_file'], isset($params['log_time']) ? $params['log_time'] : null);
