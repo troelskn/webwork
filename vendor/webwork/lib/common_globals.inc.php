@@ -105,7 +105,7 @@ class PostmanDummy {
  */
 class SwiftMailerPostman {
   protected $mailer;
-  function __construct(Swift_MailTransport $transport) {
+  function __construct($transport) {
     $this->mailer = Swift_Mailer::newInstance($transport);
   }
   function deliver($file_name, $params = array()) {
