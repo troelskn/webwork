@@ -54,6 +54,13 @@ try {
   foreach ($ex->headers() as $header) {
     header($header);
   }
+} catch (http_Forbidden $ex) {
+  // Processing was halted with a "forbidden"
+  ob_end_clean();
+  header("HTTP/1.1 403 Forbidden");
+  foreach ($ex->headers() as $header) {
+    header($header);
+  }
 } catch (http_NotFound $ex) {
   // Processing was halted with a "not found"
   ob_end_clean();
