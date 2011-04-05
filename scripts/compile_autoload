@@ -50,9 +50,11 @@ foreach (dir_tree('lib') as $file_name) {
   }
 }
 foreach ($GLOBALS['PLUGINS'] as $plugin) {
-  foreach (dir_tree($plugin.'/lib') as $file_name) {
-    if (preg_match('/[.]php$/', $file_name)) {
-      $result = array_merge(get_classes_in_file($file_name), $result);
+  if (is_dir($plugin.'/lib')) {
+    foreach (dir_tree($plugin.'/lib') as $file_name) {
+      if (preg_match('/[.]php$/', $file_name)) {
+        $result = array_merge(get_classes_in_file($file_name), $result);
+      }
     }
   }
 }
