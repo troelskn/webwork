@@ -19,14 +19,22 @@ $GLOBALS['ENVIRONMENT'] = isset($_SERVER['ENVIRONMENT']) ? strtolower($_SERVER['
 $GLOBALS['APPLICATION_ROOT'] = dirname(__FILE__);
 $GLOBALS['HTTP_ROOT'] = 'http://localhost/';
 set_include_path(get_include_path() . PATH_SEPARATOR . $GLOBALS['APPLICATION_ROOT'].'/lib/');
-// Register thirdparty plugins
+// Manually specified plugins. Useful for controlling load-order
 $GLOBALS['PLUGINS'] = array();
+if (is_file($GLOBALS['APPLICATION_ROOT'].'/config/plugins.inc.php')) {
+  require_once($GLOBALS['APPLICATION_ROOT'].'/config/plugins.inc.php');
+}
+// Discover thirdparty plugins
 foreach (scandir($GLOBALS['APPLICATION_ROOT'].'/vendor') as $plugin) {
-  if (substr($plugin, 0, 1) !== '.') {
-    $GLOBALS['PLUGINS'][$plugin] = $GLOBALS['APPLICATION_ROOT'].'/vendor/'.$plugin;
-    set_include_path(
-      get_include_path() . PATH_SEPARATOR . $GLOBALS['APPLICATION_ROOT'].'/vendor/'.$plugin.'/lib');
+  if (!array_key_exists($plugin, $GLOBALS['PLUGINS'])) {
+    if (substr($plugin, 0, 1) !== '.') {
+      $GLOBALS['PLUGINS'][$plugin] = $GLOBALS['APPLICATION_ROOT'].'/vendor/'.$plugin;
+    }
   }
+}
+// Register plugins
+foreach ($GLOBALS['PLUGINS'] as $plugin => $path) {
+  set_include_path(get_include_path() . PATH_SEPARATOR . $path.'/lib');
 }
 
 // Load various global functions/bindings used throughout the application
