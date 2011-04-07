@@ -81,6 +81,8 @@ try {
   echo str_repeat(" ", 512);
 } catch (Exception $ex) {
   // Something went haywire. If in development mode, dump to screen.
+  // Otherwise allow the current exception handler (if any) to log the incident
+  // In any case, present the user with a 500 message (You may want to pimp this part up a bit)
   ob_end_clean();
   header("HTTP/1.1 500 Internal Server Error");
   header('Content-Type: text/plain');
@@ -90,5 +92,15 @@ try {
   if ($GLOBALS['ENVIRONMENT'] === 'development') {
     echo $ex;
     echo str_repeat(" ", 512);
+  } else {
+    // find the current exceptions handler
+    // this is just a dummy, since the only way to get the current handler is by assigning a new
+    $handler = set_exception_handler('debug');
+    if (is_callable($handler)) {
+      // yep - there is one, so invoke it
+      call_user_func($handler, $ex);
+    }
+    // clean up after us. probably unnecessary, since the execution is about to halt any way
+    restore_exception_handler();
   }
 }
