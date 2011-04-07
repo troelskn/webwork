@@ -9,6 +9,7 @@ date_default_timezone_set('Europe/Copenhagen');
 // framework level debugging info that you can turn on or off
 $GLOBALS['WEBWORK_LOGGING']['render'] = true;
 $GLOBALS['WEBWORK_LOGGING']['request'] = true;
+$GLOBALS['WEBWORK_LOGGING']['dispatch'] = true;
 
 // Database connection settings
 $GLOBALS['DATABASE_CONNECTION'] = array(

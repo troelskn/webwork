@@ -19,6 +19,9 @@ try {
   }
   // Main dispatch mechanism. `resolve_route` maps the request uri to a handler name, then it gets rendered.
   $handler = resolve_route(request(), $GLOBALS['ROUTES']);
+  if ($GLOBALS['WEBWORK_LOGGING']['dispatch']) {
+    debug("Dispatching $handler");
+  }
   render_in_place($handler);
   if (!headers_sent()) {
     // The main content is wrapped in a layout file, if any exists
