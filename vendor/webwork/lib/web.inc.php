@@ -31,7 +31,7 @@ function render($file_name, $render_params = array()) {
  * A handler is a flat php file placed in the `handlers/` folder.
  */
 function render_in_place($file_name, $render_params = array()) {
-  debug("Rendering $file_name");
+  $GLOBALS['WEBWORK_LOGGING']['render'] && debug("Rendering $file_name");
   extract($render_params);
   include(resolve_file_with_plugins('/handlers/'.$file_name.'.php'));
 }

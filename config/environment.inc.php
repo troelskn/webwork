@@ -6,6 +6,10 @@
 // Timezone settings. Adjust to fit your setup.
 date_default_timezone_set('Europe/Copenhagen');
 
+// framework level debugging info that you can turn on or off
+$GLOBALS['WEBWORK_LOGGING']['render'] = true;
+$GLOBALS['WEBWORK_LOGGING']['request'] = true;
+
 // Database connection settings
 $GLOBALS['DATABASE_CONNECTION'] = array(
   'constructor' => 'create_pdo',

@@ -9,8 +9,17 @@ require_once 'html_helpers.inc.php';
 // Open a buffer so we can accesse headers during rendering.
 ob_start();
 try {
+  if ($GLOBALS['WEBWORK_LOGGING']['request']) {
+    debug(
+      array(
+        'method' => request()->method(),
+        'param' => request()->param(),
+        'query' => request()->query(),
+        'body' => request()->body()));
+  }
   // Main dispatch mechanism. `resolve_route` maps the request uri to a handler name, then it gets rendered.
-  render_in_place(resolve_route(request(), $GLOBALS['ROUTES']));
+  $handler = resolve_route(request(), $GLOBALS['ROUTES']);
+  render_in_place($handler);
   if (!headers_sent()) {
     // The main content is wrapped in a layout file, if any exists
     if (document()->layout()) {
