@@ -65,6 +65,10 @@ function create_dummy_postman($params) {
  * You need to have Swift mailer in `vendor/swift_mailer`
  */
 function create_swift_mailer_postman($params) {
+  return new SwiftMailerPostman(create_swift_mailer($params));
+}
+
+function create_swift_mailer($params) {
   require_once 'swift_required.php';
   switch ($params['transport_type']) {
   case 'smtp':
@@ -88,7 +92,7 @@ function create_swift_mailer_postman($params) {
     $transport = Swift_MailTransport::newInstance();
     break;
   }
-  return new SwiftMailerPostman($transport);
+  return $transport;
 }
 
 /**
