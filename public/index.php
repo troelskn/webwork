@@ -28,7 +28,7 @@ try {
     if (document()->layout()) {
       $content = ob_get_clean();
       ob_start();
-      render_in_place(document()->layout().'_layout', array_merge(document()->exportVariables(), array('content' => $content)));
+      render_in_place('layouts/'.document()->layout(), array_merge(document()->exportVariables(), array('content' => $content)));
     }
     // Output to client
     header("HTTP/1.1 ".response()->status());
