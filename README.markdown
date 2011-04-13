@@ -49,7 +49,7 @@ This adds an external style sheet reference to the document header.
 
 The `e` function is shorthand for escape-and-echo. It simply outputs a string in an HTML context. Use this every time you want to output something in HTML.
 
-If you pick "View Source" in your browser, you'll notice that there are some additional markup in the output. Specifically the main `<head>` and `<body>` boilerplate stuff. This is generated from a *layout*  file. In this case, the default layout is used. See in `handlers/default_layout.php`. If you don't want a layout to be rendered, you can disable it by calling:
+If you pick "View Source" in your browser, you'll notice that there are some additional markup in the output. Specifically the main `<head>` and `<body>` boilerplate stuff. This is generated from a *layout*  file. In this case, the default layout is used. See in `handlers/layouts/default.php`. If you don't want a layout to be rendered, you can disable it by calling:
 
     document()->setLayout(false);
 
@@ -57,7 +57,7 @@ Or if you want a different layout, you can do so with:
 
     document()->setLayout('funky');
 
-In which case the file `handlers/funky_layout.php` will be used instead.
+In which case the file `handlers/layouts/funky.php` will be used instead.
 
 As you may have guessed, there are a couple more helpers for putting stuff in the document layout. The function `addScript` adds an external javascript file reference, and `addOnload` adds a piece of inline javascript code to be executed on document load.
 
