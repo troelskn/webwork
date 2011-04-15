@@ -63,7 +63,10 @@ function html_form_tag_end() {
  * Renders a html text input element.
  */
 function html_text_field($name, $value = null, $options = array()) {
-  $html = '<input type="text"';
+  $html = '<input';
+  if (!isset($options['type'])) {
+    $options['type'] = 'text';
+  }
   $options['name'] = $name;
   $options['value'] = $value;
   foreach ($options as $k => $v) {
