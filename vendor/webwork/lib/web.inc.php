@@ -415,10 +415,11 @@ class http_Response {
    * Make sure that the ETag is a unique hash for the contents of your response.
    */
   function cacheByEtag($etag) {
-    if ($etag === request()->header('If-Match')) {
+    if ($etag === request()->header('If-None-Match')) {
       throw new http_NotModified(array('ETag: ' . $etag));
     }
     $this->replaceHeader('ETag', $etag);
+    $this->replaceHeader('Cache-Control', "must-revalidate, proxy-revalidate");
   }
 
   /**
@@ -695,6 +696,17 @@ function debug($mixed) {
   error_log($msg, 3, $GLOBALS['APPLICATION_ROOT'].'/log/debug.log');
 }
 
+class ObjectInspector {
+  static function Inspect($object) {
+    $export = var_export($object, true);
+    eval('$result = ' . preg_replace('/[a-z_]+[a-z0-9_]*::__set_state/i', 'ObjectInspector::unwrap', $export).';');
+    return $result;
+  }
+  static function unwrap($data) {
+    return $data;
+  }
+}
+
 /**
  * Input an object, returns a json-ized string of said object, pretty-printed
  *
@@ -704,7 +716,7 @@ function debug($mixed) {
 function json_encode_pretty($obj, $indentation = 0) {
   switch (gettype($obj)) {
     case 'object':
-      $obj = get_object_vars($obj);
+      $obj = ObjectInspector::Inspect($obj);
     case 'array':
       if (!isset($obj[0])) {
         $arr_out = array();
