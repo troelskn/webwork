@@ -99,11 +99,36 @@ function create_swift_mailer($params) {
 }
 
 /**
- * Just a dummy implementation. Should be replaced with something that *actually* mails out.
+ * Just a dummy implementation. Acts like the real deal, but doesn't do anything.
  */
 class PostmanDummy {
   function deliver($file_name, $params = array()) {
-    debug("PostmanDummy#deliver $file_name");
+    $message = new DummyMailMessage();
+    extract($params);
+    include(resolve_file_with_plugins('/mail_handlers/'.$file_name.'.php'));
+    debug(array("PostmanDummy#deliver $file_name", $message));
+  }
+}
+
+/**
+ * A mock message
+ */
+class DummyMailMessage {
+  public $subject;
+  public $from;
+  public $to;
+  public $parts = array();
+  function setSubject($subject) {
+    $this->subject = $subject;
+  }
+  function setFrom($senders) {
+    $this->from = $senders;
+  }
+  function setTo($recipients) {
+    $this->to = $recipients;
+  }
+  function addPart($data, $mime_type) {
+    $this->parts[] = array('data' => $data, 'mime_type' => $mime_type);
   }
 }
 
@@ -117,6 +142,7 @@ class SwiftMailerPostman {
   }
   function deliver($file_name, $params = array()) {
     $message = Swift_Message::newInstance();
+    $message->setCharset("utf-8");
     extract($params);
     include(resolve_file_with_plugins('/mail_handlers/'.$file_name.'.php'));
     $this->mailer->send($message);
