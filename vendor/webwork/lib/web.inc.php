@@ -339,7 +339,7 @@ class http_Request {
    * Returns true if the request is made from XmlHttpRequest (Javascript aka. Ajax).
    */
   function isXhr() {
-    throw new Exception("TODO");
+    return strtolower($this->header('X-Requested-With')) == 'xmlhttprequest';
   }
 }
 
