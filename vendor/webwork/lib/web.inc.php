@@ -373,11 +373,19 @@ class http_ResponseDocument {
     $this->title = $title;
   }
 
+  function title() {
+    return $this->title;
+  }
+
   /**
    * Adds an external javascript file to the head of the document.
    */
   function addScript($script) {
     $this->scripts[] = $script;
+  }
+
+  function scripts() {
+    return $this->scripts;
   }
 
   /**
@@ -387,6 +395,10 @@ class http_ResponseDocument {
     $this->stylesheets[] = $stylesheet;
   }
 
+  function stylesheets() {
+    return $this->stylesheets;
+  }
+
   /**
    * Adds a piece of inline javascript code to execute on page load.
    */
@@ -394,8 +406,13 @@ class http_ResponseDocument {
     $this->onload[] = $onload;
   }
 
+  function onload() {
+    return $this->onload;
+  }
+
   /**
    * Returns the variables set on the document.
+   * @deprecated Use getters
    */
   function exportVariables() {
     return get_object_vars($this);
