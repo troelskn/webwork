@@ -69,8 +69,8 @@ function create_dummy_postman($params) {
  */
 function create_swift_mailer_postman($params) {
   $mailer = new SwiftMailerPostman(create_swift_mailer($params));
-  if (isset($params['SENDGRID_CATEGORY'])) {
-    $mailer->setSendgridCategory($params['SENDGRID_CATEGORY']);
+  if (isset($params['sendgrid_category'])) {
+    $mailer->setSendgridCategory($params['sendgrid_category']);
   }
   return $mailer;
 }
