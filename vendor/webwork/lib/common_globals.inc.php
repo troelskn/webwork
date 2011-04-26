@@ -68,7 +68,11 @@ function create_dummy_postman($params) {
  * You need to have Swift mailer in `vendor/swift_mailer`
  */
 function create_swift_mailer_postman($params) {
-  return new SwiftMailerPostman(create_swift_mailer($params));
+  $mailer = new SwiftMailerPostman(create_swift_mailer($params));
+  if (isset($params['SENDGRID_CATEGORY'])) {
+    $mailer->setSendgridCategory($params['SENDGRID_CATEGORY']);
+  }
+  return $mailer;
 }
 
 function create_swift_mailer($params) {
@@ -137,12 +141,21 @@ class DummyMailMessage {
  */
 class SwiftMailerPostman {
   protected $mailer;
+  protected $sendgrid_category;
   function __construct($transport) {
     $this->mailer = Swift_Mailer::newInstance($transport);
+  }
+  function setSendgridCategory($sendgrid_category) {
+    $this->sendgrid_category = $sendgrid_category;
+    return $this;
   }
   function deliver($file_name, $params = array()) {
     $message = Swift_Message::newInstance();
     $message->setCharset("utf-8");
+    if ($this->sendgrid_category) {
+      $headers = $message->getHeaders();
+      $headers->addTextHeader('X-SMTPAPI', '{"category": "'.addslashes($this->sendgrid_category).'"}');
+    }
     extract($params);
     include(resolve_file_with_plugins('/mail_handlers/'.$file_name.'.php'));
     $this->mailer->send($message);
