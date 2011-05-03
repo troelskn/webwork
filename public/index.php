@@ -6,7 +6,7 @@ $__benchmark_start = microtime(true);
 require_once '../bootstrap.inc.php';
 require_once 'web.inc.php';
 require_once 'html_helpers.inc.php';
-// Open a buffer so we can accesse headers during rendering.
+// Open a buffer so we can access headers during rendering.
 ob_start();
 try {
   if ($GLOBALS['WEBWORK_LOGGING']['request']) {
