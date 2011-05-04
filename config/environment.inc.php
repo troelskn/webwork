@@ -18,6 +18,9 @@ $GLOBALS['DATABASE_CONNECTION'] = array(
   'password' => null
 );
 
+// Automatically set the root of the url to the directory from where webwork is served
+$GLOBALS['HREF_BASE'] = preg_replace('~(.*)/.*~', '$1', $_SERVER['SCRIPT_NAME']);    
+
 // To use pdoext instead of plain pdo, uncomment this section:
 //
 // // Tell webwork to use pdoext

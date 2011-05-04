@@ -27,5 +27,5 @@ $GLOBALS['ROUTES']['~^GET/([?].*)?$~'] = "root";
 
 // Add your url helpers here
 function root_url() {
-  return "/";
+  return $GLOBALS['HREF_BASE'] . '/';
 }

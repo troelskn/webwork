@@ -280,7 +280,7 @@ class http_Request {
    * Returns the full requested uri.
    */
   function uri() {
-    return $_SERVER['REQUEST_URI'];
+    return str_replace($GLOBALS['HREF_BASE'], '', $_SERVER['REQUEST_URI']);
   }
 
   /**
