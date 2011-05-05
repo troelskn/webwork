@@ -18,8 +18,8 @@ $GLOBALS['DATABASE_CONNECTION'] = array(
   'password' => null
 );
 
-// Automatically set the root of the url to the directory from where webwork is served
-$GLOBALS['HREF_BASE'] = preg_replace('~(.*)/.*~', '$1', $_SERVER['SCRIPT_NAME']);    
+// If the public directory is a subdir on the web server where it's served, set the HREF_BASE below
+$GLOBALS['HREF_BASE'] = '';
 
 // To use pdoext instead of plain pdo, uncomment this section:
 //
