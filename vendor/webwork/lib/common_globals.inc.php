@@ -69,9 +69,6 @@ function create_dummy_postman($params) {
  */
 function create_swift_mailer_postman($params) {
   $mailer = new SwiftMailerPostman(create_swift_mailer($params));
-  if (isset($params['sendgrid_category'])) {
-    $mailer->setSendgridCategory($params['sendgrid_category']);
-  }
   return $mailer;
 }
 
@@ -141,21 +138,16 @@ class DummyMailMessage {
  */
 class SwiftMailerPostman {
   protected $mailer;
-  protected $sendgrid_category;
   function __construct($transport) {
     $this->mailer = Swift_Mailer::newInstance($transport);
-  }
-  function setSendgridCategory($sendgrid_category) {
-    $this->sendgrid_category = $sendgrid_category;
-    return $this;
   }
   function deliver($file_name, $params = array()) {
     $message = Swift_Message::newInstance();
     $message->setCharset("utf-8");
-    if ($this->sendgrid_category) {
-      $headers = $message->getHeaders();
-      $headers->addTextHeader('X-SMTPAPI', '{"category": "'.addslashes($this->sendgrid_category).'"}');
-    }
+    // Sendgrid categorisation : begin
+    $headers = $message->getHeaders();
+    $headers->addTextHeader('X-SMTPAPI', '{"category": "'.addslashes($file_name).'"}');
+    // Sendgrid categorisation : end
     extract($params);
     include(resolve_file_with_plugins('/mail_handlers/'.$file_name.'.php'));
     $this->mailer->send($message);
