@@ -185,24 +185,25 @@ function html_select($name, $values = array(), $value = null, $options = array()
       $html .= ' ' . htmlspecialchars($k) . '="' . htmlspecialchars($v) . '"';
     }
   }
-  return $html . ">" . html_options($values, $value) . "</select>\n";
+  return $html . ">" . html_options($values, $value, $options) . "</select>\n";
 }
 
 /**
  * Renders html `<option>` elements from an array.
  */
-function html_options($values = array(), $value = null) {
+function html_options($values = array(), $value = null, $options = array()) {
+  $associative = isset($options['associative']) && $options['associative'];
   $html = "";
   foreach ($values as $key => $v) {
     $html .= '<option';
-    if (!is_integer($key)) {
+    if (!is_integer($key) && !$associative) {
       $html .= ' value="' . htmlspecialchars($v) . '"';
     }
     if ($v == $value) {
       $html .= ' selected="selected"';
     }
     $html .= '>';
-    if (is_integer($key)) {
+    if (is_integer($key) && !$associative) {
       $html .= htmlspecialchars($v);
     } else {
       $html .= htmlspecialchars($key);
