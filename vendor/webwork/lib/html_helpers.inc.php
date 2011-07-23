@@ -68,6 +68,9 @@ function html_text_field($name, $value = null, $options = array()) {
     $options['type'] = 'text';
   }
   $options['name'] = $name;
+  if (!array_key_exists('id', $options)) {
+    $options['id'] = str_replace(']', '', str_replace('[', '_', $name));
+  }
   $options['value'] = $value;
   foreach ($options as $k => $v) {
     if ($v !== null) {
@@ -83,6 +86,9 @@ function html_text_field($name, $value = null, $options = array()) {
 function html_password_field($name, $options = array()) {
   $html = '<input type="password"';
   $options['name'] = $name;
+  if (!array_key_exists('id', $options)) {
+    $options['id'] = str_replace(']', '', str_replace('[', '_', $name));
+  }
   $options['value'] = null;
   foreach ($options as $k => $v) {
     if ($v !== null) {
@@ -98,6 +104,9 @@ function html_password_field($name, $options = array()) {
 function html_hidden_field($name, $value = null, $options = array()) {
   $html = '<input type="hidden"';
   $options['name'] = $name;
+  if (!array_key_exists('id', $options)) {
+    $options['id'] = str_replace(']', '', str_replace('[', '_', $name));
+  }
   $options['value'] = $value;
   foreach ($options as $k => $v) {
     if ($v !== null) {
@@ -113,6 +122,9 @@ function html_hidden_field($name, $value = null, $options = array()) {
 function html_text_area($name, $value = null, $options = array()) {
   $html = '<textarea';
   $options['name'] = $name;
+  if (!array_key_exists('id', $options)) {
+    $options['id'] = str_replace(']', '', str_replace('[', '_', $name));
+  }
   foreach ($options as $k => $v) {
     if ($v !== null) {
       $html .= ' ' . htmlspecialchars($k) . '="' . htmlspecialchars($v) . '"';
@@ -133,6 +145,9 @@ function html_radio($name, $value = null, $checked = false, $options = array()) 
   }
   $html .= '<input type="radio"';
   $options['name'] = $name;
+  if (!array_key_exists('id', $options)) {
+    $options['id'] = str_replace(']', '', str_replace('[', '_', $name));
+  }
   $options['value'] = $value;
   $options['checked'] = $checked ? 'checked' : null;
   foreach ($options as $k => $v) {
@@ -160,6 +175,9 @@ function html_checkbox($name, $checked = false, $options = array()) {
   }
   $html .= '<input type="checkbox"';
   $options['name'] = $name;
+  if (!array_key_exists('id', $options)) {
+    $options['id'] = str_replace(']', '', str_replace('[', '_', $name));
+  }
   $options['value'] = 'on';
   $options['checked'] = $checked ? 'checked' : null;
   foreach ($options as $k => $v) {
@@ -180,11 +198,16 @@ function html_checkbox($name, $checked = false, $options = array()) {
 function html_select($name, $values = array(), $value = null, $options = array()) {
   $html = '<select';
   $options['name'] = $name;
+  if (!array_key_exists('id', $options)) {
+    $options['id'] = str_replace(']', '', str_replace('[', '_', $name));
+  }
   foreach ($options as $k => $v) {
     if ($v !== null) {
       $html .= ' ' . htmlspecialchars($k) . '="' . htmlspecialchars($v) . '"';
     }
   }
+  $options['id'] = null;
+  $options['name'] = null;
   return $html . ">" . html_options($values, $value, $options) . "</select>\n";
 }
 
