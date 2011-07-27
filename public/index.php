@@ -116,3 +116,8 @@ try {
     restore_exception_handler();
   }
 }
+if (isset($GLOBALS['WEBWORK_LOGGING']['processing_time'])) {
+  error_log(
+    request()->method() . " " . request()->uri() . " " . number_format(microtime(true) - $__benchmark_start, 4) ."\n",
+    3, $GLOBALS['WEBWORK_LOGGING']['processing_time']);
+}
