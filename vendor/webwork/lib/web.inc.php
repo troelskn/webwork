@@ -353,6 +353,7 @@ class http_ResponseDocument {
   protected $scripts = array();
   protected $stylesheets = array();
   protected $onload = array();
+  protected $contentToBeAtBottom = array();
   /**
    * Sets the document layout. Set to NULL to not have a layout rendered.
    */
@@ -383,6 +384,18 @@ class http_ResponseDocument {
    */
   function addScript($script) {
     $this->scripts[] = $script;
+  }
+
+  /**
+   * Adds raw content to the end of the document, before </body>.
+   */
+  function addContentToBottom($html) {
+    $this->contentToBeAtBottom[] = $html;
+  }
+
+  function contentAtBottom()
+  {
+      return implode( "\n", $this->contentToBeAtBottom );
   }
 
   function scripts() {
