@@ -167,7 +167,7 @@ function html_radio($name, $value = null, $checked = false, $options = array()) 
  */
 function html_checkbox($name, $checked = false, $options = array()) {
   $html = "";
-  $html .= html_hidden_field($name, 'off');
+  $html .= html_hidden_field($name, 'off', array('id' => null));
   if (isset($options['label'])) {
     $label = $options['label'];
     $options['label'] = null;
