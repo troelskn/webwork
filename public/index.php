@@ -121,6 +121,9 @@ if (isset($GLOBALS['WEBWORK_LOGGING']['processing_time'])) {
     request()->method() . " " . request()->uri() . " " . number_format(microtime(true) - $__benchmark_start, 4) ."\n",
     3, $GLOBALS['WEBWORK_LOGGING']['processing_time']);
 }
-if (function_exists('apache_note') && function_exists('memory_get_peak_usage')) {
-  apache_note('x-php-memory-usage', memory_get_peak_usage());
+if (function_exists('apache_note')) {
+  apache_note('x-php-processing-time', number_format(microtime(true) - $__benchmark_start, 4));
+  if (function_exists('memory_get_peak_usage')) {
+    apache_note('x-php-memory-usage', memory_get_peak_usage());
+  }
 }
