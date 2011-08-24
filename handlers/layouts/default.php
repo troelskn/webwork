@@ -2,6 +2,9 @@
 <html>
   <head>
     <title><?php e($title); ?></title>
+<?php foreach (document()->metaTags() as $metaname => $metacontent): ?>
+    <meta name="<?php e($metaname) ?>" content="<?php e($metacontent) ?>" />
+<?php endforeach; ?>
 <?php foreach ($stylesheets as $style): ?>
     <link rel="stylesheet" href="<?php e($style); ?>" />
 <?php endforeach; ?>

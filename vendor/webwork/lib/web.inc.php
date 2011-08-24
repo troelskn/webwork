@@ -354,6 +354,7 @@ class http_ResponseDocument {
   protected $stylesheets = array();
   protected $onload = array();
   protected $contentToBeAtBottom = array();
+  protected $metaTags = array();
   /**
    * Sets the document layout. Set to NULL to not have a layout rendered.
    */
@@ -384,6 +385,20 @@ class http_ResponseDocument {
    */
   function addScript($script) {
     $this->scripts[] = $script;
+  }
+
+  function addMetaTag( $name, $content, $overwrite = TRUE )
+  {
+      $name = strtolower( $name );
+      if ( !( !$overwrite && array_key_exists( $name, $this->metaTags ) ) )
+      {
+          $this->metaTags[$name] = $content;
+      }
+  }
+
+  function metaTags()
+  {
+      return $this->metaTags;
   }
 
   /**
