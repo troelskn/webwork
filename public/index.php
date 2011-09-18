@@ -13,6 +13,7 @@ try {
     debug(
       array(
         'method' => request()->method(),
+        'uri' => request()->uri(),
         'param' => request()->param(),
         'query' => request()->query(),
         'body' => request()->body()));
