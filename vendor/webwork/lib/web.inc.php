@@ -140,6 +140,7 @@ class http_Exception extends Exception {
 class http_NotModified extends http_Exception {}
 class http_MethodNotAllowed extends http_Exception {}
 class http_NotFound extends http_Exception {}
+class http_MovedPermanently extends http_Exception {}
 class http_SeeOther extends http_Exception {}
 class http_Unauthorized extends http_Exception {}
 class http_Forbidden extends http_Exception {}
@@ -437,6 +438,13 @@ class http_Response {
     }
     $this->replaceHeader('ETag', $etag);
     $this->replaceHeader('Cache-Control', "must-revalidate, proxy-revalidate");
+  }
+
+  /**
+   * Redirects browser to another location, with a "301 Moved Permanently" status.
+   */
+  function movedPermanently($location) {
+    throw new http_MovedPermanently(array('Location: ' . $location));
   }
 
   /**

@@ -38,6 +38,13 @@ try {
     header("X-Processing-Time: " . number_format(microtime(true) - $__benchmark_start, 4));
     ob_end_flush();
   }
+} catch (http_MovedPermanently $ex) {
+  // Processing was halted with a redirect
+  ob_end_clean();
+  header("HTTP/1.1 301 Moved Permanently");
+  foreach ($ex->headers() as $header) {
+    header($header);
+  }
 } catch (http_SeeOther $ex) {
   // Processing was halted with a redirect
   ob_end_clean();
