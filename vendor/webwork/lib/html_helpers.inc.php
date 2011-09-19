@@ -219,7 +219,7 @@ function html_options($values = array(), $value = null, $options = array()) {
   $html = "";
   foreach ($values as $key => $v) {
     $html .= '<option';
-    if (!is_integer($key) && !$associative) {
+    if (!is_integer($key) || $associative) {
       $html .= ' value="' . htmlspecialchars($v) . '"';
     }
     if ($v == $value) {
