@@ -92,6 +92,7 @@ function request() {
 function cookie() {
   if (!isset($GLOBALS['cookie_instance'])) {
     $GLOBALS['cookie_instance'] = new http_CookieAccess(request()->serverName(), $_COOKIE);
+    $GLOBALS['cookie_instance']->addListener(response());
   }
   return $GLOBALS['cookie_instance'];
 }
@@ -104,6 +105,7 @@ function cookie() {
 function session() {
   if (!isset($GLOBALS['session_instance'])) {
     $GLOBALS['session_instance'] = new http_SessionAccess(cookie());
+    $GLOBALS['session_instance']->addListener(response());
   }
   return $GLOBALS['session_instance'];
 }
@@ -146,6 +148,13 @@ class http_Unauthorized extends http_Exception {}
 class http_Forbidden extends http_Exception {}
 class http_Gone extends http_Exception {}
 class http_BadRequest extends http_Exception {}
+
+/** Thrown if you try to combine a public caching strategy with cookie access. */
+class PublicCachedCookieViolation extends Exception {
+  public function __construct($message = 'Public caching is incompatible with cookies', $code = 0) {
+    parent::__construct($message, $code);
+  }
+}
 
 /**
  * Wraps incoming http request
@@ -452,6 +461,8 @@ class http_Response {
   protected $status = 200;
   protected $headers = array(
     array('Content-Type', 'text/html; charset=UTF-8'));
+  protected $cachedPublic = false;
+  protected $privateActivity = false;
 
   /**
    * Sets the response ETag.
@@ -475,6 +486,9 @@ class http_Response {
    * Do not use this if the response contains private data as it can be cached in http intermediaries (proxies etc.)
    */
   function cacheByExpires($maxAge = 3600, $lastModified = null) {
+    if ($this->privateActivity) {
+      throw new PublicCachedCookieViolation();
+    }
     if ($lastModified === null) {
       $lastModified = filemtime(__FILE__);
     }
@@ -482,6 +496,20 @@ class http_Response {
     $this->replaceHeader('Expires', date('r', $lastModified + $maxAge));
     $this->replaceHeader('Last-Modified', date('r', $lastModified));
     $this->replaceHeader('Vary', "Accept-Encoding, Cookie");
+    $this->cachedPublic = true;
+  }
+
+  /** Event handler. Called when private http content is accessed (Cookies) */
+  function onPrivateActivity() {
+    if ($this->cachedPublic) {
+      throw new PublicCachedCookieViolation();
+    }
+    $this->privateActivity = true;
+  }
+
+  /** Returns true if the response is about to be publically cached. */
+  function isCachedPublic() {
+    return $this->cachedPublic;
   }
 
   /**
@@ -551,6 +579,8 @@ class http_CookieAccess {
   protected $domain;
   /** @var string */
   protected $raw;
+  /** @var array */
+  protected $listeners = array();
   /**
     * @param string
     * @param array
@@ -561,10 +591,17 @@ class http_CookieAccess {
     $this->raw = $raw;
   }
 
+  function addListener($listener) {
+    $this->listeners[] = $listener;
+  }
+
   /**
    * Returns true if a cookie has been set with the given $key
    */
   function has($key) {
+    foreach ($this->listeners as $listener) {
+      $listener->onPrivateActivity();
+    }
     return isset($this->raw[$key]);
   }
 
@@ -572,6 +609,9 @@ class http_CookieAccess {
    * Returns a cookie, or if no $key is passed it returns a hash of all cookies.
    */
   function get($key = null) {
+    foreach ($this->listeners as $listener) {
+      $listener->onPrivateActivity();
+    }
     if ($key === null) {
       return $this->raw;
     }
@@ -582,6 +622,9 @@ class http_CookieAccess {
    * Sets a cookie
    */
   function set($key, $value, $expire = 0, $secure = false, $httponly = false) {
+    foreach ($this->listeners as $listener) {
+      $listener->onPrivateActivity();
+    }
     if ($value === null) {
       setcookie($key, '', time() - 42000, '/');
       unset($this->raw[$key]);
@@ -595,6 +638,9 @@ class http_CookieAccess {
    * Returns a hash of all cookies.
    */
   function all() {
+    foreach ($this->listeners as $listener) {
+      $listener->onPrivateActivity();
+    }
     return $this->raw;
   }
 }
@@ -602,6 +648,8 @@ class http_CookieAccess {
 class http_SessionAccess {
   /** @var CookieAccess */
   protected $cookie_access;
+  /** @var array */
+  protected $listeners = array();
   /**
     * @param http_CookieAccess
     * @return null
@@ -609,10 +657,18 @@ class http_SessionAccess {
   function __construct($cookie_access) {
     $this->cookie_access = $cookie_access;
   }
+
   protected function autoStart() {
     if (!session_id()) {
       session_start();
+      foreach ($this->listeners as $listener) {
+        $listener->onPrivateActivity();
+      }
     }
+  }
+
+  function addListener($listener) {
+    $this->listeners[] = $listener;
   }
 
   /**
@@ -685,6 +741,9 @@ class http_SessionAccess {
    * Regenerates the session id.
    */
   function regenerateId() {
+    foreach ($this->listeners as $listener) {
+      $listener->onPrivateActivity();
+    }
     return session_regenerate_id();
   }
 }
