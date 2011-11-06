@@ -456,7 +456,7 @@ class http_Response {
   /**
    * Sets the response ETag.
    * If the request specifies an ETag, then the request will end witha "Not Modified" response.
-   * This is an efficient way to utilise http level caching in your application.
+   * This form of caching is softer than `cacheByExpires` in that it still lets each request through to the application, but it can end the request earlier.
    *
    * Make sure that the ETag is a unique hash for the contents of your response.
    */
@@ -466,6 +466,22 @@ class http_Response {
     }
     $this->replaceHeader('ETag', $etag);
     $this->replaceHeader('Cache-Control', "must-revalidate, proxy-revalidate");
+  }
+
+  /**
+   * Sets headers that will cache the response for a time period (defaults to one hour).
+   * This is a harder form of caching than `cacheByEtag` that will allow a proxy to completely shield off your application.
+   *
+   * Do not use this if the response contains private data as it can be cached in http intermediaries (proxies etc.)
+   */
+  function cacheByExpires($maxAge = 3600, $lastModified = null) {
+    if ($lastModified === null) {
+      $lastModified = filemtime(__FILE__);
+    }
+    $this->replaceHeader('Cache-Control', 'max-age='.$maxAge.', public');
+    $this->replaceHeader('Expires', date('r', $lastModified + $maxAge));
+    $this->replaceHeader('Last-Modified', date('r', $lastModified));
+    $this->replaceHeader('Vary', "Accept-Encoding, Cookie");
   }
 
   /**
