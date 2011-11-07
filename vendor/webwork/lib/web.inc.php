@@ -705,6 +705,11 @@ class http_SessionAccess {
     return $value;
   }
 
+  function all() {
+    $this->autoStart();
+    return $_SESSION;
+  }
+
   /**
    * Sets a session value
    */
