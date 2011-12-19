@@ -461,6 +461,7 @@ class http_Response {
   protected $status = 200;
   protected $headers = array(
     array('Content-Type', 'text/html; charset=UTF-8'));
+  protected $stream = null;
   protected $cachedPublic = false;
   protected $privateActivity = false;
 
@@ -571,6 +572,14 @@ class http_Response {
    */
   function headers() {
     return $this->headers;
+  }
+
+  function setStreaming($stream) {
+    $this->stream = $stream;
+  }
+
+  function stream() {
+    return $this->stream;
   }
 }
 

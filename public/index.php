@@ -38,6 +38,9 @@ try {
     }
     header("X-Processing-Time: " . number_format(microtime(true) - $__benchmark_start, 4));
     ob_end_flush();
+    if (response()->stream()) {
+      call_user_func(response()->stream());
+    }
   }
 } catch (http_MovedPermanently $ex) {
   // Processing was halted with a redirect
