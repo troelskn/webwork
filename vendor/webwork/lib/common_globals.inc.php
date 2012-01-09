@@ -136,8 +136,11 @@ class DummyMailMessage {
   function setTo($recipients) {
     $this->to = $recipients;
   }
-  function addPart($data, $mime_type) {
+  function addPart($data, $mime_type = false) {
     $this->parts[] = array('data' => $data, 'mime_type' => $mime_type);
+  }
+  function attach($attachment) {
+    $this->addPart($attachment);
   }
 }
 
