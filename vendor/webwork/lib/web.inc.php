@@ -392,8 +392,12 @@ class http_ResponseDocument {
   /**
    * Adds an external javascript file to the head of the document.
    */
-  function addScript($script) {
-    $this->scripts[] = $script;
+  function addScript($script, $add_to_top = false) {
+    if ($add_to_top) {
+      array_unshift($this->scripts, $script);
+    } else {
+      $this->scripts[] = $script;
+    }
   }
 
   function addMetaTag( $name, $content, $overwrite = TRUE )
