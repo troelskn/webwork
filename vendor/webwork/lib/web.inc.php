@@ -8,7 +8,7 @@ function resolve_route($request, $routes) {
   foreach ($routes as $pattern => $handler) {
     if (preg_match($pattern, $request_method . $request_uri, $reg) || preg_match($pattern, $request_uri, $reg)) {
       array_shift($reg);
-      $request->setParams($reg);
+      $request->setParams(array_map('urldecode', $reg));
       return $handler;
     }
   }
