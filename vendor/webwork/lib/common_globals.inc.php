@@ -5,12 +5,20 @@
 /**
  * Returns a database connection object.
  */
-function db() {
-  if (!isset($GLOBALS['DATABASE_CONNECTION']['instance'])) {
-    $ctor = $GLOBALS['DATABASE_CONNECTION']['constructor'];
-    $GLOBALS['DATABASE_CONNECTION']['instance'] = call_user_func($ctor, $GLOBALS['DATABASE_CONNECTION']);
+function db($connection_name = 'default') {
+  if ($connection_name == 'default' && isset($GLOBALS['DATABASE_CONNECTION'])) {
+    if (!isset($GLOBALS['DATABASE_CONNECTION']['instance'])) {
+      $ctor = $GLOBALS['DATABASE_CONNECTION']['constructor'];
+      $GLOBALS['DATABASE_CONNECTION']['instance'] = call_user_func($ctor, $GLOBALS['DATABASE_CONNECTION']);
+    }
+    return $GLOBALS['DATABASE_CONNECTION']['instance'];
   }
-  return $GLOBALS['DATABASE_CONNECTION']['instance'];
+  $config =& $GLOBALS['DATABASE_CONNECTIONS'][$connection_name];
+  if (!isset($config['instance'])) {
+    $ctor = $config['constructor'];
+    $config['instance'] = call_user_func($ctor, $config);
+  }
+  return $config['instance'];
 }
 
 /**

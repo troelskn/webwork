@@ -12,10 +12,12 @@ $GLOBALS['WEBWORK_LOGGING']['request'] = true;
 $GLOBALS['WEBWORK_LOGGING']['dispatch'] = true;
 
 // Database connection settings
-$GLOBALS['DATABASE_CONNECTION'] = array(
-  'constructor' => 'create_pdo',
-  'username' => null,
-  'password' => null
+$GLOBALS['DATABASE_CONNECTIONS'] = array(
+  'default' => array(
+    'constructor' => 'create_pdo',
+    'username' => null,
+    'password' => null
+  )
 );
 
 // If the public directory is a subdir on the web server where it's served, set the HREF_BASE below

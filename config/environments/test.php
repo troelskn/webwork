@@ -1,2 +1,2 @@
 <?php
-$GLOBALS['DATABASE_CONNECTION']['dsn'] = "sqlite::memory:";
+$GLOBALS['DATABASE_CONNECTIONS']['default']['dsn'] = "sqlite::memory:";
