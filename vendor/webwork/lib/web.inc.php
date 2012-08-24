@@ -31,7 +31,7 @@ function render($file_name, $render_params = array()) {
  * A handler is a flat php file placed in the `handlers/` folder.
  */
 function render_in_place($file_name, $render_params = array()) {
-  $GLOBALS['WEBWORK_LOGGING']['render'] && debug("Rendering $file_name");
+  $GLOBALS['WEBWORK_LOGGING']['render'] && debug("Rendering $file_name", $GLOBALS['WEBWORK_LOGGING']['render']);
   extract($render_params);
   include(resolve_file_with_plugins('/handlers/'.$file_name.'.php'));
 }
@@ -832,13 +832,34 @@ class http_UploadedFile {
  *
  * Use it instead of `var_dump` and put a `tail -f` on the debug log.
  */
-function debug($mixed) {
+function debug($mixed, $color = null) {
   static $process_id;
   if (!$process_id) {
     $process_id = substr(md5(microtime(true)), 0, 8);
   }
   $debug_backtrace = debug_backtrace();
   $msg = "*** ".$process_id." ".date("Y-m-d H:i:s")." ".$debug_backtrace[0]['file']." : ".$debug_backtrace[0]['line']."\n".json_encode_pretty($mixed)."\n";
+  switch ($color) {
+  case 'red':
+    $msg = "\033[31m" . $msg . "\033[0m";
+    break;
+  case 'green':
+    $msg = "\033[32m" . $msg . "\033[0m";
+    break;
+  case 'yellow':
+    $msg = "\033[33m" . $msg . "\033[0m";
+    break;
+  case 'blue':
+    $msg = "\033[34m" . $msg . "\033[0m";
+    break;
+  case 'purple':
+  case 'magenta':
+    $msg = "\033[35m" . $msg . "\033[0m";
+    break;
+  case 'cyan':
+    $msg = "\033[36m" . $msg . "\033[0m";
+    break;
+  }
   error_log($msg, 3, $GLOBALS['APPLICATION_ROOT'].'/log/debug.log');
 }
 

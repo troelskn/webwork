@@ -16,12 +16,12 @@ try {
         'uri' => request()->uri(),
         'param' => request()->param(),
         'query' => request()->query(),
-        'body' => request()->body()));
+        'body' => request()->body()), $GLOBALS['WEBWORK_LOGGING']['request']);
   }
   // Main dispatch mechanism. `resolve_route` maps the request uri to a handler name, then it gets rendered.
   $handler = resolve_route(request(), $GLOBALS['ROUTES']);
   if ($GLOBALS['WEBWORK_LOGGING']['dispatch']) {
-    debug("Dispatching $handler");
+    debug("Dispatching $handler", $GLOBALS['WEBWORK_LOGGING']['dispatch']);
   }
   render_in_place($handler);
   if (!headers_sent()) {
