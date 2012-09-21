@@ -2,6 +2,19 @@
 <?php
 require_once(dirname(__FILE__) . '/../bootstrap.inc.php');
 require_once('web.inc.php');
+if (isset($_SERVER['argv'][1])) {
+  $parts = explode(".", $_SERVER['argv'][1]);
+  $var = $GLOBALS;
+  while (!empty($parts)) {
+    $index = array_shift($parts);
+    if (!isset($var[$index])) {
+      exit(-1);
+    }
+    $var = $var[$index];
+  }
+  echo $var, "\n";
+  exit(0);
+}
 $ignore = array (
   'GLOBALS', 'HTTP_ENV_VARS', 'argv', 'argc', '_POST', 'HTTP_POST_VARS',
   '_GET', 'HTTP_GET_VARS', '_COOKIE', 'HTTP_COOKIE_VARS', '_SERVER',
