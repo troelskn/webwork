@@ -180,23 +180,20 @@ class http_Request {
     $file_access = new http_UploadedFileAccess();
     $this->files = array();
     foreach ($_FILES as $key => $file) {
-      if (isset($file['tmp_name']) && is_array($file['tmp_name'])) {
-        $file_info = array();
-        for ($i = 0; $i < count($file['tmp_name']); $i++) {
-          $file_info[$i] = array();
-          $file_info[$i]['tmp_name'] = $file['tmp_name'][$i];
-          $file_info[$i]['name'] = $file['name'][$i];
-          $file_info[$i]['type'] = $file['type'][$i];
-          $file_info[$i]['size'] = $file['size'][$i];
-          $file_info[$i]['error'] = $file['error'][$i];
-        }
-        if (array_key_exists('name', $file_info)) {
-          $this->files[$key] = new http_UploadedFile($file_info, $key, $file_access);
-        } else {
+      if (isset($file['tmp_name'])) {
+        if (is_array($file['tmp_name'])) {
           $this->files[$key] = array();
-          foreach ($file_info as $file_info_struct) {
-            $this->files[$key][] = new http_UploadedFile($file_info_struct, $key, $file_access);
+          for ($i = 0; $i < count($file['tmp_name']); $i++) {
+            $file_info = array();
+            $file_info['tmp_name'] = $file['tmp_name'][$i];
+            $file_info['name'] = $file['name'][$i];
+            $file_info['type'] = $file['type'][$i];
+            $file_info['size'] = $file['size'][$i];
+            $file_info['error'] = $file['error'][$i];
+            $this->files[$key][] = new http_UploadedFile($file_info, $key, $file_access);
           }
+        } else {
+          $this->files[$key] = new http_UploadedFile($file, $key, $file_access);
         }
       }
     }
