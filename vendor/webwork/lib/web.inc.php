@@ -765,20 +765,21 @@ class http_SessionAccess {
 
 class http_UploadedFileAccess {
   function copy($tmp_name, $path_destination) {
-    $this->ensureDirectory(dirname($path_destination));
-    if (is_uploaded_file($tmp_name)) {
-      move_uploaded_file($tmp_name, $path_destination);
-    } else {
-      throw new Exception("Fileinfo is not a valid uploaded file");
+    $dir = dirname($path_destination);
+    $dir_available = is_dir($dir);
+    if (!$dir_available) {
+      $oldumask = umask(0);
+      $dir_available = mkdir($dir, 0777, true);
+      umask($oldumask);
     }
-  }
-  protected function mkdir($path) {
-    mkdir($path);
-  }
-  protected function ensureDirectory($dir) {
-    if (!is_dir($dir)) {
-      $this->ensureDirectory(dirname($dir));
-      $this->mkdir($dir);
+    if ($dir_available) {
+      if (is_uploaded_file($tmp_name)) {
+        move_uploaded_file($tmp_name, $path_destination);
+      } else {
+        throw new Exception("Fileinfo is not a valid uploaded file");
+      }
+    } else {
+      throw new Exception("Could not create directory");
     }
   }
 }
