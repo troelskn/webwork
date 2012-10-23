@@ -26,11 +26,11 @@ $GLOBALS['HREF_BASE'] = '';
 // To use pdoext instead of plain pdo, uncomment this section:
 //
 // // Tell webwork to use pdoext
-// $GLOBALS['DATABASE_CONNECTION']['constructor'] = 'create_pdoext';
+// $GLOBALS['DATABASE_CONNECTIONS']['default']['constructor'] = 'create_pdoext';
 // // Enable logging
-// $GLOBALS['DATABASE_CONNECTION']['log_file'] = '/var/log/pdoext_log.txt';
+// $GLOBALS['DATABASE_CONNECTIONS']['default']['log_file'] = '/var/log/pdoext_log.txt';
 // // Only log slow queries
-// $GLOBALS['DATABASE_CONNECTION']['log_time'] = 0.5;
+// $GLOBALS['DATABASE_CONNECTIONS']['default']['log_time'] = 0.5;
 
 // Mailer settings
 $GLOBALS['POSTMAN'] = array(
