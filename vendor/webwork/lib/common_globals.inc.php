@@ -126,6 +126,7 @@ class DummyMailMessage {
   public $subject;
   public $from;
   public $to;
+  public $bcc;
   public $parts = array();
   function setSubject($subject) {
     $this->subject = $subject;
@@ -135,6 +136,9 @@ class DummyMailMessage {
   }
   function setTo($recipients) {
     $this->to = $recipients;
+  }
+  function addBCC($recipients) {
+    $this->bcc[] = $recipients;
   }
   function addPart($data, $mime_type = false) {
     $this->parts[] = array('data' => $data, 'mime_type' => $mime_type);
