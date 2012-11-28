@@ -56,10 +56,11 @@ function create_pdoext($params) {
     $db->setLogging($params['log_file'], isset($params['log_time']) ? $params['log_time'] : null);
   }
   if (preg_match('/^mysql:.*;charset=UTF-8$/', $params['dsn'])) {
-    $db->query("SET NAMES UTF8");
+    $db->exec("SET NAMES UTF8");
   }
   if ($db->getAttribute(PDO::ATTR_DRIVER_NAME) === 'mysql') {
-    $db->query("SET time_zone = ".$db->quote(date("P")));
+    $db->exec("SET time_zone = ".$db->quote(date("P")));
+    $db->exec("SET default_week_format = 1");
   }
   return $db;
 }
