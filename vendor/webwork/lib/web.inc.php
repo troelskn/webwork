@@ -170,6 +170,8 @@ class http_Request {
     if ($_SERVER['REQUEST_METHOD'] === 'PUT' && $_SERVER['CONTENT_TYPE'] === 'application/x-www-form-urlencoded' && empty($_POST)) {
       parse_str(file_get_contents('php://input'), $buffer);
       $this->body = $buffer;
+    } elseif (isset($_SERVER['CONTENT_TYPE']) && $_SERVER['CONTENT_TYPE'] === 'application/json' && empty($_POST)) {
+      $this->body = json_decode(file_get_contents('php://input'), true);
     } else {
       $this->body = $_POST;
     }
