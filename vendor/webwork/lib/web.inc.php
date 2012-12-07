@@ -167,7 +167,7 @@ class http_Request {
   protected $files;
   function __construct() {
     $this->query = $_GET;
-    if ($_SERVER['REQUEST_METHOD'] === 'PUT' && $_SERVER['CONTENT_TYPE'] === 'application/x-www-form-urlencoded' && empty($_POST)) {
+    if ($_SERVER['REQUEST_METHOD'] === 'PUT' && isset($_SERVER['CONTENT_TYPE']) && $_SERVER['CONTENT_TYPE'] === 'application/x-www-form-urlencoded' && empty($_POST)) {
       parse_str(file_get_contents('php://input'), $buffer);
       $this->body = $buffer;
     } elseif (isset($_SERVER['CONTENT_TYPE']) && $_SERVER['CONTENT_TYPE'] === 'application/json' && empty($_POST)) {
