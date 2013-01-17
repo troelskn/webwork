@@ -1,6 +1,19 @@
 #!/usr/bin/env php
 <?php
 require_once(dirname(__FILE__) . '/../bootstrap.inc.php');
+ini_set('memory_limit', '512M');
+set_time_limit(0);
+
+// Are you sure prombt. Maybe an idea to have globally?
+function prompt_accept($prompttext = "Are you sure?", $default = 'N') {
+  $default = strtoupper($default);
+  $abort = ($default=='N') ? 'y' : 'n';
+  echo "\n" . $prompttext . " [" . $default .  "/" . $abort . "]";
+  $handle = fopen ("php://stdin","r");
+  $line = fgets($handle);
+  echo "\n";
+  return in_array(trim(strtoupper($line)), array($default, ''));
+}
 
 function dir_tree($dir) {
   $path = '';
@@ -31,7 +44,7 @@ function get_classes_in_file($file_name) {
   $state = false;
   $result = array();
   foreach (token_get_all($content) as $token) {
-    if (is_array($token) && $token[0] === T_CLASS) {
+    if (is_array($token) && ($token[0] === T_CLASS || $token[0] === T_INTERFACE)) {
       $state = true;
     } elseif ($state && is_array($token) && $token[0] === T_STRING) {
       $result[strtolower($token[1])] = $file_name;
@@ -41,6 +54,8 @@ function get_classes_in_file($file_name) {
   return $result;
 }
 
+//Generating fileinformation.
+echo "Generating 'autoload.inc.php' file..";
 $result = array();
 $cwd = getcwd();
 chdir($GLOBALS['APPLICATION_ROOT']);
@@ -60,9 +75,28 @@ foreach ($GLOBALS['PLUGINS'] as $plugin) {
 }
 chdir($cwd);
 ksort($result);
-echo "<", "?php\n", '$', "GLOBALS['AUTOLOAD'] = array(\n";
+
+// Build filestructure.
+$output = "<" . "?php\n" . '$' . "GLOBALS['AUTOLOAD'] = array(\n";
 foreach ($result as $class => $file_name) {
   $file_name = preg_replace('/^'.preg_quote($GLOBALS['APPLICATION_ROOT'].'/', '/').'/', '', $file_name);
-  echo "  '", $class, "' => '", $file_name, "',\n";
+  $output .=  "  '" . $class . "' => '" . $file_name . "',\n";
 }
-echo ");\n";
+$output .= ");\n";
+
+//File operation
+$tmpfilename = '/tmp/' . uniqid();
+file_put_contents($tmpfilename, $output);
+$diff = exec('diff ' . $GLOBALS['APPLICATION_ROOT'].'/config/autoload.inc.php' . ' ' . $tmpfilename);
+if (!trim($diff)) {
+  exit("\nNo changes to be saved.\n");
+} else {
+  echo "\nDifferences:\n" . $diff . "\n";
+}
+
+if (prompt_accept('Replace autoload.inc.php with these changes?')) {
+  echo "Aborted.\n";
+} else {
+  passthru('cp -f ' . $tmpfilename . ' ' . $GLOBALS['APPLICATION_ROOT'].'/config/autoload.inc.php');
+  echo "Updated file '" . $GLOBALS['APPLICATION_ROOT'] . "/config/autoload.inc.php\n";
+}
