@@ -23,6 +23,9 @@ class Migrations {
       case 'mysql':
         $sql = "SHOW TABLES";
         break;
+      case 'pgsql':
+        $sql = "SELECT table_name AS name FROM information_schema.tables 
+                WHERE table_type = 'BASE TABLE' AND table_schema NOT IN ('pg_catalog','information_schema')";
       case 'sqlite':
         $sql = 'SELECT name FROM sqlite_master WHERE type = "table"';
         break;
@@ -40,8 +43,8 @@ class Migrations {
 
   function getVersions() {
     $versions = array();
-    foreach ($this->db->query("select * from schema_migrations") as $row) {
-      $versions[] = $row[0];
+    foreach ($this->db->query("SELECT version FROM schema_migrations") as $row) {
+      $versions[] = $row['version'];
     }
     return $versions;
   }
