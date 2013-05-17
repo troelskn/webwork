@@ -1,5 +1,5 @@
 #!/bin/sh
-if echo $1 | grep -Pq '^[a-z_]+$'
+if echo $1 | grep -Eq '^[a-z_0-9]+$'
 then
   FILENAME=migrations/$(date +"%Y%m%d%H%M%S")_$1.sql
   touch $FILENAME
