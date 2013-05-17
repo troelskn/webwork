@@ -176,8 +176,17 @@ class http_Request {
       $this->body = $_POST;
     }
     $this->headers = array();
-    foreach (apache_request_headers() as $k => $v) {
-      $this->headers[strtolower($k)] = $v;
+    if (function_exists('apache_request_headers')) {
+      foreach (apache_request_headers() as $k => $v) {
+        $this->headers[strtolower($k)] = $v;
+      }
+    } else {
+      foreach ($_SERVER as $k => $v) {
+        if (preg_match('/^HTTP_/', $k)) {
+          $k = strtolower(str_replace('_', '-', preg_replace('/^HTTP_/', '', $k)));
+          $this->headers[$k] = $v;
+        }
+      }
     }
     $file_access = new http_UploadedFileAccess();
     $this->files = array();
