@@ -847,7 +847,7 @@ function debug($mixed, $color = null) {
     $process_id = substr(md5(microtime(true)), 0, 8);
   }
   $debug_backtrace = debug_backtrace();
-  $msg = "*** ".$process_id." ".date("Y-m-d H:i:s")." ".$debug_backtrace[0]['file']." : ".$debug_backtrace[0]['line']."\n".json_encode_pretty($mixed)."\n";
+  $msg = "*** ".$process_id." ".date("Y-m-d H:i:s")." ".(isset($debug_backtrace[0]['file']) ? $debug_backtrace[0]['file'] : 'No File')." : ".(isset($debug_backtrace[0]['line']) ? $debug_backtrace[0]['line'] : '-')."\n".json_encode_pretty($mixed)."\n";
   switch ($color) {
   case 'red':
     $msg = "\033[31m" . $msg . "\033[0m";
